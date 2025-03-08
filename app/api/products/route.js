@@ -14,21 +14,25 @@ export async function POST(request) {
   try {
     const data = await request.formData();
 
+    const file = data.get("file");
+    const image = data.get("image");
 
-    const file = data.get("image");
-
-    if (!file) {
+    if (!file || !image) {
       return NextResponse.json({
         success: false,
-        message: "اپلود تصویر الزامی میباشد",
+        message: "اپلود فایل و تصویر الزامی میباشد",
       });
     }
 
     const name = data.get("name");
     const description = data.get("description");
     const price = data.get("price");
-    const active = data.get("active");
     const discountPrice = data.get("discountPrice");
+    const active = data.get("active");
+    const category = data.get("category");
+    const types = data.get("types").split(",").map(tag => tag.trim());
+    const tags = data.get("tags").split(",").map(tag => tag.trim());
+    const free = data.get("free");
 
     if (!name || !description || isNaN(price) || isNaN(discountPrice) || !category) {
       return new Response(
@@ -77,7 +81,7 @@ export async function POST(request) {
       );
     }
 
-    if (price <= 0 || stock < 0) {
+    if (price <= 0) {
       return new Response(
         JSON.stringify({ message: "قیمت یا موجودی باید بیش از عدد ۰ باشد" }),
         {
@@ -86,25 +90,53 @@ export async function POST(request) {
       );
     }
     
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const bytesFile = await file.arrayBuffer();
+    const bytesImage = await image.arrayBuffer();
+    
+    const bufferFile = Buffer.from(bytesFile);
+    const bufferImage = Buffer.from(bytesImage);
 
-    const uploadDir = join(process.cwd(), "public/uploads");
-    const filePath = join(uploadDir, file.name);
+    const uploadDirFile = join(process.cwd(), "public/uploads/files");
+    const filePath = join(uploadDirFile, file.name);
+    const uploadDirImage = join(process.cwd(), "public/uploads/images");
+    const imagePath = join(uploadDirImage, image.name);
 
-    await writeFile(filePath, buffer);
+    await writeFile(filePath, bufferFile);
+    await writeFile(imagePath, bufferImage);
 
     await connectToDatabase();
 
-    const product = await Product.create({
+    console.log("Creating product with data:", {
+      fileUrl: `/uploads/files/${file.name}`,
       name,
       description,
       price,
-      active,
       discountPrice,
       category,
-      imageUrl: `/uploads/${file.name}`,
+      types,
+      tags,
+      active,
+      free,
+      imageUrl: `/uploads/images/${image.name}`,
     });
+
+    const product = await Product.create({
+
+      fileUrl: `/uploads/files/${file.name}`,
+      name,
+      description,
+      price,
+      discountPrice,
+      category,
+      types,
+      tags,
+      active,
+      free,
+      imageUrl: `/uploads/images/${image.name}`,
+    });
+
+    console.log("Product created:", product);
+    
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), {

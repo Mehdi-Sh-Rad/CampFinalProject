@@ -1,4 +1,5 @@
 import connectToDatabase from "@/app/lib/db";
+import Category from "@/models/Category";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { join } from "path";

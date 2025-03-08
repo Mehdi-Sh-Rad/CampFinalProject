@@ -167,6 +167,7 @@ body {
 input {
   text-align: right;
 }
-.no-underline{
-  text-decoration: none;;
+
+.no-underline {
+  text-decoration: none;
 }

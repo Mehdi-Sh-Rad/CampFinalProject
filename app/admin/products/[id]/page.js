@@ -31,7 +31,7 @@ const UpdateProduct = () => {
         setDescription(productData.description);
         setPrice(productData.price);
         setStock(productData.stock);
-        // setCategory(productData.category);
+        setCategory(productData.category);
         setCurrentImage(productData.imageUrl);
 
         const categoriesResponse = await fetch("/api/categories");
@@ -72,10 +72,10 @@ const UpdateProduct = () => {
       setFormError("موجودی محصول باید بزرگ تر از ۰ باشد");
       return false;
     }
-    // if (!category) {
-    //   setFormError("دسته بندی محصول باید باشد");
-    //   return false;
-    // }
+    if (!category) {
+      setFormError("دسته بندی محصول باید باشد");
+      return false;
+    }
 
     setFormError("");
     return true;
@@ -93,7 +93,7 @@ const UpdateProduct = () => {
       formData.append("description", description);
       formData.append("price", price);
       formData.append("stock", stock);
-      // formData.append("category", category);
+      formData.append("category", category);
       if (image) {
         formData.append("image", image);
       }
@@ -195,7 +195,7 @@ const UpdateProduct = () => {
                 <Form.Select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  // required
+                  required
                 >
                   <option value="">انتخاب دسته بندی</option>
                   {categories.map((cat) => {

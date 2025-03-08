@@ -6,37 +6,43 @@ import React, { use, useEffect, useState } from "react";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 
 const AddProduct = () => {
-  
   const [file, setFile] = useState(null);
-  // const [image, setImage] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  // const [categories, setCategories] = useState('');
-  // const [tags, setTags] = useState('');
-  // const [fileTypes, setFileTypes] = useState("");
-  const [active, setActive] = useState(false);
+  const [image, setImage] = useState(null);
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
-  const [Free, setFree] = useState(false);
+  const [active, setActive] = useState("");
+  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [types, setTypes] = useState("");
+  const [tags, setTags] = useState("");
+  const [free, setFree] = useState(false);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
-  const validateForm = () => {
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
+  }, []);
 
-    // if (!file) {
-    //   setFormError("انتخاب فایل محصول میباشد");
-    //   return false;
-    // }
-    // if (!image) {
-    //   setFormError("انتخاب تصویرالزامی میباشد");
-    //   return false;
-    // }
+  const validateForm = () => {
+    if (!file) {
+      setFormError("انتخاب فایل محصول الزامی میباشد");
+      return false;
+    }
+    if (!image) {
+      setFormError("انتخاب تصویر محصول الزامی میباشد");
+      return false;
+    }
     if (!name || name.trim() === "") {
       setFormError("نام محصول الزامی میباشد");
       return false;
-    } else if (name.length < 2 || name.length > 30) {
-      setFormError("نام محصول باید بین ۲ تا ۳۰ باشد");
+    } else if (name.length < 3 || name.length > 30) {
+      setFormError("نام محصول باید بین ۳ تا ۳۰ باشد");
       return false;
     }
     if (!description || description.trim() === "") {
@@ -46,10 +52,22 @@ const AddProduct = () => {
       setFormError("توضیحات محصول باید بین ۳ تا ۵۰۰ باشد");
       return false;
     }
-    if (price <= 0) {
-      setFormError("قیمت محصول باید یک مقدار مثبت باشد");
+    if (!category) {
+      setFormError("دسته بندی محصول باید باشد");
       return false;
-    }  
+    }
+    if (!tags) {
+      setFormError(" انتخاب حداقل یک برچسب برای محصول الزامی است");
+      return false;
+    }
+    if (!types.trim() === "") {
+      setFormError("انتخاب فرمت فایل محصول الزامی است");
+      return false;
+    }
+    if (price <= 0) {
+      setFormError(" قیمت محصول باید یک مقدار مثبت باشد در غیر اینصورت گزینه رایگان را تیک بزنید");
+      return false;
+    }
     setFormError("");
     return true;
   };
@@ -62,18 +80,18 @@ const AddProduct = () => {
 
     try {
       const formData = new FormData();
-      // formData.append("fileUrl", file);
-      // formData.append("imageUrl", image);
+      formData.append("file", file);
       formData.append("name", name);
       formData.append("description", description);
-      // formData.append("categories", categories);
-      // formData.append("tags", tags);
-      // formData.append("fileTypes", fileTypes);
-      formData.append("active", active);
       formData.append("price", price);
       formData.append("discountPrice", discountPrice);
-      // formData.append("isFree", Free);      
-      console.log(formData);
+      formData.append("active", active ? "true" : "false");
+      formData.append("category", category);
+      formData.append("types", types);
+      formData.append("tags", tags);
+      formData.append("image", image);
+      formData.append("free", free);
+
       const response = await fetch("/api/products", {
         method: "POST",
         body: formData,
@@ -89,7 +107,6 @@ const AddProduct = () => {
       setError(error.message);
     }
   };
-
   return (
     <Container fluid>
       <Row>
@@ -104,31 +121,30 @@ const AddProduct = () => {
             {formError && <Alert variant="warning">{formError}</Alert>}
 
             <Form onSubmit={handleSubmit}>
+
               <Form.Group className="mb-3">
                 <Form.Label>فایل</Form.Label>
                 <Form.Control
                   type="file"
-                  accept="image/*"
-                  required
+                  accept="file/*"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
-             </Form.Group>
+              </Form.Group>
 
-              {/* <Form.Group className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>تصویر</Form.Label>
                 <Form.Control
                   type="file"
                   accept="image/*"
-                  required
                   onChange={(e) => setImage(e.target.files[0])}
                 />
-              </Form.Group> */}
+              </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>نام</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="نام ..."
+                  placeholder="اسم محصول ..."
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -138,50 +154,58 @@ const AddProduct = () => {
                 <Form.Label>توضیحات</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="توضیحات ..."
+                  placeholder=" توضیحات محصول ..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </Form.Group>
 
-              {/* <Form.Group className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>دسته بندی</Form.Label>
                 <Form.Select
-                  value={categories}
-                  onChange={(e) => setCategories(e.target.value)}
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
                 >
                   <option value="">انتخاب دسته بندی</option>
+                  {categories.map((cat) => {
+                    return (
+                      <option key={cat._id} value={cat._id}>
+                        {cat.name}
+                      </option>
+                    );
+                  })}
                 </Form.Select>
-              </Form.Group> */}
+              </Form.Group>
 
-              {/* <Form.Group className="mb-3">
-                <Form.Label>تگ ها</Form.Label>
-                <Form.Select
+              <Form.Group className="mb-3">
+                <Form.Label>برچسب ها</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="تگ‌ها را با کاما جدا کنید"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                >
-                  <option value="">انتخاب تگ های محصول</option>
-                </Form.Select>
-              </Form.Group> */}
+                />
+              </Form.Group>
 
-              {/* <Form.Group className="mb-3">
-                <Form.Label>فرمت فایل های محصول</Form.Label>
-                <Form.Select
-                  value={fileTypes}
-                  onChange={(e) => setFileTypes(e.target.value)}
-                >
-                  <option value="">انتخاب فرمت فایل محصول</option>
-                </Form.Select>
-              </Form.Group> */}
+              <Form.Group className="mb-3">
+                <Form.Label>فرمت فایل</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="در صورت وجود بیش از یک فرمت آنها را با کاما جدا کنید"
+                  value={types}
+                  onChange={(e) => setTypes(e.target.value)}
+                />
+              </Form.Group>
 
-              {/* <Form.Group className="mb-3">
-                <Form.Label>فعال</Form.Label>
+              <Form.Group className="mb-3">
+                <Form.Label>وضعیت :</Form.Label>
                 <Form.Check
-                  type="check"
+                  className="d-inline mx-2"
+                  type="checkbox"
                   checked={active}
                   onChange={(e) => setActive(e.target.checked)}
-                />
-              </Form.Group> */}
+                /> فعال
+              </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>قیمت</Form.Label>
@@ -201,14 +225,15 @@ const AddProduct = () => {
                 />
               </Form.Group>
 
-              {/* <Form.Group className="mb-3">
-                <Form.Label>رایگان</Form.Label>
+              <Form.Group className="mb-3">
+                <Form.Label>رایگان :</Form.Label>
                 <Form.Check
-                  type="check"
-                  checked={Free}
+                  className="d-inline mx-2"
+                  type="checkbox"
+                  checked={free}
                   onChange={(e) => setFree(e.target.checked)}
-                />
-              </Form.Group> */}
+                /> بله
+              </Form.Group>
 
               <Button type="submit">ذخیره</Button>
             </Form>
