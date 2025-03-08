@@ -56,33 +56,6 @@ const UpdateCategory = () => {
     }
   };
   return (
-    // <Container fluid>
-    //   <Row>
-    //     <Col md={2} className="vh-100">
-    //       <Sidebar />
-    //     </Col>
-    //     <Col md={10}>
-    //       <Header />
-    //       <main className="p-4">
-    //         <h2 className="my-4">ویرایش دسته بندی </h2>
-    //         {error && <Alert variant="danger">{error}</Alert>}
-    //         {formError && <Alert variant="warning">{formError}</Alert>}
-
-    //         <Form onSubmit={handleSubmit}>
-    //           <Form.Group className="mb-3">
-    //             <Form.Label>نام دسته بندی</Form.Label>
-    //             <Form.Control
-    //               type="text"
-    //               value={name}
-    //               onChange={(e) => setName(e.target.value)}
-    //             />
-    //           </Form.Group>
-    //           <Button type="submit">ذخیره</Button>
-    //         </Form>
-    //       </main>
-    //     </Col>
-    //   </Row>
-    // </Container>
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
         <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-3xl">ویرایش دسته بندی </h1>
