@@ -174,3 +174,47 @@ input {
 .no-underline {
   text-decoration: none;
 }
+
+@keyframes scaleAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.header-img {
+  animation: scaleAnimation 10s infinite ease-in-out;
+}
+
+@keyframes pulse-scale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.animate-pulse-scale {
+  animation: pulse-scale 2s infinite;
+}
+
+::selection {
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+}
+
+.dark ::selection {
+  background-color: rgba(255, 50, 50, 0.9);
+  color: black;
+}
+
+body a {
+  text-decoration: none;
+}
