@@ -172,7 +172,7 @@ const Products = () => {
                             فرمت
                           </th>
                           <th scope="col" className=" px-4 py-4">
-                            موجودی
+                            وضعیت
                           </th>
 
                           <th scope="col" className=" px-4 py-4">
@@ -193,8 +193,8 @@ const Products = () => {
                                   <Image src={product.imageUrl} width={100} height={100} alt={product.imageUrl} />
                                 </td>
                                 <td className="whitespace-nowrap  px-4 py-4">{product.price.toLocaleString("fa-IR")} تومان</td>
-                                <td className="whitespace-nowrap  px-4 py-4">{product.type}</td>
-                                <td className="whitespace-nowrap  px-4 py-4">{product.stock}</td>
+                                <td className="whitespace-nowrap  px-4 py-4">{product.types}</td>
+                                <td className="whitespace-nowrap  px-4 py-4">{product.active? "فعال" : "غیرفعال"}</td>
                                 <td className="whitespace-nowrap  px-4 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <Link href={`/admin/products/${product._id}`}>
