@@ -50,7 +50,7 @@ const AddCategory = () => {
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-3xl">اضافه کردن دسته بندی جدید</h1>
+        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">اضافه کردن دسته بندی جدید</h1>
         <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت دسته بندی جدید برای محصولات خود اضافه کنید.</span>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
