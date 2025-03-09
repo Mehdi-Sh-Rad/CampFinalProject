@@ -48,9 +48,9 @@ const Sidebar = () => {
         <ul className="flex flex-col gap-y-0.5">
           <Link className="" href={"/admin"}>
             <li
-              className={`flex ${pathName == "/admin" ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] dark:hover:text-white transition-all group duration-300"} ${
-                !isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"
-              } items-center rounded`}>
+              className={`flex ${
+                pathName == "/admin" ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] dark:hover:text-white transition-all group duration-300"
+              } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className={pathName == "/admin" ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
@@ -79,10 +79,10 @@ const Sidebar = () => {
           <Link className=" " href={"/admin/categories"}>
             <li
               className={`flex ${
-                pathName == "/admin/categories" ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e]  transition-all group duration-300"
+                pathName.startsWith("/admin/categories") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e]  transition-all group duration-300"
               }  ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
-                className={pathName == "/admin/categories" ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/categories") ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -104,22 +104,20 @@ const Sidebar = () => {
               </svg>
               <span
                 className={`${
-                  pathName == "/admin/categories" ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                  pathName.startsWith("/admin/categories") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                 } ${!isSidebarOpen && "hidden"}`}>
                 دســــته بنـــــدی ها
               </span>
             </li>
           </Link>
-          {/* <ul className="list-disc list-inside pr-5 py-4 text-shop-gray">
-              <Link href={`#`}><li>افزودن دسته بندی جدید</li></Link>
-            </ul> */}
+
           <Link className=" " href={"/admin/products"}>
             <li
               className={`flex ${
-                pathName == "/admin/products" ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                pathName.startsWith("/admin/products") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
-                className={pathName == "/admin/products" ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/products") ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -137,7 +135,7 @@ const Sidebar = () => {
               </svg>
               <span
                 className={`${
-                  pathName == "/admin/products" ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                  pathName.startsWith("/admin/products") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                 } ${!isSidebarOpen && "hidden"}`}>
                 محـصــــولات
               </span>
