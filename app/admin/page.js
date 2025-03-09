@@ -1,24 +1,24 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import Sidebar from "../components/ui/Sidebar";
-import Header from "../components/ui/Header";
+import Image from "next/image";
 
 const AdminDashboard = () => {
   return (
-    <Container fluid>
-      <Row>
-        <Col md={2} className="vh-100">
-          <Sidebar />
-        </Col>
-        <Col md={10}>
-          <Header />
-          <main className="content p-4">
-            <h4>به پنل ادمین خوش آمدید</h4>
-            <p>در این بخش میتوانید موارد مختلف فروشگاه را مدیریت کنید</p>
-          </main>
-        </Col>
-      </Row>
-    </Container>
+    <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
+      <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
+        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">پنل ادمین</h1>
+        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">پنل مدیریت برای مدیریت محتوای سایت، مشاهده آمار و انجام تنظیمات مختلف.</span>
+        <Image
+          className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
+          src={"/uploads/top-header.png"}
+          alt="هدر"
+          width={1663}
+          height={277}
+        />
+      </div>
+      <div className="container py-4 px-10">
+        <h1>صفحه اصلی</h1>
+      </div>
+    </div>
   );
 };
 

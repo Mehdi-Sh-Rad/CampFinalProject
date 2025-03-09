@@ -1,5 +1,6 @@
+import { ThemeProvider } from "./context/ThemeContext";
 import "./styles/globals.css";
-import "bootstrap/dist/css/bootstrap.rtl.min.css";
+// import "bootstrap/dist/css/bootstrap.rtl.min.css";
 
 export const metadata = {
   title: "Create Next App",
@@ -9,7 +10,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
