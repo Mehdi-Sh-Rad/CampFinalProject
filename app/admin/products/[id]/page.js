@@ -1,11 +1,8 @@
 "use client";
-import Header from "@/app/components/ui/Header";
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/Sidebar";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import React, { use, useEffect, useState } from "react";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 import Skeleton from "react-loading-skeleton";
 
 const UpdateProduct = () => {

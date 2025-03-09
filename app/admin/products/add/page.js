@@ -1,6 +1,7 @@
 "use client";
 import Header from "@/app/components/ui/Header";
 import Sidebar from "@/app/components/ui/Sidebar";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { use, useEffect, useState } from "react";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
@@ -108,64 +109,158 @@ const AddProduct = () => {
     }
   };
   return (
-    <Container fluid>
-      <Row>
-        <Col md={2} className="vh-100">
-          <Sidebar />
-        </Col>
-        <Col md={10}>
-          <Header />
-          <main className="p-4">
-            <h2 className="my-4">افزودن محصول</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
-            {formError && <Alert variant="warning">{formError}</Alert>}
-
-            <Form onSubmit={handleSubmit}>
-
-              <Form.Group className="mb-3">
-                <Form.Label>فایل</Form.Label>
-                <Form.Control
-                  type="file"
-                  accept="file/*"
-                  onChange={(e) => setFile(e.target.files[0])}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>تصویر</Form.Label>
-                <Form.Control
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setImage(e.target.files[0])}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>نام</Form.Label>
-                <Form.Control
+    <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
+      <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
+        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-3xl">اضافه کردن محصول جدید</h1>
+        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت محصول جدید اضافه کنید.</span>
+        <Image
+          className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
+          src={"/uploads/top-header.png"}
+          alt="هدر"
+          width={1663}
+          height={277}
+        />
+      </div>
+      <div className="container py-4 px-10 -mt-10 z-50 relative">
+        <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
+          <div className="max-w-[400px] bg-white dark:bg-shop-dark">
+            {error && (
+              <h3 className="text-shop-red dark:text-gray-200 flex gap-x-2 items-center border border-shop-red/30 rounded py-1 px-2">
+                <svg className="dark:text-shop-red" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8 10.5378C8 9.43327 8.89543 8.53784 10 8.53784H11.3333C12.4379 8.53784 13.3333 9.43327 13.3333 10.5378V19.8285C13.3333 20.9331 14.2288 21.8285 15.3333 21.8285H16C16 21.8285 12.7624 23.323 10.6667 22.9361C10.1372 22.8384 9.52234 22.5913 9.01654 22.3553C8.37357 22.0553 8 21.3927 8 20.6832V10.5378Z"
+                    fill="currentColor"></path>
+                  <path
+                    d="M13 3.5C13 2.11929 11.8807 1 10.5 1C9.11929 1 8 2.11929 8 3.5C8 4.88071 9.11929 6 10.5 6C11.8807 6 13 4.88071 13 3.5Z"
+                    fill="currentColor"></path>
+                </svg>
+                {error}
+              </h3>
+            )}
+            {formError && <h3>{formError}</h3>}
+            <form className="py-4" onSubmit={handleSubmit}>
+              <div className="flex flex-col items-start gap-y-4 w-full">
+                <input
+                  name="name"
+                  autoComplete="name"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="نام"
                   type="text"
-                  placeholder="اسم محصول ..."
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>توضیحات</Form.Label>
-                <Form.Control
+                <input
+                  name="description"
+                  autoComplete="description"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="توضیحات"
                   type="text"
-                  placeholder=" توضیحات محصول ..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-              </Form.Group>
+                <div className="relative w-full">
+                  <input
+                    id="image-upload"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    autoComplete="image"
+                    required
+                    onChange={(e) => setImage(e.target.files[0])}
+                    className="hidden"
+                  />
 
-              <Form.Group className="mb-3">
-                <Form.Label>دسته بندی</Form.Label>
-                <Form.Select
+                  <label
+                    htmlFor="image-upload"
+                    className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
+                    📂 آپلود تصویر
+                  </label>
+
+                  <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
+                    {image ? image.name : "فایلی انتخاب نشده است"}
+                  </span>
+                </div>
+                <div className="relative w-full">
+                  <input id="file-upload" name="file" type="file" accept="file/*" required onChange={(e) => setFile(e.target.files[0])} className="hidden" />
+
+                  <label
+                    htmlFor="file-upload"
+                    className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
+                    📂 آپلود فایل
+                  </label>
+
+                  <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
+                    {file ? file.name : "فایلی انتخاب نشده است"}
+                  </span>
+                </div>
+                <input
+                  name="price"
+                  autoComplete="price"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="قیمت"
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+                <input
+                  name="discountPrice"
+                  autoComplete="discountPrice"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="قیمت تخفیفی"
+                  type="number"
+                  value={discountPrice}
+                  onChange={(e) => setDiscountPrice(e.target.value)}
+                />
+
+                <input
+                  name="tags"
+                  autoComplete="tags"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="برچسب ها"
+                  type="text"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                />
+                <input
+                  name="types"
+                  autoComplete="types"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="فرمت فایل"
+                  type="text"
+                  value={types}
+                  onChange={(e) => setTypes(e.target.value)}
+                />
+                <label htmlFor="custom-switch" className="flex items-center cursor-pointer">
+                  <div className="relative">
+                    <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
+                    <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
+                    <div
+                      className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                        active ? "transform translate-x-5" : ""
+                      }`}></div>
+                  </div>
+                  <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
+                </label>
+                <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
+                  <div className="relative">
+                    <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
+                    <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
+                    <div
+                      className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                        free ? "transform translate-x-5" : ""
+                      }`}></div>
+                  </div>
+                  <span className="ms-2 text-sm dark:text-white">{free ? "رایگان" : "غیررایگان"}</span>
+                </label>
+                <select
+                  name="category"
+                  autoComplete="category"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="دسته بندی"
+                  type="text"
+                  required
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
+                  onChange={(e) => setCategory(e.target.value)}>
                   <option value="">انتخاب دسته بندی</option>
                   {categories.map((cat) => {
                     return (
@@ -174,73 +269,16 @@ const AddProduct = () => {
                       </option>
                     );
                   })}
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>برچسب ها</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="تگ‌ها را با کاما جدا کنید"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>فرمت فایل</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="در صورت وجود بیش از یک فرمت آنها را با کاما جدا کنید"
-                  value={types}
-                  onChange={(e) => setTypes(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>وضعیت :</Form.Label>
-                <Form.Check
-                  className="d-inline mx-2"
-                  type="checkbox"
-                  checked={active}
-                  onChange={(e) => setActive(e.target.checked)}
-                /> فعال
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>قیمت</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>قیمت تخفیفی</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={discountPrice}
-                  onChange={(e) => setDiscountPrice(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>رایگان :</Form.Label>
-                <Form.Check
-                  className="d-inline mx-2"
-                  type="checkbox"
-                  checked={free}
-                  onChange={(e) => setFree(e.target.checked)}
-                /> بله
-              </Form.Group>
-
-              <Button type="submit">ذخیره</Button>
-            </Form>
-          </main>
-        </Col>
-      </Row>
-    </Container>
+                </select>
+                <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
+                  افزودن
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
