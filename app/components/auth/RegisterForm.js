@@ -15,7 +15,55 @@ const RegisterForm = () => {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (e) => {
+
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    if (!name || name.trim().length < 3 || name.trim().length > 30) {
+      setError("نام باید بین 3 تا 30 کاراکتر باشد");
+      return;
+    }
+    const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
+    if (!email || !emailRegex.test(email)) {
+      setError("ایمیل معتبر نیست");
+      return;
+    }
+    const phoneRegex = /^09[0-9]{9}$/;
+    if (!phone || !phoneRegex.test(phone)) {
+      setError("شماره تماس معتبر نیست");
+      return;
+    }
+    if (!password || password.length < 8) {
+      setError("رمز عبور باید حداقل 8 کاراکتر باشد");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("رمز عبور و تکرار آن مطابقت ندارند");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, phone, password, type: "register" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "خطایی از سمت سرور رخ داده است");
+      } else {
+        setSuccess("کد تایید برای شما ارسال شد");
+        setStep(2);
+      }
+    } catch (error) {
+      setError("خطا در ارسال اطلاعات");
+    } finally {
+      setLoading(false);
+    }
 
   }
   const handleVerifyOtp = async () => {
