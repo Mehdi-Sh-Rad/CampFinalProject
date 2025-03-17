@@ -1,11 +1,12 @@
+import RegisterForm from '@/app/components/auth/RegisterForm';
 import React from 'react';
 
-const page = () => {
+const Register = () => {
     return (
-        <div className='bg-info'>
-          <h3 className=" text-white pt-5 mb-2"> صفحه ثبت نام </h3>
+        <div >
+          <RegisterForm/>
         </div>
     );
 };
 
-export default page;
+export default Register;
