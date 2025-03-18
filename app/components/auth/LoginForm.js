@@ -72,7 +72,12 @@ const LoginForm = () => {
         });
         const data = await res.json();
         if (!res.ok) {
-          setError(data.message || "خطایی از سمت سرور رخ داده است");
+          if (res.status === 429) {
+            setSuccess(`کد قبلی هنوز معتبر است. (${data.timeLeft} ثانیه باقی‌مانده)`);
+            setStep(3);
+          } else {
+            setError(data.message || "خطایی از سمت سرور رخ داده است");
+          }
         } else {
           setSuccess("کد تایید برای شما ارسال شد");
           setStep(3);
@@ -102,8 +107,6 @@ const LoginForm = () => {
 
       const result = await signIn(provider, credentials);
 
-     
-
       if (result?.error) {
         setError(result.error);
       } else {
@@ -125,7 +128,7 @@ const LoginForm = () => {
     setSuccess("");
 
     if (step === 4) {
-        setPhone("");
+      setPhone("");
       const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
       if (!email || !emailRegex.test(email)) {
         setError("ایمیل معتبر نیست");
@@ -143,7 +146,12 @@ const LoginForm = () => {
         });
         const data = await res.json();
         if (!res.ok) {
-          setError(data.message || "خطایی از سمت سرور رخ داده است");
+          if (res.status === 429) {
+            setSuccess(`کد قبلی هنوز معتبر است. (${data.timeLeft} ثانیه باقی‌مانده)`);
+            setStep(3);
+          } else {
+            setError(data.message || "خطایی از سمت سرور رخ داده است");
+          }
         } else {
           setSuccess("کد تایید به ایمیل شما ارسال شد");
           setStep(3);

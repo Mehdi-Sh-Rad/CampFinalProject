@@ -49,6 +49,18 @@ export async function POST(req) {
         return NextResponse.json({ message: "کاربری با این شماره موبایل یافت نشد" }, { status: 400 });
       }
     }
+
+    const existingOtp = await Otp.findOne({
+      $or: [{ phone }, { email }],
+      expiresAt: { $gt: new Date() },
+    });
+
+    //در صورت وجود کد منقضی نشده از ارسال پیاپی کد یکبار مصرف جلوگیری می شود
+    if (existingOtp) {
+      const timeLeft = Math.ceil((existingOtp.expiresAt - Date.now()) / 1000);
+      return NextResponse.json({ message: "کد قبلی هنوز معتبر است.", timeLeft }, { status: 429 });
+    }
+
     const otpCode = crypto.randomInt(100000, 999999).toString();
     const otp = await Otp.create({
       phone: phone || null,
