@@ -66,7 +66,34 @@ const RegisterForm = () => {
     }
 
   }
-  const handleVerifyOtp = async () => {
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    if (!otp || otp.length !== 6) {
+      setError("کد تایید باید 6 رقمی باشد");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phone, code: otp, name, email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "خطایی سمت سرور رخ داده است");
+      } else {
+        setSuccess("شما با موفقیت ثبت نام شدید");
+      }
+    } catch (error) {
+      setError("خطایی رخ داده است");
+    } finally {
+      setLoading(false);
+    }
 
   }
 
