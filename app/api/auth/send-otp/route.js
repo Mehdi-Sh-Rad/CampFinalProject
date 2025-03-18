@@ -1,4 +1,5 @@
 import connectToDatabase from "@/app/lib/db";
+import { sendSms } from "@/app/lib/melipayamak";
 import Otp from "@/models/Otp";
 import User from "@/models/User";
 import crypto from "crypto";
@@ -45,7 +46,9 @@ export async function POST(req) {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 
-    //send sms
+    // send otp code to user phone number
+
+    await sendSms(phone, `کد تایید شما : ${otpCode}`);
 
     return NextResponse.json({ message: "کد تایید ارسال شد" }, { status: 200 });
   } catch (error) {
