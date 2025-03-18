@@ -3,10 +3,12 @@ const OtpSchema = new mongoose.Schema(
   {
     email: {
       type: String,
+      default: null,
       required: false,
     },
     phone: {
       type: String,
+      default: null,
       required: false,
     },
     code: {
