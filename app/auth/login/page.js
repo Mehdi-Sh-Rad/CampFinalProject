@@ -1,10 +1,13 @@
-import LoginForm from '@/app/components/auth/LoginForm';
-import React from 'react';
+import LoginForm from "@/app/components/auth/LoginForm";
+import NoAuthWrapper from "@/app/components/auth/NoAuth";
+import React from "react";
 
 const page = () => {
-    return (
-        <LoginForm/>
-    );
+  return (
+    <NoAuthWrapper>
+      <LoginForm />
+    </NoAuthWrapper>
+  );
 };
 
 export default page;
