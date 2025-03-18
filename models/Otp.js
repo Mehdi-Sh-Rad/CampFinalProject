@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
 const OtpSchema = new mongoose.Schema(
   {
+    email: {
+      type: String,
+      required: false,
+    },
     phone: {
       type: String,
-      required: true,
+      required: false,
     },
     code: {
       type: String,
