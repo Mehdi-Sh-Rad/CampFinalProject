@@ -1,11 +1,14 @@
-import React from 'react';
+import AuthWrapper from "@/app/components/auth/auth";
+import React from "react";
 
 const page = () => {
-    return (
-        <div>
-            <h3>صفحه مدیریت نظرات</h3>
-        </div>
-    );
+  return (
+    <AuthWrapper>
+      <div>
+        <h3>صفحه مدیریت نظرات</h3>
+      </div>
+    </AuthWrapper>
+  );
 };
 
 export default page;
