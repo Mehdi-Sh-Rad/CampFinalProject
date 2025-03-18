@@ -97,11 +97,12 @@ const LoginForm = () => {
       }
       setLoading(true);
 
-      const result = await signIn("phone-otp", {
-        phone,
-        code: otp,
-        redirect: false,
-      });
+      const credentials = phone ? { phone, code: otp, redirect: false } : { email, code: otp, redirect: false };
+      const provider = phone ? "phone-otp" : "email-otp";
+
+      const result = await signIn(provider, credentials);
+
+     
 
       if (result?.error) {
         setError(result.error);
@@ -118,6 +119,41 @@ const LoginForm = () => {
     }
   };
 
+  const handleSendEmailOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (step === 4) {
+      const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
+      if (!email || !emailRegex.test(email)) {
+        setError("ایمیل معتبر نیست");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await fetch("/api/auth/send-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, type: "email-login" }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || "خطایی از سمت سرور رخ داده است");
+        } else {
+          setSuccess("کد تایید به ایمیل شما ارسال شد");
+          setStep(3);
+        }
+      } catch (error) {
+        setError("خطا در ارسال اطلاعات");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
   return (
     <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
       <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">
@@ -144,6 +180,16 @@ const LoginForm = () => {
                   : "bg-[#f8f8f8] dark:bg-[#171a26] dark:text-white px-4 py-1 rounded-md font-semibold text-shop-dark"
               }>
               شماره موبایل
+            </button>
+
+            <button
+              onClick={() => setStep(4)}
+              className={
+                step === 4
+                  ? "bg-shop-red text-white px-4 py-1 rounded-md font-semibold"
+                  : "bg-[#f8f8f8] dark:bg-[#171a26] dark:text-white px-4 py-1 rounded-md font-semibold text-shop-dark"
+              }>
+              کد ایمیل
             </button>
           </div>
           {step === 1 && (
@@ -261,6 +307,38 @@ const LoginForm = () => {
                 type="submit"
                 className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                 {loading ? "در حال تایید ..." : "تایید"}
+              </button>
+            </form>
+          )}
+
+          {step === 4 && (
+            <form className="flex flex-col gap-y-4 w-full" onSubmit={handleSendEmailOtp}>
+              <div className="flex flex-col gap-y-2">
+                <div className="flex gap-x-2 items-center">
+                  <svg fill="none" className="text-[#292d32] dark:text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M16.9395 3C18.2805 3 19.5705 3.53 20.5195 4.481C21.4695 5.43 22.0005 6.71 22.0005 8.05V15.95C22.0005 18.74 19.7305 21 16.9395 21H7.06049C4.26949 21 2.00049 18.74 2.00049 15.95V8.05C2.00049 5.26 4.25949 3 7.06049 3H16.9395ZM18.5305 9.54L18.6105 9.46C18.8495 9.17 18.8495 8.75 18.5995 8.46C18.4605 8.311 18.2695 8.22 18.0705 8.2C17.8605 8.189 17.6605 8.26 17.5095 8.4L13.0005 12C12.4205 12.481 11.5895 12.481 11.0005 12L6.50049 8.4C6.18949 8.17 5.75949 8.2 5.50049 8.47C5.23049 8.74 5.20049 9.17 5.42949 9.47L5.56049 9.6L10.1105 13.15C10.6705 13.59 11.3495 13.83 12.0605 13.83C12.7695 13.83 13.4605 13.59 14.0195 13.15L18.5305 9.54Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  <h3 className="text-[#292d32] dark:text-white font-bold">ایمیل</h3>
+                </div>
+                <input
+                  name="email"
+                  autoComplete="email"
+                  className="focus:outline-none bg-[#f8f8f8] dark:bg-[#24152e] dark:text-white rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="یک ایمیل معتبر وارد کنید"
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
+                {loading ? "در حال ارسال ..." : "ورود"}
               </button>
             </form>
           )}
