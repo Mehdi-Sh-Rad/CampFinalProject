@@ -1,7 +1,8 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import { signIn } from "next-auth/react";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -13,11 +14,109 @@ const LoginForm = () => {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
 
-  const handleLoginByEmail = async (e) => {};
+  const handleLoginByEmail = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
-  const handleSendOtp = async (e) => {};
+    if (step === 1) {
+      if (!email && !password) {
+        setError("لطفا تمامی فیلدها را وارد کنید");
+        return;
+      }
+      const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
+      if (!email || !emailRegex.test(email)) {
+        setError("ایمیل معتبر نیست");
+        return;
+      }
+      if (!password || password.length < 8) {
+        setError("رمز عبور باید حداقل 8 کاراکتر باشد");
+        return;
+      }
+      setLoading(true);
+      const result = await signIn("email-password", {
+        email,
+        password,
+        redirect: false,
+      });
 
-  const handleLogin = async (e) => {};
+      if (result?.error) {
+        setError(result.error);
+      } else {
+        setSuccess("ورود موفقیت‌آمیز بود");
+      }
+      setLoading(false);
+    }
+  };
+
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (step === 2) {
+      const phoneRegex = /^09[0-9]{9}$/;
+      if (!phone || !phoneRegex.test(phone)) {
+        setError("شماره تماس معتبر نیست");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await fetch("/api/auth/send-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, phone, password, type: "login" }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || "خطایی از سمت سرور رخ داده است");
+        } else {
+          setSuccess("کد تایید برای شما ارسال شد");
+          setStep(3);
+        }
+      } catch (error) {
+        setError("خطا در ارسال اطلاعات");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (step === 3) {
+      if (!otp || otp.length !== 6) {
+        setError("کد تایید باید 6 رقمی باشد");
+        return;
+      }
+      setLoading(true);
+
+      const result = await signIn("phone-otp", {
+        phone,
+        code: otp,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(result.error);
+      } else {
+        setError("");
+      }
+      if (!result.ok) {
+        setError(result.error || "خطایی رخ داده است");
+      } else {
+        setSuccess("ورود موفقیت آمیز بود");
+      }
+
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
