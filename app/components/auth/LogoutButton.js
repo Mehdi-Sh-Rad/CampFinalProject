@@ -2,7 +2,7 @@
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 
-const LogoutButton = ({ className }) => {
+const LogoutButton = ({ className , children }) => {
   const { data: session, status } = useSession();
 
   if (status !== "authenticated") return null;
@@ -13,7 +13,7 @@ const LogoutButton = ({ className }) => {
 
   return (
     <button className={className} onClick={handleLogout}>
-      خروج
+      {children}
     </button>
   );
 };

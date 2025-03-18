@@ -15,7 +15,7 @@ const Home = () => {
           {" "}
           پنل ادمین
         </Link>
-        <LogoutButton className="bg-shop-red text-white px-4 py-1 rounded-md" />
+        <LogoutButton className="bg-shop-red text-white px-4 py-1 rounded-md" >خروج</LogoutButton>
       </div>
     </div>
   );
