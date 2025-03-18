@@ -29,9 +29,6 @@ export async function POST(req) {
       if (!phone || !phoneRegex.test(phone)) {
         return NextResponse.json({ message: "شماره تلفن وارد شده صحیح نیست" }, { status: 400 });
       }
-      if (!email || !emailRegex.test(email)) {
-        return NextResponse.json({ message: "ایمیل معتبر نیست" }, { status: 400 });
-      }
     }
 
     if (type === "register") {
@@ -58,6 +55,7 @@ export async function POST(req) {
       email: email || null,
       code: otpCode,
       kind: type === "register" ? 1 : 2,
+      method: type === "email-login" ? "email" : "phone",
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 

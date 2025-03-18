@@ -21,6 +21,11 @@ const OtpSchema = new mongoose.Schema(
       default: 1,
       comment: "1 for register , 2 for login",
     },
+    method: {
+      type: String,
+      enum: ["phone", "email"],
+      default: "phone",
+    },
     expiresAt: {
       type: Date,
       required: true,

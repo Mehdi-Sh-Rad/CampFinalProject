@@ -68,7 +68,7 @@ const LoginForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, phone, password, type: "login" }),
+          body: JSON.stringify({ phone, type: "login" }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -125,6 +125,7 @@ const LoginForm = () => {
     setSuccess("");
 
     if (step === 4) {
+        setPhone("");
       const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
       if (!email || !emailRegex.test(email)) {
         setError("ایمیل معتبر نیست");
