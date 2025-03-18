@@ -56,7 +56,37 @@ export const authOptions = {
         return { id: user._id.toString(), name: user.name, phone: user.phone, email: user.email, image: user.image, isAdmin: user.isAdmin };
       },
     }),
+
+    // ورود با ایمیل و کد یک بار مصرف
+    CredentialsProvider({
+        name: "Email OTP",
+        id: "email-otp",
+        credentials: {
+          email: { label: "Email", type: "text" },
+          code: { label: "Otp", type: "text" },
+        },
+        async authorize(credentials) {
+          await connectToDatabase();
+          const { email, code } = credentials;
+      
+          const otp = await Otp.findOne({ email, code });
+          if (!otp || otp.expiresAt < new Date()) {
+            throw new Error("کد نامعتبر یا منقضی شده است");
+          }
+          const user = await User.findOne({ email });
+          if (!user) {
+            throw new Error("کاربر یافت نشد");
+          }
+      
+          await Otp.deleteOne({ _id: otp._id });
+      
+          return { id: user._id.toString(), name: user.name, phone: user.phone, email: user.email, image: user.image, isAdmin: user.isAdmin };
+        },
+      }),
+      
   ],
+
+  
   session: {
     strategy: "jwt",
   },
