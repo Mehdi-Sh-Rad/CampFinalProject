@@ -1,11 +1,13 @@
-import React from 'react';
+import NoAuthWrapper from "@/app/components/auth/NoAuth";
+import RegisterForm from "@/app/components/auth/RegisterForm";
+import React from "react";
 
-const page = () => {
-    return (
-        <div className='bg-info'>
-          <h3 className=" text-white pt-5 mb-2"> صفحه ثبت نام </h3>
-        </div>
-    );
+const Register = () => {
+  return (
+    <NoAuthWrapper>
+      <RegisterForm />
+    </NoAuthWrapper>
+  );
 };
 
-export default page;
+export default Register;

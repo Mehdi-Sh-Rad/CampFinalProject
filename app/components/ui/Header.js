@@ -1,5 +1,6 @@
 "use client";
 import { useTheme } from "@/app/context/ThemeContext";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -7,6 +8,9 @@ import React, { useState } from "react";
 const Header = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [showMenu, setShowMenu] = useState(false);
+  const { data: session, status } = useSession();
+  const userName = session?.user?.name || "کاربر";
+  const userImage = session?.user?.image;
   return (
     <div className={`border-b dark:bg-shop-dark dark:border-b-black border-b-slate-100 py-3 px-10 flex justify-between`}>
       <div className="w-1/2">
@@ -58,8 +62,8 @@ const Header = () => {
         </svg>
         <Link className="hidden md:flex" href={"/admin"}>
           <div className="flex items-center gap-x-2">
-            <Image className="rounded-full" src={"/uploads/profile.png"} width={50} height={50} alt="پروفایل" />
-            <span className="text-[#232d42] font-medium dark:text-[#8a92a6]">شکیب شاهسوند</span>
+            <Image className="rounded-full" src={userImage} width={50} height={50} alt="پروفایل" />
+            <span className="text-[#232d42] font-medium dark:text-[#8a92a6]">{userName}</span>
           </div>
         </Link>
         <svg
@@ -104,8 +108,8 @@ const Header = () => {
           </svg>
           <Link href={"/admin"}>
             <div className="flex items-center gap-x-2">
-              <Image className="rounded-full" src={"/uploads/profile.png"} width={50} height={50} alt="پروفایل" />
-              <span className="text-[#232d42] font-medium">شکیب شاهسوند</span>
+              <Image className="rounded-full" src={userImage} width={50} height={50} alt="پروفایل" />
+              <span className="text-[#232d42] font-medium">{userName}</span>
             </div>
           </Link>
         </div>

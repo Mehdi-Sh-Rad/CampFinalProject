@@ -1,3 +1,4 @@
+import SessionProviderWrapper from "./components/auth/SessionProviderWrapper";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./styles/globals.css";
 // import "bootstrap/dist/css/bootstrap.rtl.min.css";
@@ -11,7 +12,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl">
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <SessionProviderWrapper>
+          <ThemeProvider>{children}</ThemeProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
