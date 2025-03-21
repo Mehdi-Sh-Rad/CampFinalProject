@@ -10,7 +10,7 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const { data: session, status } = useSession();
   const userName = session?.user?.name || "کاربر";
-  const userImage = session?.user?.image;
+  const userImage = session?.user?.image || "/uploads/profile.png";
   return (
     <div className={`border-b dark:bg-shop-dark dark:border-b-black border-b-slate-100 py-3 px-10 flex justify-between`}>
       <div className="w-1/2">

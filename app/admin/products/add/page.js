@@ -11,7 +11,7 @@ const AddProduct = () => {
   const [file, setFile] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
   const [active, setActive] = useState("");

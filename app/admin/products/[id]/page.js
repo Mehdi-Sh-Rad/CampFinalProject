@@ -10,7 +10,7 @@ const UpdateProduct = () => {
   const { id } = useParams();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
   const [currentImage, setCurrentImage] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
