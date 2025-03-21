@@ -192,6 +192,7 @@ const Products = () => {
                                   <td className="whitespace-nowrap  px-4 py-4">{product.description}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.category?.name || "بدون دسته بندی"}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">
+                                    {console.log("categoryis:", product.category)}
                                     <Image src={product.imageUrl} width={100} height={100} alt={product.imageUrl} />
                                   </td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.price.toLocaleString("fa-IR")} تومان</td>

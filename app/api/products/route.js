@@ -134,9 +134,7 @@ export async function POST(request) {
       free,
       imageUrl: `/uploads/images/${image.name}`,
     });
-
-    console.log("Product created:", product);
-    
+   
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), {

@@ -21,7 +21,7 @@ export async function GET(req) {
       }
       return new Response(JSON.stringify(discount), { status: 200 });
     } else {
-      const discounts = await Discount.find().lean();
+      const discounts = await Discount.find({}).populate('product').lean();
       return new Response(JSON.stringify(discounts), { status: 200 });
     }
   } catch (error) {
@@ -32,7 +32,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     await connectDB();
-    const { code, percentage, date, status } = await req.json();
+    const { code, product, percentage, date, status } = await req.json();
     const currentDate = new Date();
     const expirationDate = new Date(date);
 
@@ -40,7 +40,7 @@ export async function POST(req) {
       return new Response(JSON.stringify({ message: 'تاریخ انقضا باید بزرگ‌تر از امروز باشد' }), { status: 400 });
     }
 
-    const discount = await Discount.create({ code, percentage, date, status });
+    const discount = await Discount.create({ code, product, percentage, date, status });
     return new Response(JSON.stringify(discount.toJSON()), { status: 201 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), { status: 400 });
@@ -50,7 +50,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     await connectDB();
-    const { id, code, percentage, date, status } = await req.json();
+    const { id, code, product, percentage, date, status } = await req.json();
     if (!id) {
       return new Response(JSON.stringify({ message: 'ID الزامی است' }), { status: 400 });
     }
@@ -61,7 +61,7 @@ export async function PUT(req) {
       return new Response(JSON.stringify({ message: 'تاریخ انقضا باید بزرگ‌تر از امروز باشد' }), { status: 400 });
     }
 
-    const discount = await Discount.findByIdAndUpdate(id, { code, percentage, date, status }, { new: true, runValidators: true });
+    const discount = await Discount.findByIdAndUpdate(id, { code, product, percentage, date, status }, { new: true, runValidators: true });
     if (!discount) {
       return new Response(JSON.stringify({ message: 'کد تخفیف یافت نشد' }), { status: 404 });
     }

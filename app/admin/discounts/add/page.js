@@ -9,6 +9,8 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 const AddDiscount = () => {
   const [code, setCode] = useState("");
+  const [product, setProduct] = useState("");
+  const [products, setProducts] = useState([]);
   const [percentage, setPercentage] = useState("");
   const [expirationDate, setExpirationDate] = useState(null);
   const [status, setStatus] = useState(true);
@@ -16,8 +18,15 @@ const AddDiscount = () => {
   const router = useRouter();
 
   useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
+  }, []);
+  useEffect(() => {
     generateDiscountCode();
   }, []);
+
 
   const generateDiscountCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -33,6 +42,10 @@ const AddDiscount = () => {
   const validateForm = () => {
     if (code.trim() === "") {
       setFormError("کد تخفیف الزامی می‌باشد");
+      return false;
+    }
+    if (!product) {
+      setFormError("انتخاب محصول مورد نظر الزامی می‌باشد");
       return false;
     }
     if (percentage.trim() === "") {
@@ -68,6 +81,7 @@ const AddDiscount = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code,
+          product,
           percentage,
           date: isoDate,
           status,
@@ -146,6 +160,25 @@ const AddDiscount = () => {
                   placeholder="کد خودکار تولید می‌شود"
                 />
               </div>
+              <select
+                name="product"
+                autoComplete="product"
+                className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                placeholder="انتخاب محصول"
+                type="text"
+                required
+                value={product}
+                onChange={(e) => setProduct(e.target.value)}>
+
+                <option value="">انتخاب محصول مورد نظر</option>
+                {products.map((cat) => {
+                  return (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </option>
+                  );
+                })}
+              </select>
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">
                   درصد تخفیف

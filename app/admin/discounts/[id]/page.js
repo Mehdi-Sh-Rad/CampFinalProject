@@ -13,6 +13,8 @@ import DateObject from "react-date-object";
 const EditDiscount = () => {
   const { id } = useParams();
   const [code, setCode] = useState("");
+  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState("");
   const [percentage, setPercentage] = useState("");
   const [expirationDate, setExpirationDate] = useState(null);
   const [status, setStatus] = useState(true);
@@ -21,6 +23,12 @@ const EditDiscount = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
+  }, []);
   useEffect(() => {
     const fetchDiscountData = async () => {
       setLoading(true);
@@ -35,6 +43,7 @@ const EditDiscount = () => {
           throw new Error(discount.message);
         }
         setCode(discount.code || "");
+        setProduct(discount.product || "");
         setPercentage(discount.percentage || "");
         setExpirationDate(
           discount.date
@@ -77,6 +86,7 @@ const EditDiscount = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id,
+          product,
           code,
           percentage: percentage || undefined,
           date: expirationDate ? expirationDate.toDate().toISOString() : undefined,
@@ -129,6 +139,30 @@ const EditDiscount = () => {
                   placeholder="کد تخفیف"
                 />
               </div>
+
+              <div className="space-y-2">
+              <label className="text-gray-700 dark:text-gray-300">محصول</label>
+              <select
+                name="product"
+                autoComplete={product}
+                className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                placeholder="انتخاب محصول"
+                type="text"
+                required
+                value={product}
+                onChange={(e) => setProduct(e.target.value)}>
+                <option value="">انتخاب محصول موردنظر</option>
+                {products.map((cat) => {
+                  return (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </option>
+                  );
+                })}
+              </select>
+              </div>
+
+
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">درصد تخفیف</label>
                 <input
