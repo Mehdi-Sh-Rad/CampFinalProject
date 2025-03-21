@@ -7,7 +7,7 @@ const Home = () => {
     <div className="bg-info">
       <h1 className="text-opacity-30 font-sans text-xl text-center pt-5 mb-2"> کتاب فروشی آنلاین </h1>
       <div className="d-flex">
-        <Link href="/auth" className="no-underline px-5 py-2 rounded m-1 bg-slate-400">
+        <Link href="/auth/login" className="no-underline px-5 py-2 rounded m-1 bg-slate-400">
           {" "}
           ورود / ثبت نام
         </Link>
