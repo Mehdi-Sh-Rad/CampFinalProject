@@ -1,5 +1,6 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
+import Link from "next/link";
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -10,11 +11,17 @@ const UpdateProduct = () => {
   const { id } = useParams();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  const [file, setFile] = useState(null);
+  const [currentFile, setCurrentFile] = useState("");
+  const [image, setImage] = useState(null);
   const [currentImage, setCurrentImage] = useState("");
   const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [tags, setTags] = useState("");
+  const [types, setTypes] = useState("");
+  const [active, setActive] = useState("");
   const [category, setCategory] = useState("");
+  const [free, setFree] = useState(false);
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,10 +36,15 @@ const UpdateProduct = () => {
         const productData = await productResponse.json();
         setName(productData.name);
         setDescription(productData.description);
-        setPrice(productData.price);
-        setStock(productData.stock);
-        setCategory(productData.category);
+        setCurrentFile(productData.fileUrl);
         setCurrentImage(productData.imageUrl);
+        setPrice(productData.price);
+        setDiscountPrice(productData.discountPrice);
+        setTags(productData.tags);
+        setTypes(productData.types);
+        setActive(productData.active);
+        setFree(productData.free);
+        setCategory(productData.category);
 
         const categoriesResponse = await fetch("/api/categories");
         const categoriesData = await categoriesResponse.json();
@@ -68,8 +80,12 @@ const UpdateProduct = () => {
       setFormError("قیمت محصول باید یک مقدار مثبت باشد");
       return false;
     }
-    if (stock < 0) {
-      setFormError("موجودی محصول باید بزرگ تر از ۰ باشد");
+    if (discountPrice && discountPrice < 0) {
+      setFormError("قیمت تخفیفی محصول باید یک مقدار مثبت باشد");
+      return false;
+    }
+    if (discountPrice && discountPrice > price) {
+      setFormError("قیمت تخفیفی باید کمتر از قیمت محصول باشد");
       return false;
     }
     if (!category) {
@@ -92,10 +108,18 @@ const UpdateProduct = () => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("stock", stock);
       formData.append("category", category);
+      formData.append("discountPrice", discountPrice);
+      formData.append("tags", tags);
+      formData.append("types", types);
+      formData.append("active", active);
+      formData.append("free", free);
+
       if (image) {
         formData.append("image", image);
+      }
+      if (file) {
+        formData.append("file", file);
       }
 
       const response = await fetch(`/api/products/${id}`, {
@@ -122,8 +146,7 @@ const UpdateProduct = () => {
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-          <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">ویرایش محصول </h1>
-          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت محصول را ویرایش کنید.</span>
+          <h1 className="text-white absolute z-10 right-8 top-6 font-bold  text-xl md:text-3xl">ویرایش محصول </h1>
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
             src={"/uploads/top-header.png"}
@@ -149,11 +172,10 @@ const UpdateProduct = () => {
                 </h3>
               )}
               {formError && <h3>{formError}</h3>}
-              {loading ? (
-                <Skeleton count={10} height={30} />
-              ) : (
-                <form className="py-4" onSubmit={handleSubmit}>
-                  <div className="flex flex-col items-start gap-y-4 w-full">
+              <form className="py-4" onSubmit={handleSubmit}>
+                <div className="flex flex-col items-start gap-y-4 w-full">
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">نام</label>
                     <input
                       name="name"
                       autoComplete="name"
@@ -163,6 +185,10 @@ const UpdateProduct = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     />
+                  </div>
+
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">توضیحات</label>
                     <input
                       name="description"
                       autoComplete="description"
@@ -172,33 +198,47 @@ const UpdateProduct = () => {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
+                  </div>
 
-                    <div className="relative w-full">
-                      <input
-                        id="image-upload"
-                        name="image"
-                        type="file"
-                        accept="image/*"
-                        autoComplete="image"
-                        onChange={(e) => setImage(e.target.files[0])}
-                        className="hidden"
-                      />
+                  <div className="relative w-full">
+                    <input
+                      id="image-upload"
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      autoComplete="image"
+                      onChange={(e) => setImage(e.target.files[0])}
+                      className="hidden"
+                    />
 
-                      <label
-                        htmlFor="image-upload"
-                        className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
-                        📂 آپلود تصویر
-                      </label>
-
-                      <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
-                        {image ? image.name : "فایلی انتخاب نشده است"}
-                      </span>
-                    </div>
-                    {currentImage && (
-                      <div className="my-2">
-                        <img src={currentImage} width={200} height={200} alt={name} />
-                      </div>
-                    )}
+                    <label
+                      htmlFor="image-upload"
+                      className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
+                      📂 تغییر تصویر
+                    </label>
+                    <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
+                      {image ? image.name : currentImage}
+                    </span>
+                  </div>
+                  <div className="relative w-full">
+                    <input 
+                    id="file-upload" 
+                    name="file" type="file" 
+                    accept="file/*" 
+                    onChange={(e) => setFile(e.target.files[0])} 
+                    className="hidden" 
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
+                      📂 تغییر فایل
+                    </label>
+                    <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
+                      {file ? file.name : currentFile}
+                    </span>
+                  </div>
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">قیمت</label>
                     <input
                       name="price"
                       autoComplete="price"
@@ -208,39 +248,94 @@ const UpdateProduct = () => {
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                     />
-                    <input
-                      name="stock"
-                      autoComplete="stock"
-                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                      placeholder="موجودی"
-                      type="number"
-                      value={stock}
-                      onChange={(e) => setStock(e.target.value)}
-                    />
-                    <select
-                      name="category"
-                      autoComplete="category"
-                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                      placeholder="دسته بندی"
-                      type="text"
-                      required
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}>
-                      <option value="">انتخاب دسته بندی</option>
-                      {categories.map((cat) => {
-                        return (
-                          <option key={cat._id} value={cat._id}>
-                            {cat.name}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
-                      ویرایش
-                    </button>
                   </div>
-                </form>
-              )}
+
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">قیمت تخفیفی</label>
+                    <input
+                      name="discountPrice"
+                      autoComplete="discountPrice"
+                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                      placeholder="قیمت تخفیفی"
+                      type="number"
+                      value={discountPrice || ""}
+                      onChange={(e) => setDiscountPrice(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300"> برچسب ها</label>
+                    <input
+                      name="tags"
+                      autoComplete="tags"
+                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                      placeholder="برچسب ها را با کاما از هم جدا کنید"
+                      type="text"
+                      value={tags || ""}
+                      onChange={(e) => setTags(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">فرمت فایل ها</label>
+                    <input
+                      name="types"
+                      autoComplete="types"
+                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                      placeholder="در صورت داشتن چندین فرمت آنها را با کاما از هم جدا کنید"
+                      type="text"
+                      value={types || ""}
+                      onChange={(e) => setTypes(e.target.value)}
+                    />
+                  </div>
+                  <label htmlFor="custom-switch" className="flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input id="custom-switch" type="checkbox" className="sr-only" checked={active || ""} onChange={(e) => setActive(e.target.checked)} />
+                      <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
+                      <div
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${active ? "transform translate-x-5" : ""
+                          }`}></div>
+                    </div>
+                    <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
+                  </label>
+                  <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free || ""} onChange={(e) => setFree(e.target.checked)} />
+                      <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
+                      <div
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${free ? "transform translate-x-5" : ""
+                          }`}></div>
+                    </div>
+                    <span className="ms-2 text-sm dark:text-white">{free ? "رایگان" : "غیررایگان"}</span>
+                  </label>
+                  <select
+                    name="category"
+                    autoComplete="category"
+                    className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                    placeholder="دسته بندی"
+                    type="text"
+                    required
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}>
+                    <option value="">انتخاب دسته بندی</option>
+                    {categories.map((cat) => {
+                      return (
+                        <option key={cat._id} value={cat._id}>
+                          {cat.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div>
+                  <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
+                    ویرایش
+                  </button>
+                  <Link href={"/admin/products"} className="bg-red-700 text-white py-2 px-4 rounded">
+                    انصراف
+                  </Link>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>

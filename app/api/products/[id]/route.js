@@ -1,5 +1,4 @@
 import connectToDatabase from "@/app/lib/db";
-import Category from "@/models/Category";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { join } from "path";
@@ -48,11 +47,16 @@ export async function PUT(request, { params }) {
     const name = data.get("name");
     const description = data.get("description");
     const price = data.get("price");
-    const stock = data.get("stock");
+    const discountPrice = data.get("discountPrice");
     const category = data.get("category");
-    const file = data.get("image");
+    const tags = data.get("tags");
+    const types = data.get("types");
+    const active = data.get("active");
+    const free = data.get("free");
+    const file = data.get("file");
+    const image = data.get("image");
 
-    if (!name || !description || isNaN(price) || isNaN(stock) || !category) {
+    if (!name || !description || isNaN(price) || !category) {
       return new Response(
         JSON.stringify({ message: "تمامی فیلد ها الزامی میباشند" }),
         {
@@ -99,7 +103,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    if (price <= 0 || stock < 0) {
+    if (price <= 0) {
       return new Response(
         JSON.stringify({ message: "قیمت یا موجودی باید بیش از عدد ۰ باشد" }),
         {
@@ -107,18 +111,27 @@ export async function PUT(request, { params }) {
         }
       );
     }
-
+    if (discountPrice && discountPrice <= 0 ) {
+      return new Response(
+        JSON.stringify({ message: "قیمت یا موجودی باید بیش از عدد ۰ باشد" }),
+        {
+          status: 400,
+        }
+      );
+    }
     let imageUrl = product.imageUrl;
+    let fileUrl = product.fileUrl;
 
-    if (file && file.name) {
-      const bytes = await file.arrayBuffer();
+
+    if (image && image.name) {
+      const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      const uploadDir = join(process.cwd(), "public/uploads");
-      const filePath = join(uploadDir, file.name);
+      const uploadDir = join(process.cwd(), "public/uploads/images");
+      const filePath = join(uploadDir, image.name);
 
       await writeFile(filePath, buffer);
-      imageUrl = `/uploads/${file.name}`;
+      imageUrl = `/uploads/images/${image.name}`;
 
       const oldFilePath = join(process.cwd(), "public", product.imageUrl);
       await unlink(oldFilePath).catch(() => {
@@ -126,15 +139,38 @@ export async function PUT(request, { params }) {
       });
     }
 
+    if (file && file.name) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadDir = join(process.cwd(), "public/uploads/files");
+      const filePath = join(uploadDir, file.name);
+
+      await writeFile(filePath, buffer);
+     fileUrl = `/uploads/files/${file.name}`;
+
+      const oldFilePath = join(process.cwd(), "public", product.fileUrl);
+      await unlink(oldFilePath).catch(() => {
+        console.log("خطا در حذف تصویر قبلی");
+      });
+    }
+
+
+
     const updateProduct = await Product.findByIdAndUpdate(
       id,
       {
         name,
         description,
         price,
-        stock,
+        discountPrice,
         category,
+        tags,
+        types,
+        active,
+        free,
         imageUrl,
+        fileUrl,
       },
       { new: true }
     );

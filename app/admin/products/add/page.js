@@ -1,5 +1,6 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
+import Link from "next/link";
 import Header from "@/app/components/ui/Header";
 import Sidebar from "@/app/components/ui/Sidebar";
 import Image from "next/image";
@@ -291,10 +292,15 @@ const AddProduct = () => {
                         </option>
                       );
                     })}
-                  </select>
-                  <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
+                  </select>           
+                  <div>
+                  <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
                     افزودن
                   </button>
+                  <Link href={"/admin/products"} className="bg-red-700 text-white py-2 px-4 rounded">
+                    انصراف
+                  </Link>
+                  </div>
                 </div>
               </form>
             </div>
