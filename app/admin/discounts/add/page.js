@@ -1,5 +1,6 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-multi-date-picker";
 import { useRouter } from "next/navigation";
@@ -26,7 +27,6 @@ const AddDiscount = () => {
   useEffect(() => {
     generateDiscountCode();
   }, []);
-
 
   const generateDiscountCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -213,18 +213,20 @@ const AddDiscount = () => {
                   type="checkbox"
                   checked={status}
                   onChange={(e) => setStatus(e.target.checked)}
-                  className="w-4 h-4"
+                  className="w-4 h-4 m-1"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">
                   فعال
                 </span>
               </div>
-              <button
-                type="submit"
-                className="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-              >
-                ذخیره
-              </button>
+              <div>
+                <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
+                  ذخیره
+                </button>
+                <Link href={"/admin/discounts"} className="bg-red-700 text-white py-2 px-4 rounded">
+                  انصراف
+                </Link>
+              </div>
             </form>
           </div>
         </div>
