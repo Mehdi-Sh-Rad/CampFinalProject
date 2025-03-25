@@ -171,6 +171,41 @@ const Sidebar = () => {
             </li>
           </Link>
 
+          <Link className=" " href={"/admin/comments"}>
+            <li
+              className={`flex ${pathName.startsWith("/admin/comments")
+                ? "bg-shop-red"
+                : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"
+                } items-center rounded`}
+            >
+              <svg
+                className={
+                  pathName.startsWith("/admin/comments")
+                    ? "text-white"
+                    : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"
+                }
+                width="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                height="20"
+              >
+                <circle cx="6" cy="6" r="3" fill="currentColor" />
+                <circle cx="18" cy="18" r="3" fill="currentColor" />
+                <line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <span
+                className={`${pathName.startsWith("/admin/comments")
+                  ? "text-white font-bold"
+                  : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                  } ${!isSidebarOpen && "hidden"}`}
+              >
+              مدیریت نظرات
+              </span>
+            </li>
+          </Link>
+
           <LogoutButton
             className={`flex
                 hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300

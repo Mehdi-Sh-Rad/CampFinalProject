@@ -106,20 +106,6 @@ export async function POST(request) {
 
     await connectToDatabase();
 
-    console.log("Creating product with data:", {
-      fileUrl: `/uploads/files/${file.name}`,
-      name,
-      description,
-      price,
-      discountPrice,
-      category,
-      types,
-      tags,
-      active,
-      free,
-      imageUrl: `/uploads/images/${image.name}`,
-    });
-
     const product = await Product.create({
 
       fileUrl: `/uploads/files/${file.name}`,
