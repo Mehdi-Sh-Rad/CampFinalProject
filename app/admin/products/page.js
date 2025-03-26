@@ -102,50 +102,37 @@ const Products = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr className="border-b border-neutral-200 dark:border-white/10">
-                            <td className="whitespace-nowrap  px-4 py-4 font-medium">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-neutral-200 dark:border-white/10">
-                            <td className="whitespace-nowrap  px-4 py-4 font-medium">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-neutral-200 dark:border-white/10">
-                            <td className="whitespace-nowrap  px-4 py-4 font-medium">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-neutral-200 dark:border-white/10">
-                            <td className="whitespace-nowrap  px-4 py-4 font-medium">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                            <td className="whitespace-nowrap  px-4 py-4">
-                              <Skeleton baseColor="#cac7c7" highlightColor="#a3a3a3" />{" "}
-                            </td>
-                          </tr>
+                          {[...Array(4)].map((_, index) => (
+                            <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
+                              <td className="whitespace-nowrap px-4 py-4 font-medium">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     ) : (

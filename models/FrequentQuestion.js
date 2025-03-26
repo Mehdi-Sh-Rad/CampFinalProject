@@ -1,17 +1,14 @@
 import mongoose from "mongoose";
-const CommentSchema = new mongoose.Schema({
-
-   user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+const FrequentQuestionSchema = new mongoose.Schema({
+   topic: {
+      type: String,
+      required: [true, "Please enter your comment"],
    },
-   product: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      required: true,
+   question: {
+      type: String,
+      required: [true, "Please enter your comment"],
    },
-   text: {
+   answer: {
       type: String,
       required: [true, "Please enter your comment"],
    }
@@ -19,4 +16,4 @@ const CommentSchema = new mongoose.Schema({
    { timeseries: true }
 );
 
-export default mongoose.models.Comment || mongoose.model("Comment", CommentSchema);
+export default mongoose.models.FrequentQuestion || mongoose.model("FrequentQuestion", FrequentQuestionSchema);

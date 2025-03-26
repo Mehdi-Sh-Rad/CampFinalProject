@@ -8,34 +8,33 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
-const ProductQuestions = () => {
-  const [productQuestions, setProductQuestions] = useState([]);
+const FrequentQuestions = () => {
+  const [frequentQuestions, setFrequentQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    const fetchProductQuestions = async () => {
+    const fetchfrequentQuestions = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/productQuestions");
+        const response = await fetch("/api/frequentQuestions");
 
-        if (!response.ok) throw new Error(" مشکل در دریافت اطلاعات نظرات");
+        if (!response.ok) throw new Error("مشکل در دریافت سوالات متداول");
         const data = await response.json();
-        setProductQuestions(data);
+        setFrequentQuestions(data);
       } catch (error) {
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchProductQuestions();
+    fetchfrequentQuestions();
   }, []);
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`/api/productQuestions/${id}`, { method: "DELETE" });
-      setProductQuestions(productQuestions.filter((productQuestion) => productQuestion._id !== id));
+      await fetch(`/api/frequentQuestions/${id}`, { method: "DELETE" });
+      setFrequentQuestions(frequentQuestions.filter((freQue) => freQue._id !== id));
     } catch (error) {
       setError("مشکلی در حذف پیش آمد");
     }
@@ -43,13 +42,13 @@ const ProductQuestions = () => {
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">سوالات در مورد محصول</h1>
-        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base"> سوالات مربوط به محصولات را مدیریت کنید</span>
+        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">سوالات متداول</h1>
+        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت سوالات متداول را مدیریت کنید</span>
         <Link
-          href={"/admin/productQuestions/add"}
-          as={"/admin/productQuestions/add"}
+          href={"/admin/frequentQuestions/add"}
+          as={"/admin/frequentQuestions/add"}
           className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg">
-          افزودن سوال جدید
+          افزودن سوال و پاسخ جدید
           <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
           </svg>
@@ -77,13 +76,10 @@ const ProductQuestions = () => {
                             #
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            کاربر
+                            نام
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            محصول
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
-                            سوال
+                            عملیات
                           </th>
                         </tr>
                       </thead>
@@ -120,10 +116,7 @@ const ProductQuestions = () => {
                             #
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            کاربر
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
-                            محصول
+                            موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
                             سوال
@@ -137,18 +130,17 @@ const ProductQuestions = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {productQuestions &&
-                          productQuestions.map((proQuestion, index) => {
+                        {frequentQuestions &&
+                          frequentQuestions.map((freQue, index) => {
                             return (
                               <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap  px-6 py-4 font-medium">{index + 1}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{proQuestion.user?.name || "not available"}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{proQuestion.product?.name || "not available"}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{proQuestion.question}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{proQuestion.answer}</td>
+                                <td className="whitespace-nowrap  px-6 py-4">{freQue.topic}</td>
+                                <td className="whitespace-nowrap  px-6 py-4">{freQue.question}</td>
+                                <td className="whitespace-nowrap  px-6 py-4">{freQue.answer}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
-                                    <Link href={`/admin/productQuestions/${proQuestion._id}`}>
+                                    <Link href={`/admin/frequentQuestions/${freQue._id}`}>
                                       <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                                         <path
                                           d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
@@ -169,7 +161,7 @@ const ProductQuestions = () => {
                                         <path d="M15.1655 4.60254L19.7315 9.16854" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
                                     </Link>
-                                    <button onClick={() => handleDelete(proQuestion._id)}>
+                                    <button onClick={() => handleDelete(freQue._id)}>
                                       <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                                         <path
                                           d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
@@ -206,4 +198,4 @@ const ProductQuestions = () => {
   );
 };
 
-export default ProductQuestions;
+export default FrequentQuestions;

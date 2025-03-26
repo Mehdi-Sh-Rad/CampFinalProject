@@ -235,12 +235,12 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          <Link className=" " href={"/admin/productQuestions"}>
+          <Link className=" " href={"/admin/frequentQuestions"}>
             <li
-              className={`flex ${pathName.startsWith("/admin/productQuestions") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+              className={`flex ${pathName.startsWith("/admin/frequentQuestions") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
-                className={pathName.startsWith("/admin/productQuestions") ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/frequentQuestions") ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -257,7 +257,7 @@ const Sidebar = () => {
                   fill="currentColor"></path>
               </svg>
               <span
-                className={`${pathName.startsWith("/admin/productQuestions") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                className={`${pathName.startsWith("/admin/frequentQuestions") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
                 سوالات متداول
               </span>
