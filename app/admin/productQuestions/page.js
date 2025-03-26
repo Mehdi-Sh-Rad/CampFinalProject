@@ -85,6 +85,12 @@ const ProductQuestions = () => {
                           <th scope="col" className=" px-6 py-4">
                             سوال
                           </th>
+                          <th scope="col" className=" px-6 py-4">
+                            پاسخ
+                          </th>
+                          <th scope="col" className=" px-6 py-4">
+                            عملیات
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -106,7 +112,7 @@ const ProductQuestions = () => {
                               <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-4">
-                              <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
                           </tr>
                         ))}
