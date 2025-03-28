@@ -15,29 +15,17 @@ const RegisterForm = () => {
   const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
-  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  // const [recaptchaToken, setRecaptchaToken] = useState(null);
 
-  const loadRecaptchaToken = () => {
-    window.grecaptcha.ready(() => {
-      window.grecaptcha
-        .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY, { action: "register" })
-        .then((token) => {
-          setRecaptchaToken(token);
-        })
-        .catch((err) => {
-          console.error("خطا در گرفتن توکن reCAPTCHA:", err);
-          setError("مشکل در تأیید امنیتی");
-        });
+  const getRecaptchaToken = async (action) => {
+    return new Promise((resolve, reject) => {
+      window.grecaptcha.ready(() => {
+        window.grecaptcha
+          .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY, { action })
+          .then((token) => resolve(token))
+          .catch((err) => reject(err));
+      });
     });
-  };
-
-  const handleRecaptchaLoad = () => {
-    if (window.grecaptcha) {
-      loadRecaptchaToken();
-    } else {
-      console.error("reCAPTCHA لود نشد");
-      setError("خطا در بارگذاری تأیید امنیتی");
-    }
   };
 
   const handleSendOtp = async (e) => {
@@ -67,12 +55,10 @@ const RegisterForm = () => {
       setError("رمز عبور و تکرار آن مطابقت ندارند");
       return;
     }
-    if (!recaptchaToken) {
-      setError("لطفاً صبر کنید تا تأیید امنیتی انجام شود");
-      return;
-    }
+   
     setLoading(true);
     try {
+      const recaptchaToken = await getRecaptchaToken("register");
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: {
@@ -101,12 +87,10 @@ const RegisterForm = () => {
       setError("کد تایید باید 6 رقمی باشد");
       return;
     }
-    if (!recaptchaToken) {
-      setError("لطفاً صبر کنید تا تأیید امنیتی انجام شود");
-      return;
-    }
+  
     setLoading(true);
     try {
+      const recaptchaToken = await getRecaptchaToken("verify_otp");
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: {
@@ -129,11 +113,7 @@ const RegisterForm = () => {
 
   return (
     <>
-      <Script
-        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-        strategy="afterInteractive"
-        onLoad={handleRecaptchaLoad}
-      />
+      <Script src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`} strategy="afterInteractive" />
       <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
         <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">
           <div className="bg-white dark:bg-[#2e1f38] rounded-3xl w-80 md:w-96 px-6 py-6 shadow-sm flex flex-col items-center gap-y-4 justify-center">
@@ -250,7 +230,7 @@ const RegisterForm = () => {
 
                 <button
                   type="submit"
-                  disabled={!recaptchaToken || loading}
+                  disabled={ loading}
                   className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                   {loading ? "در حال ارسال ..." : "ثبت نام"}
                 </button>
@@ -284,7 +264,7 @@ const RegisterForm = () => {
 
                 <button
                   type="submit"
-                  disabled={!recaptchaToken || loading}
+                  disabled={ loading}
                   className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                   {loading ? "در حال تایید ..." : "تایید"}
                 </button>
