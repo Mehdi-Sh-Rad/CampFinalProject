@@ -171,7 +171,7 @@ const AddComment = () => {
                                     <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
                                         افزودن
                                     </button>
-                                    <Link href={"/admin/comments"} className="bg-red-700 text-white py-2 px-4 rounded">
+                                    <Link href={"/admin/productQuestions"} className="bg-red-700 text-white py-2 px-4 rounded">
                                         انصراف
                                     </Link>
                                 </div>

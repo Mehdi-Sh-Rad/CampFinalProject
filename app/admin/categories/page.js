@@ -72,7 +72,6 @@ const Categories = () => {
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
-                          <tr>
                             <th scope="col" className=" px-6 py-4">
                               #
                             </th>
@@ -82,7 +81,6 @@ const Categories = () => {
                             <th scope="col" className=" px-6 py-4">
                               عملیات
                             </th>
-                          </tr>
                         </tr>
                       </thead>
                       <tbody>

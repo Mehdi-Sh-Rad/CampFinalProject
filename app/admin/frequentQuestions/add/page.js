@@ -2,6 +2,7 @@
 import Header from "@/app/components/ui/Header";
 import Sidebar from "@/app/components/ui/Sidebar";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { use, useState } from "react";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
@@ -111,9 +112,14 @@ const AddFrequentQuestions = () => {
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                 />
-                <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
-                  افزودن
+                <div>
+                <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
+                  ذخیره
                 </button>
+                <Link href={"/admin/frequentQuestions"} className="bg-red-700 text-white py-2 px-4 rounded">
+                  انصراف
+                </Link>
+              </div>
               </div>
             </form>
           </div>
