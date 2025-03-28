@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 
 const LoginForm = () => {
@@ -13,6 +13,25 @@ const LoginForm = () => {
   const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+
+  useEffect(() => {
+    if (window.grecaptcha) {
+      window.grecaptcha.ready(() => {
+        window.grecaptcha
+          .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY, { action: "login" })
+          .then((token) => {
+            setRecaptchaToken(token);
+          })
+          .catch((err) => {
+            console.error("خطا در گرفتن توکن reCAPTCHA:", err);
+            setError("مشکل در تأیید امنیتی");
+          });
+      });
+    } else {
+      console.error("reCAPTCHA هنوز لود نشده");
+    }
+  }, []);
 
   const handleLoginByEmail = async (e) => {
     e.preventDefault();
@@ -33,10 +52,17 @@ const LoginForm = () => {
         setError("رمز عبور باید حداقل 8 کاراکتر باشد");
         return;
       }
+
+      if (!recaptchaToken) {
+        setError("لطفاً صبر کنید تا تأیید امنیتی انجام شود");
+        return;
+      }
+
       setLoading(true);
       const result = await signIn("email-password", {
         email,
         password,
+        recaptchaToken,
         redirect: false,
       });
 
@@ -60,6 +86,10 @@ const LoginForm = () => {
         setError("شماره تماس معتبر نیست");
         return;
       }
+      if (!recaptchaToken) {
+        setError("لطفاً صبر کنید تا تأیید امنیتی انجام شود");
+        return;
+      }
 
       setLoading(true);
       try {
@@ -68,7 +98,7 @@ const LoginForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phone, type: "login" }),
+          body: JSON.stringify({ phone, type: "login", recaptchaToken }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -100,9 +130,13 @@ const LoginForm = () => {
         setError("کد تایید باید 6 رقمی باشد");
         return;
       }
+      if (!recaptchaToken) {
+        setError("لطفاً صبر کنید تا تأیید امنیتی انجام شود");
+        return;
+      }
       setLoading(true);
 
-      const credentials = phone ? { phone, code: otp, redirect: false } : { email, code: otp, redirect: false };
+      const credentials = phone ? { phone, code: otp, recaptchaToken, redirect: false } : { email, code: otp, recaptchaToken, redirect: false };
       const provider = phone ? "phone-otp" : "email-otp";
 
       const result = await signIn(provider, credentials);
@@ -134,6 +168,10 @@ const LoginForm = () => {
         setError("ایمیل معتبر نیست");
         return;
       }
+      if (!recaptchaToken) {
+        setError("لطفاً صبر کنید تا تأیید امنیتی انجام شود");
+        return;
+      }
 
       setLoading(true);
       try {
@@ -142,7 +180,7 @@ const LoginForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, type: "email-login" }),
+          body: JSON.stringify({ email, type: "email-login", recaptchaToken }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -248,6 +286,7 @@ const LoginForm = () => {
 
               <button
                 type="submit"
+                disabled={!recaptchaToken || loading}
                 className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                 {loading ? "در حال ارسال ..." : "ورود"}
               </button>
@@ -280,6 +319,7 @@ const LoginForm = () => {
 
               <button
                 type="submit"
+                disabled={!recaptchaToken || loading}
                 className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                 {loading ? "در حال ارسال ..." : "ورود"}
               </button>
@@ -314,6 +354,7 @@ const LoginForm = () => {
 
               <button
                 type="submit"
+                disabled={!recaptchaToken || loading}
                 className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                 {loading ? "در حال تایید ..." : "تایید"}
               </button>
@@ -346,6 +387,7 @@ const LoginForm = () => {
 
               <button
                 type="submit"
+                disabled={!recaptchaToken || loading}
                 className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                 {loading ? "در حال ارسال ..." : "ورود"}
               </button>
