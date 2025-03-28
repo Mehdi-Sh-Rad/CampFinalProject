@@ -15,7 +15,6 @@ const RegisterForm = () => {
   const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
-  // const [recaptchaToken, setRecaptchaToken] = useState(null);
 
   const getRecaptchaToken = async (action) => {
     return new Promise((resolve, reject) => {
