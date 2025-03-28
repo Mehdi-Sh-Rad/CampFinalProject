@@ -1,3 +1,4 @@
+import Script from "next/script";
 import SessionProviderWrapper from "./components/auth/SessionProviderWrapper";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./styles/globals.css";
@@ -15,6 +16,10 @@ export default function RootLayout({ children }) {
         <SessionProviderWrapper>
           <ThemeProvider>{children}</ThemeProvider>
         </SessionProviderWrapper>
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
