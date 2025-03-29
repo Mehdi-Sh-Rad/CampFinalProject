@@ -7,10 +7,9 @@ const DiscountSchema = new mongoose.Schema(
       required: [true, "Discount code is required"],
       trim: true,
     },
-    product: {
+    category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      required: true,
+      ref: "Category",
     },
     percentage: {
       type: Number,
