@@ -4,11 +4,31 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import User from "@/models/User";
 
+async function verifyRecaptchaToken(token) {
+  const secretKey = process.env.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY;
+ 
+  const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`, {
+    method: "POST",
+  });
+  const data = await response.json();
+  console.log("پاسخ reCAPTCHA:", data);
+  return data.success && data.score >= 0.5;
+}
+
 export async function POST(req) {
   await connectToDatabase();
 
   try {
-    const { phone, code, name, email, password } = await req.json();
+    const { phone, code, name, email, password, recaptchaToken } = await req.json();
+
+    if (!recaptchaToken) {
+      return NextResponse.json({ message: "توکن امنیتی یافت نشد" }, { status: 400 });
+    }
+    const isRecaptchaValid = await verifyRecaptchaToken(recaptchaToken);
+    if (!isRecaptchaValid) {
+      return NextResponse.json({ message: "تأیید امنیتی ناموفق بود" }, { status: 403 });
+    }
+
     if (!phone || !name || !email || !password) {
       return NextResponse.json({ message: "لطفا تمامی فیلد ها را پر کنید" }, { status: 400 });
     }
