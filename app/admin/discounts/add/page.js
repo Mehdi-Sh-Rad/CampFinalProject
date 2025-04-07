@@ -10,7 +10,7 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 const AddDiscount = () => {
   const [code, setCode] = useState("");
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [percentage, setPercentage] = useState("");
   const [expirationDate, setExpirationDate] = useState(null);

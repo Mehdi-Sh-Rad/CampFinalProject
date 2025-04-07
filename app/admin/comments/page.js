@@ -41,19 +41,19 @@ const Comments = () => {
     }
   };
 
-  const handleStatus = async (id , preStatus) => {
+  const handleStatus = async (id, preStatus) => {
     const newStatus = !Boolean(preStatus);
     setStatus(newStatus);
     try {
       const response = await fetch(`/api/comments/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status:newStatus }),
+        body: JSON.stringify({ status: newStatus }),
       });
 
       if (response.status === 400) {
         let message = await response.json();
-        setFormError(message.message);
+        setError(message.message);
       }
       if (!response.ok) throw new Error("مشکلی در تغییر وضعیت آمده است");
     } catch (error) {
@@ -113,6 +113,9 @@ const Comments = () => {
                           <th scope="col" className=" px-6 py-4">
                             نظر
                           </th>
+                          <th scope="col" className=" px-6 py-4">
+                            عملیات
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -126,6 +129,9 @@ const Comments = () => {
                             </td>
                             <td className="whitespace-nowrap px-4 py-4">
                               <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-4">
+                              <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-4">
                               <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>

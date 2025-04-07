@@ -18,8 +18,13 @@ export async function PUT(request, { params }) {
   await connectToDatabase();
   try {
     const body = await request.json();
-
-    const comment = await Comment.findByIdAndUpdate(params.id, body, {
+    const { id } = await params;
+    if (!body) {
+      return new Response(JSON.stringify({ message: "No data provided" }), {
+        status: 400,
+      });
+    }   
+    const comment = await Comment.findByIdAndUpdate(id, body, {
       new: true,
     });
     return new Response(JSON.stringify(comment), { status: 200 });

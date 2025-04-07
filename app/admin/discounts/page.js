@@ -137,6 +137,9 @@ const Discounts = () => {
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
