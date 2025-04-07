@@ -14,3 +14,18 @@ export async function DELETE(request, { params }) {
     });
   }
 }
+export async function PUT(request, { params }) {
+  await connectToDatabase();
+  try {
+    const body = await request.json();
+
+    const comment = await Comment.findByIdAndUpdate(params.id, body, {
+      new: true,
+    });
+    return new Response(JSON.stringify(comment), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
+  }
+}

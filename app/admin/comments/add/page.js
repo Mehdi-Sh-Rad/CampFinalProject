@@ -13,6 +13,7 @@ const AddComment = () => {
     const [products, setProducts] = useState([]);
     const [product, setProduct] = useState("");
     const [text, setText] = useState("");
+    const [status, setStatus] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formError, setFormError] = useState(null);
@@ -69,12 +70,11 @@ const AddComment = () => {
         if (!validateForm()) {
             return;
         }
-
         try {
             const response = await fetch("/api/comments", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user, product, text }),
+                body: JSON.stringify({ user, product, text, status }),
             });
 
             if (response.status === 400) {
@@ -157,7 +157,6 @@ const AddComment = () => {
                                         );
                                     })}
                                 </select>
-
                                 <input
                                     name="text"
                                     autoComplete="text"
@@ -167,6 +166,17 @@ const AddComment = () => {
                                     value={text}
                                     onChange={(e) => setText(e.target.value)}
                                 />
+                                <div className="flex items-center space-x-3">
+                                    <input
+                                        type="checkbox"
+                                        checked={status}
+                                        onChange={(e) => setStatus(e.target.checked)}
+                                        className="w-4 h-4 m-1"
+                                    />
+                                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                                        فعال
+                                    </span>
+                                </div>
                                 <div>
                                     <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
                                         افزودن

@@ -10,6 +10,7 @@ import Skeleton from "react-loading-skeleton";
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
+  const [status, setStatus] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -38,6 +39,34 @@ const Comments = () => {
     } catch (error) {
       setError("مشکلی در حذف پیش آمد");
     }
+  };
+
+  const handleStatus = async (id , preStatus) => {
+    const newStatus = !Boolean(preStatus);
+    setStatus(newStatus);
+    try {
+      const response = await fetch(`/api/comments/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status:newStatus }),
+      });
+
+      if (response.status === 400) {
+        let message = await response.json();
+        setFormError(message.message);
+      }
+      if (!response.ok) throw new Error("مشکلی در تغییر وضعیت آمده است");
+    } catch (error) {
+      setError(error.message);
+    }
+    setComments(
+      comments.map((comment) => {
+        if (comment._id === id) {
+          return { ...comment, status: newStatus };
+        }
+        return comment;
+      })
+    );
   };
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
@@ -155,6 +184,14 @@ const Comments = () => {
                                           strokeLinejoin="round"
                                         />
                                       </svg>
+                                    </button>
+                                    <button onClick={() => handleStatus(comment._id, comment.status)}>
+                                      {comment.status ? <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                                      </svg> : <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                      </svg>
+                                      }
                                     </button>
                                   </div>
                                 </td>
