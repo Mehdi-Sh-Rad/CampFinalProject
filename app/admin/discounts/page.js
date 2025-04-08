@@ -100,6 +100,9 @@ const Discounts = () => {
                               کد تخفیف
                             </th>
                             <th scope="col" className="px-4 py-4">
+                              دسته بندی
+                            </th>
+                            <th scope="col" className="px-4 py-4">
                               درصد تخفیف
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -134,6 +137,9 @@ const Discounts = () => {
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -149,7 +155,7 @@ const Discounts = () => {
                               کد تخفیف
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              محصول
+                              دسته بندی
                             </th>
                             <th scope="col" className="px-4 py-4">
                               درصد تخفیف
@@ -171,7 +177,7 @@ const Discounts = () => {
                               <tr className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap px-4 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{discount.code}</td>
-                                <td className="whitespace-nowrap px-4 py-4">{discount.product?.name}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{discount.category?.name}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{discount.percentage}%</td>
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(discount.date)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{discount.status ? "فعال" : "غیرفعال"}</td>

@@ -14,6 +14,9 @@ const CommentSchema = new mongoose.Schema({
    text: {
       type: String,
       required: [true, "Please enter your comment"],
+   },
+   status: {
+      type: Boolean,
    }
 },
    { timeseries: true }

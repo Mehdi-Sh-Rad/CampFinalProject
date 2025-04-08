@@ -91,6 +91,7 @@ export async function POST(req) {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 
+
     // send otp code to user phone number or email
 
     if (type === "email-login") {
