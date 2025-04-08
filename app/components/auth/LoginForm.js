@@ -381,6 +381,11 @@ const LoginForm = () => {
             href={"/auth/register"}>
             حساب کاربری ندارید؟ ثبت نام کنید
           </Link>
+          <Link
+            className="py-4 px-4 w-80 md:w-96 flex font-semibold text-sm justify-center bg-white dark:bg-[#2e1f38] dark:text-white rounded-xl shadow-sm"
+            href={"/auth/forget-password"}>
+            رمزعبور خود را فراموش کرده اید؟
+          </Link>
           <Link className="py-4 px-4 w-80 md:w-96 flex font-semibold text-sm justify-center bg-white dark:bg-[#2e1f38] dark:text-white rounded-xl shadow-sm" href={"/"}>
             بازگشت
           </Link>

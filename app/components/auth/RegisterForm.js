@@ -54,7 +54,7 @@ const RegisterForm = () => {
       setError("رمز عبور و تکرار آن مطابقت ندارند");
       return;
     }
-   
+
     setLoading(true);
     try {
       const recaptchaToken = await getRecaptchaToken("register");
@@ -86,7 +86,7 @@ const RegisterForm = () => {
       setError("کد تایید باید 6 رقمی باشد");
       return;
     }
-  
+
     setLoading(true);
     try {
       const recaptchaToken = await getRecaptchaToken("verify_otp");
@@ -229,7 +229,7 @@ const RegisterForm = () => {
 
                 <button
                   type="submit"
-                  disabled={ loading}
+                  disabled={loading}
                   className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                   {loading ? "در حال ارسال ..." : "ثبت نام"}
                 </button>
@@ -263,7 +263,7 @@ const RegisterForm = () => {
 
                 <button
                   type="submit"
-                  disabled={ loading}
+                  disabled={loading}
                   className="bg-shop-red text-white rounded-lg font-bold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
                   {loading ? "در حال تایید ..." : "تایید"}
                 </button>
@@ -274,6 +274,11 @@ const RegisterForm = () => {
             className="mt-4 py-4 px-4 w-80 md:w-96 flex font-semibold text-sm justify-center bg-white dark:bg-[#2e1f38] dark:text-white rounded-xl shadow-sm"
             href={"/auth/login"}>
             حساب کاربری دارید؟ وارد شوید
+          </Link>
+          <Link
+            className="py-4 px-4 w-80 md:w-96 flex font-semibold text-sm justify-center bg-white dark:bg-[#2e1f38] dark:text-white rounded-xl shadow-sm"
+            href={"/auth/forget-password"}>
+            رمزعبور خود را فراموش کرده اید؟
           </Link>
           <Link className="py-4 px-4 w-80 md:w-96 flex font-semibold text-sm justify-center bg-white dark:bg-[#2e1f38] dark:text-white rounded-xl shadow-sm" href={"/"}>
             بازگشت
