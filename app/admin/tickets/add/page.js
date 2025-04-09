@@ -106,20 +106,19 @@ const AddTicket = () => {
                   value={order}
                   onChange={(e) => setOrder(e.target.value)}
                 />
-                <input
+                <textarea
                   name="problem"
                   autoComplete="problem"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300 h-32"
                   placeholder="مشکل پیش آمده "
                   type="text"
                   value={problem}
                   onChange={(e) => setProblem(e.target.value)}
                 />
-
-                <input
+                <textarea
                   name="answer"
                   autoComplete="answer"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300 h-32"
                   placeholder="پاسخ"
                   type="text"
                   value={answer}

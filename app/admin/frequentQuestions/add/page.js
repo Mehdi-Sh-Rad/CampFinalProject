@@ -93,7 +93,7 @@ const AddFrequentQuestions = () => {
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                 />
-                <input
+                <textarea
                   name="question"
                   autoComplete="question"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
@@ -102,11 +102,10 @@ const AddFrequentQuestions = () => {
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                 />
-
-                <input
+                <textarea
                   name="answer"
                   autoComplete="answer"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300 text-lg h-40"
                   placeholder="پاسخ"
                   type="text"
                   value={answer}

@@ -150,8 +150,18 @@ const ProductQuestions = () => {
                                 <td className="whitespace-nowrap  px-6 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">{proQuestion.user?.name || "not available"}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">{proQuestion.product?.name || "not available"}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{proQuestion.question}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{proQuestion.answer}</td>
+                                <td className="whitespace-nowrap  px-6 py-4" style={{
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  maxWidth: "150px",
+                                }}>{proQuestion.question}</td>
+                                <td className="whitespace-nowrap  px-6 py-4" style={{
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  maxWidth: "150px",
+                                }}>{proQuestion.answer}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <Link href={`/admin/productQuestions/${proQuestion._id}`}>
