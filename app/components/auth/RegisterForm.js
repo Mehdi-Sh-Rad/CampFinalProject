@@ -67,7 +67,12 @@ const RegisterForm = () => {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message || "خطایی از سمت سرور رخ داده است");
+        if (res.status === 429) {
+          setSuccess(`کد قبلی هنوز معتبر است. (${data.timeLeft} ثانیه باقی‌مانده)`);
+          setStep(2);
+        } else {
+          setError(data.message || "خطایی از سمت سرور رخ داده است");
+        }
       } else {
         setSuccess("کد تایید برای شما ارسال شد");
         setStep(2);
