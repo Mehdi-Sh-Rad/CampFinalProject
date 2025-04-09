@@ -1,11 +1,11 @@
-import ForgetPasswordForm from "@/app/components/auth/ForgetPasswordForm";
 import NoAuthWrapper from "@/app/components/auth/NoAuth";
+import ResetPasswordForm from "@/app/components/auth/ResetPasswordForm";
 import React from "react";
 
 const Register = () => {
   return (
     <NoAuthWrapper>
-      <ForgetPasswordForm/>
+      <ResetPasswordForm/>
     </NoAuthWrapper>
   );
 };
