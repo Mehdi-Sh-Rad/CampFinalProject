@@ -1,3 +1,4 @@
+import Script from "next/script";
 import SessionProviderWrapper from "./components/auth/SessionProviderWrapper";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./styles/globals.css";

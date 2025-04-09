@@ -6,10 +6,30 @@ import User from "@/models/User";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 
+//verify reCaptchaToken
+async function verifyRecaptchaToken(token) {
+  const secretKey = process.env.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY;
+  const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`, {
+    method: "POST",
+  });
+  const data = await response.json();
+  return data.success && data.score >= 0.5;
+}
+
 export async function POST(req) {
   await connectToDatabase();
   try {
-    const { name, email, phone, type } = await req.json();
+    const { name, email, phone, type, recaptchaToken } = await req.json();
+
+    if (!recaptchaToken) {
+      return NextResponse.json({ message: "توکن امنیتی یافت نشد" }, { status: 400 });
+    }
+
+    const isRecaptchaValid = await verifyRecaptchaToken(recaptchaToken);
+    if (!isRecaptchaValid) {
+      return NextResponse.json({ message: "تأیید امنیتی ناموفق بود" }, { status: 403 });
+    }
+
     if (!type || (type !== "register" && type !== "login" && type !== "email-login")) {
       return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
     }

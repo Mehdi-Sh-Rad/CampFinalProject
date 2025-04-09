@@ -23,7 +23,7 @@ const OtpSchema = new mongoose.Schema(
     },
     method: {
       type: String,
-      enum: ["phone", "email"],
+      enum: ["phone", "email", "reset-password"],
       default: "phone",
     },
     expiresAt: {
