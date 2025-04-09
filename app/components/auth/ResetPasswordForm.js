@@ -161,7 +161,7 @@ const ResetPasswordForm = () => {
 
                   <button
                     type="button"
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                     {showConfirmPassword ? (
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
