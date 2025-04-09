@@ -166,7 +166,7 @@ const Sidebar = () => {
                   : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}
               >
-                کد تخفیف
+                کدهای تخفیف
               </span>
             </li>
           </Link>
@@ -292,6 +292,26 @@ const Sidebar = () => {
                 className={`${pathName.startsWith("/admin/tickets") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
                 مدیریت تیکت ها
+              </span>
+            </li>
+          </Link>
+          <Link className=" " href={"/admin/users"}>
+            <li
+              className={`flex ${pathName.startsWith("/admin/users") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-3 py-2"} items-center rounded`}>
+              <svg 
+              className="w-[30px] h-[30px] text-shop-gray dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" 
+              width="25" 
+              fill="currentColor" 
+              viewBox="0 0 24 24">
+              <path fillRule="evenodd"
+               d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" 
+               clipRule="evenodd"/>
+              </svg>
+              <span
+                className={`${pathName.startsWith("/admin/users") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                  } ${!isSidebarOpen && "hidden"}`}>
+                مدیریت کاربران  
               </span>
             </li>
           </Link>
