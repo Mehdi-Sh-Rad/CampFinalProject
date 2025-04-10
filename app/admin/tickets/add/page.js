@@ -10,19 +10,17 @@ import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 const AddTicket = () => {
   const [topic, setTopic] = useState("");
   const [order, setOrder] = useState("");
-  const [problem, setProblem] = useState("");
-  const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
   const validateForm = () => {
-    if (problem.trim() === "") {
-      setFormError("درج سوال الزامی میباشد");
+    if (topic.trim() === "") {
+      setFormError("درج موضوع تیکت الزامی میباشد");
       return false;
-    } else if (problem.length < 1 || problem.length > 100) {
-      setFormError("تعداد کاراکترهای سوال باید بین ۱ تا ۱۰۰ باشد");
+    } else if (topic.length < 1 || topic.length > 100) {
+      setFormError("تعداد کاراکترهای موضوع باید بین ۱ تا ۱۰۰ باشد");
       return false;
     }
     setFormError("");
@@ -40,7 +38,7 @@ const AddTicket = () => {
       const response = await fetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ problem, answer, topic, order }),
+        body: JSON.stringify({ topic, order }),
       });
 
       if (response.status === 400) {
@@ -106,24 +104,7 @@ const AddTicket = () => {
                   value={order}
                   onChange={(e) => setOrder(e.target.value)}
                 />
-                <textarea
-                  name="problem"
-                  autoComplete="problem"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300 h-32"
-                  placeholder="مشکل پیش آمده "
-                  type="text"
-                  value={problem}
-                  onChange={(e) => setProblem(e.target.value)}
-                />
-                <textarea
-                  name="answer"
-                  autoComplete="answer"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300 h-32"
-                  placeholder="پاسخ"
-                  type="text"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                />
+
                 <div>
                   <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
                     ثبت

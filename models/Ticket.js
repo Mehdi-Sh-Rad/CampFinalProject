@@ -7,14 +7,13 @@ const TicketSchema = new mongoose.Schema({
    order: {
       type: String,
    },
-   problem: {
-      type: String,
-      required: [true, "Please enter your question"],
-   },
-   answer: {
-      type: String,
-      required: [true, "Please enter the anwser"],
-   }
+   message: [
+      {
+        text: String,
+        sender: String,
+        timestamp: { type: Date, default: Date.now },
+      },
+    ],
 },
    { timeseries: true }
 );

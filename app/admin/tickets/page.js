@@ -72,20 +72,17 @@ const Tickets = () => {
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-1 py-1">
                             #
                           </th>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-1 py-1">
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
                             سفارش
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            مشکل
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
-                            پاسخ
+                            آخرین پیام
                           </th>
                           <th scope="col" className=" px-6 py-4">
                             عملیات
@@ -121,20 +118,17 @@ const Tickets = () => {
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-1 py-1">
                             #
                           </th>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-1 py-1">
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
                             سفارش
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            مشکل
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
-                            پاسخ
+                            آخرین پیام
                           </th>
                           <th scope="col" className=" px-6 py-4">
                             عملیات
@@ -146,42 +140,25 @@ const Tickets = () => {
                           tickets.map((ticket, index) => {
                             return (
                               <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                                <td className="whitespace-nowrap  px-6 py-4 font-medium">{index + 1}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{ticket.topic}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{ticket.order}</td>
-                                <td className="whitespace-nowrap  px-6 py-4" style={{
+                                <td className="whitespace-nowrap  px-1 py-1 font-medium">{index + 1}</td>
+                                <td className="whitespace-nowrap  px-1 py-1">{ticket.topic}</td>
+                                <td className="whitespace-nowrap  px-1 py-1">{ticket.order}</td>
+                                <td className="whitespace-nowrap  px-1 py-4" style={{
                                   whiteSpace: "nowrap",
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   maxWidth: "150px",
-                                }}>{ticket.problem}</td>
-                                <td className="whitespace-nowrap  px-6 py-4" style={{
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "150px",
-                                }}>{ticket.answer}</td>
+                                }}>{ticket.message.slice(-1)[0]?.text || "No messages yet"}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <Link href={`/admin/tickets/${ticket._id}`}>
-                                      <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                                      <svg className="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path
-                                          d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
                                           stroke="currentColor"
-                                          strokeWidth="1.5"
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
+                                          strokeWidth="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"
                                         />
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                          stroke="currentColor"
-                                          strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
-                                        <path d="M15.1655 4.60254L19.7315 9.16854" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
                                     </Link>
                                     <button onClick={() => handleDelete(ticket._id)}>
