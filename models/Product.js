@@ -2,20 +2,38 @@ import mongoose from "mongoose";
 
 const ProductSchema = new mongoose.Schema(
   {
-    fileUrl: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     name: {
       type: String,
       required: [true, "Product name is required"],
       trim: true,
     },
+    author: {
+      type: String,
+      required: [true, "Product author is required"],
+      trim: true,
+    },
     description: {
       type: String,
+    },
+    imageUrls: {
+      type: [String],
       required: true,
     },
+    fileUrls: {
+      type: [String],
+      required: true,
+    },
+    types: {
+      type: [String],
+      required: true,
+    },
+    tags: {
+      type: [String],
+     required: true,
+    },
+    free: {
+      type: Boolean,
+    },   
     price: {
       type: Number,
       required: true,
@@ -26,28 +44,14 @@ const ProductSchema = new mongoose.Schema(
     active: {
       type: Boolean,
     },
-    imageUrl: {
-      type: String,
-      required: true,
-      trim: true,
+    award: {
+      type: Boolean,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
-    },
-    types: {
-      type: [String],
-      default: [],
-    },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    free: {
-      type: Boolean,
-    },
-    
+    },  
   },
   { timestamps: true }
 );

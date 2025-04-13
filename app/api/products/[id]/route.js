@@ -156,7 +156,6 @@ export async function PUT(request, { params }) {
     }
 
 
-
     const updateProduct = await Product.findByIdAndUpdate(
       id,
       {
@@ -204,13 +203,41 @@ export async function DELETE(request, { params }) {
         message: " محصول معتبر نیست",
       });
     }
+    
+    // Delete the image file from the server
+    const imageUrls = product.imageUrls;
+    if (!imageUrls || imageUrls.length === 0) {
+      return new Response(
+        JSON.stringify({ message: "تصویر محصول پیدا نشد" }),
+        { status: 404 }
+      );
+    }
+    imageUrls.map((imageUrl) => {
+      const filePath = join(process.cwd(), "public", imageUrl);
+      unlink(filePath).catch(() => {
+        console.log("خطا در حذف تصویر از سرور");
+      });
+    }
+    );
 
-    const filePath = join(process.cwd(), "public", product.imageUrl);
-    await unlink(filePath).catch(() => {
-      console.log("خطا در حذف تصویر قبلی");
-    });
+    // Delete the file from the server
+    const fileUrls = product.fileUrls;
+    if (!fileUrls || fileUrls.length === 0) {
+      return new Response(
+        JSON.stringify({ message: "فایل محصول پیدا نشد" }),
+        { status: 404 }
+      );
+    }   
+    fileUrls.map((fileUrl) => {
+      const filePath = join(process.cwd(), "public", fileUrl);
+      unlink(filePath).catch(() => {
+        console.log("خطا در حذف فایل از سرور");
+      });
+    }
+    );
 
-    await Product.findByIdAndDelete(params.id);
+    // Delete the product from the database
+    await Product.findByIdAndDelete(id);
     return new Response(null, { status: 204 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), {

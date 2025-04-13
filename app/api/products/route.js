@@ -13,28 +13,36 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const data = await request.formData();
-
-    const file = data.get("file");
-    const image = data.get("image");
-
-    if (!file || !image) {
+    if (!data) {
       return NextResponse.json({
         success: false,
-        message: "اپلود فایل و تصویر الزامی میباشد",
+        message: "خطا در دریافت اطلاعات",
+      });
+    };
+
+    // Get all files and images as arrays   
+    let files = data.getAll("files"); // Use "files" as the key for multiple files
+    let images = data.getAll("images"); // Use "images" as the key for multiple images
+    if (!files.length || !images.length) {
+      return NextResponse.json({
+        success: false,
+        message: "آپلود فایل‌ها و تصاویر الزامی میباشد",
       });
     }
 
     const name = data.get("name");
+    const author = data.get("author");
     const description = data.get("description");
-    const price = data.get("price");
-    const discountPrice = data.get("discountPrice");
-    const active = data.get("active");
+    const price = parseFloat(data.get("price"));
+    const discountPrice = parseFloat(data.get("discountPrice"));
+    const active = data.get("active") === "true";
     const category = data.get("category");
-    const types = data.get("types").split(",").map(tag => tag.trim());
-    const tags = data.get("tags").split(",").map(tag => tag.trim());
-    const free = data.get("free");
+    const types = data.get("types")?.split(",").map((tag) => tag.trim()) || [];
+    const tags = data.get("tags")?.split(",").map((tag) => tag.trim()) || [];
+    const free = data.get("free") === "true";
+    const award = data.get("award") === "true";
 
-    if (!name || !description || isNaN(price) || isNaN(discountPrice) || !category) {
+    if (!name || !description || !author || isNaN(price) || isNaN(discountPrice) || !category) {
       return new Response(
         JSON.stringify({ message: "تمامی فیلد ها الزامی میباشند" }),
         {
@@ -43,14 +51,7 @@ export async function POST(request) {
       );
     }
 
-    if (!name || typeof name !== "string" || name.trim() === "") {
-      return new Response(
-        JSON.stringify({ message: "نام محصول الزامی میباشد" }),
-        {
-          status: 400,
-        }
-      );
-    }
+    // Validate name, author, description, and price
     if (name.length < 3 || name.length > 30) {
       return new Response(
         JSON.stringify({ message: "نام باید بین ۳ تا ۳۰ باشد" }),
@@ -60,18 +61,32 @@ export async function POST(request) {
       );
     }
 
-    if (
-      !description ||
-      typeof description !== "string" ||
-      description.trim() === ""
-    ) {
+    if (author.length < 3 || author.length > 30) {
       return new Response(
-        JSON.stringify({ message: "توضیحات محصول الزامی میباشد" }),
+        JSON.stringify({ message: "نام نویسنده باید بین ۳ تا ۳۰ باشد" }),
         {
           status: 400,
         }
       );
     }
+    if (files.length > 10) {
+      return new Response(
+        JSON.stringify({ message: "حداکثر ۱۰ فایل مجاز است" }),
+        {
+          status: 400,
+        }
+      );
+    }
+    if (images.length > 10) {
+      return new Response(
+        JSON.stringify({ message: "حداکثر ۱۰ تصویر مجاز است" }),
+        {
+          status: 400,
+        }
+      );
+    }
+
+
     if (description.length < 3 || description.length > 200) {
       return new Response(
         JSON.stringify({ message: "توضیحات باید بین ۳ تا ۲۰۰ باشد" }),
@@ -83,33 +98,45 @@ export async function POST(request) {
 
     if (price <= 0) {
       return new Response(
-        JSON.stringify({ message: "قیمت یا موجودی باید بیش از عدد ۰ باشد" }),
+        JSON.stringify({ message: "قیمت باید بیش از عدد ۰ باشد" }),
         {
           status: 400,
         }
       );
     }
-    
-    const bytesFile = await file.arrayBuffer();
-    const bytesImage = await image.arrayBuffer();
-    
-    const bufferFile = Buffer.from(bytesFile);
-    const bufferImage = Buffer.from(bytesImage);
 
+    // Ensure upload directories exist
     const uploadDirFile = join(process.cwd(), "public/uploads/files");
-    const filePath = join(uploadDirFile, file.name);
     const uploadDirImage = join(process.cwd(), "public/uploads/images");
-    const imagePath = join(uploadDirImage, image.name);
 
-    await writeFile(filePath, bufferFile);
-    await writeFile(imagePath, bufferImage);
+    // Save files and images to disk
+    const fileUrls = [];
+    const imageUrls = [];
 
+    for (const file of files) {
+      const bytesFile = await file.arrayBuffer();
+      const bufferFile = Buffer.from(bytesFile);
+      const filePath = join(uploadDirFile, file.name);
+      await writeFile(filePath, bufferFile);
+      fileUrls.push(`/uploads/files/${file.name}`);
+    }
+
+    for (const image of images) {
+      const bytesImage = await image.arrayBuffer();
+      const bufferImage = Buffer.from(bytesImage);
+      const imagePath = join(uploadDirImage, image.name);
+      await writeFile(imagePath, bufferImage);
+      imageUrls.push(`/uploads/images/${image.name}`);
+    }
+
+    // Save product to database
     await connectToDatabase();
 
     const product = await Product.create({
-
-      fileUrl: `/uploads/files/${file.name}`,
+      fileUrls, // Array of file URLs
+      imageUrls, // Array of image URLs
       name,
+      author,
       description,
       price,
       discountPrice,
@@ -118,11 +145,12 @@ export async function POST(request) {
       tags,
       active,
       free,
-      imageUrl: `/uploads/images/${image.name}`,
+      award,
     });
-   
+
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {
+    console.error("Error saving product:", error);
     return new Response(JSON.stringify({ message: error.message }), {
       status: 500,
     });

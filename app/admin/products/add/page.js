@@ -9,18 +9,21 @@ import React, { use, useEffect, useState } from "react";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 
 const AddProduct = () => {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [images, setImages] = useState([]);
   const [name, setName] = useState("");
+  const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
   const [active, setActive] = useState("");
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
-  const [types, setTypes] = useState("");
-  const [tags, setTags] = useState("");
+  const [types, setTypes] = useState(["pdf", "docx", "ppt", "png", "jpeg"]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [tags, setTags] = useState([""]);
   const [free, setFree] = useState(false);
+  const [award, setAward] = useState(false);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const router = useRouter();
@@ -32,12 +35,42 @@ const AddProduct = () => {
       .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
   }, []);
 
+  const handleAddFile = () => {
+    setFiles([...files, null]); // Add a new empty file slot
+  };
+
+  const handleAddImage = () => {
+    setImages([...images, null]); // Add a new empty image slot
+  };
+
+  const handleAddTag = () => {
+    setTags([...tags, ""]); // Add a new empty tag slot
+  };
+
+  const handleFileChange = (index, file) => {
+    const updatedFiles = [...files];
+    updatedFiles[index] = file;
+    setFiles(updatedFiles);
+  };
+
+  const handleImageChange = (index, image) => {
+    const updatedImages = [...images];
+    updatedImages[index] = image;
+    setImages(updatedImages);
+  };
+
+  const handleTagChange = (index, tag) => {
+    const updatedTags = [...tags];
+    updatedTags[index] = tag;
+    setTags(updatedTags);
+  }
+
   const validateForm = () => {
-    if (!file) {
+    if (!files) {
       setFormError("انتخاب فایل محصول الزامی میباشد");
       return false;
     }
-    if (!image) {
+    if (!images) {
       setFormError("انتخاب تصویر محصول الزامی میباشد");
       return false;
     }
@@ -63,10 +96,6 @@ const AddProduct = () => {
       setFormError(" انتخاب حداقل یک برچسب برای محصول الزامی است");
       return false;
     }
-    if (!types.trim() === "") {
-      setFormError("انتخاب فرمت فایل محصول الزامی است");
-      return false;
-    }
     if (price <= 0) {
       setFormError(" قیمت محصول باید یک مقدار مثبت باشد در غیر اینصورت گزینه رایگان را تیک بزنید");
       return false;
@@ -83,17 +112,29 @@ const AddProduct = () => {
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
       formData.append("name", name);
+      formData.append("author", author);
       formData.append("description", description);
       formData.append("price", price);
       formData.append("discountPrice", discountPrice);
       formData.append("active", active ? "true" : "false");
       formData.append("category", category);
-      formData.append("types", types);
-      formData.append("tags", tags);
-      formData.append("image", image);
+      formData.append("types", selectedTypes);
+      formData.append("tags", tags.filter(tag => tag.trim() !== "")); // Filter out empty tags
       formData.append("free", free);
+      formData.append("award", award);
+
+      // Append all files
+      files.forEach((file) => {
+        console.log("noooonooonooo", file)
+        if (file) formData.append("files", file);
+      });
+
+      // Append all images
+      images.forEach((image, index) => {
+        if (image) formData.append("images", image);
+        console.log("form data is****:", formData);
+      });
 
       const response = await fetch("/api/products", {
         method: "POST",
@@ -159,6 +200,19 @@ const AddProduct = () => {
                   </div>
 
                   <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">نویسنده</label>
+                    <input
+                      name="author"
+                      autoComplete="author"
+                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                      placeholder="نویسنده"
+                      type="text"
+                      value={author}
+                      onChange={(e) => setAuthor(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">توضیحات</label>
                     <input
                       name="description"
@@ -171,37 +225,61 @@ const AddProduct = () => {
                     />
                   </div>
 
-                  <div className="relative w-full">
-                    <input
-                      id="image-upload"
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      autoComplete="image"
-                      required
-                      onChange={(e) => setImage(e.target.files[0])}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="image-upload"
-                      className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
-                      📂 آپلود تصویر
-                    </label>
-                    <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
-                      {image ? image.name : "فایلی انتخاب نشده است"}
-                    </span>
+                  {/* Multiple Images */}
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">تصاویر :</label>
+                    {images.map((image, index) => (
+                      <div key={index} className="flex items-center gap-x-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageChange(index, e.target.files[0])}
+                          className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
+                        />
+                        <button
+                          type="button"
+                          className="bg-red-500 text-white px-2 py-1 rounded"
+                          onClick={() => setImages(images.filter((_, i) => i !== index))}
+                        >
+                          حذف
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
+                      onClick={handleAddImage}
+                    >
+                      افزودن تصویر
+                    </button>
                   </div>
-                  <div className="relative w-full">
-                    <input id="file-upload" name="file" type="file" accept="file/*" required onChange={(e) => setFile(e.target.files[0])} className="hidden" />
 
-                    <label
-                      htmlFor="file-upload"
-                      className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
-                      📂 آپلود فایل
-                    </label>
-                    <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
-                      {file ? file.name : "فایلی انتخاب نشده است"}
-                    </span>
+                  {/* Multiple Files */}
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">فایل ها: </label>
+                    {files.map((file, index) => (
+                      <div key={index} className="flex items-center gap-x-2">
+                        <input
+                          type="file"
+                          onChange={(e) => handleFileChange(index, e.target.files[0])}
+                          className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
+                        />
+                        <button
+                          type="button"
+                          className="bg-red-500 text-white px-2 py-1 rounded"
+                          onClick={() => setFiles(files.filter((_, i) => i !== index))}
+                        >
+                          حذف
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="bg-blue-500 text-white mx-2 px-4 py-2 rounded"
+                      onClick={handleAddFile}
+                    >
+                      افزودن فایل
+                    </button>
                   </div>
 
                   <div className="space-y-2 w-full">
@@ -230,20 +308,51 @@ const AddProduct = () => {
                     />
                   </div>
 
+                  {/* Multiple tags */}
                   <div className="space-y-2 w-full">
-                    <label className="text-gray-700 dark:text-gray-300"> برچسب ها</label>
-                    <input
-                      name="tags"
-                      autoComplete="tags"
-                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                      placeholder="برچسب ها را با کاما از هم جدا کنید"
-                      type="text"
-                      value={tags}
-                      onChange={(e) => setTags(e.target.value)}
-                    />
+                    <label className="text-gray-700 dark:text-gray-300">تگ ها : </label>
+
+                    {tags.map((tag, index) => (
+                      <div key={index} className="flex items-center gap-x-2">
+                        <input
+                          type="text"
+                          value={tag || ""}
+                          onChange={(e) => handleTagChange(index, e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleAddTag();
+                              setTimeout(() => {
+                                // Focus on the newly added input field
+                                const nextInput = document.querySelector(
+                                  `input[name="tag-${tags.length}"]`
+                                );
+                                if (nextInput) nextInput.focus();
+                              }, 0);
+                            }
+                          }}
+                          name={`tag-${index}`} // Add a unique name for each input
+                          className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
+                        />
+                        <button
+                          type="button"
+                          className="bg-green-500 text-white px-2 py-1 rounded"
+                          onClick={handleAddTag}
+                        >
+                          +
+                        </button>
+                        <button
+                          type="button"
+                          className="bg-red-500 text-white px-2 py-1 rounded"
+                          onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                        >
+                          -
+                        </button>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="space-y-2 w-full">
+                  {/* <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">فرمت فایل ها</label>
                     <input
                       name="types"
@@ -254,7 +363,32 @@ const AddProduct = () => {
                       value={types}
                       onChange={(e) => setTypes(e.target.value)}
                     />
-                  </div>
+                  </div> */}
+
+                  <select
+                    name="types"
+                    autoComplete="types"
+                    className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                    placeholder="دسته بندی"
+                    type="text"
+                    required
+                    multiple
+                    value={selectedTypes}
+                    onChange={(e) => {
+                      const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+                      setSelectedTypes(selectedOptions); // Update state with selected options
+                    }}
+                    >
+                    <option value="">انتخاب فرمت فایل ها </option>
+                    {types.map((type, index) => {
+                      return (
+                        <option key={index} value={type}>
+                          {type}
+                        </option>
+                      );
+                    })}
+                  </select>
+
                   <label htmlFor="custom-switch" className="flex items-center cursor-pointer">
                     <div className="relative">
                       <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
@@ -265,6 +399,18 @@ const AddProduct = () => {
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
                   </label>
+
+                  <label htmlFor="award-switch" className="flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input id="award-switch" type="checkbox" className="sr-only" checked={award} onChange={(e) => setAward(e.target.checked)} />
+                      <div className={`block w-10 h-5 rounded-full ${award ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
+                      <div
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${award ? "transform translate-x-5" : ""
+                          }`}></div>
+                    </div>
+                    <span className="ms-2 text-sm dark:text-white">{award ? "جایزه دار" : "غیر جایزه دار"}</span>
+                  </label>
+
                   <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
                     <div className="relative">
                       <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
@@ -292,14 +438,14 @@ const AddProduct = () => {
                         </option>
                       );
                     })}
-                  </select>           
+                  </select>
                   <div>
-                  <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
-                    افزودن
-                  </button>
-                  <Link href={"/admin/products"} className="bg-red-700 text-white py-2 px-4 rounded">
-                    انصراف
-                  </Link>
+                    <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
+                      افزودن
+                    </button>
+                    <Link href={"/admin/products"} className="bg-red-700 text-white py-2 px-4 rounded">
+                      انصراف
+                    </Link>
                   </div>
                 </div>
               </form>
