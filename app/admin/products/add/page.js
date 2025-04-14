@@ -125,15 +125,13 @@ const AddProduct = () => {
       formData.append("award", award);
 
       // Append all files
-      files.forEach((file) => {
-        console.log("noooonooonooo", file)
+      files.forEach((file, index) => {
         if (file) formData.append("files", file);
       });
 
       // Append all images
       images.forEach((image, index) => {
         if (image) formData.append("images", image);
-        console.log("form data is****:", formData);
       });
 
       const response = await fetch("/api/products", {
@@ -351,19 +349,6 @@ const AddProduct = () => {
                       </div>
                     ))}
                   </div>
-
-                  {/* <div className="space-y-2 w-full">
-                    <label className="text-gray-700 dark:text-gray-300">فرمت فایل ها</label>
-                    <input
-                      name="types"
-                      autoComplete="types"
-                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                      placeholder="در صورت داشتن چندین فرمت آنها را با کاما از هم جدا کنید"
-                      type="text"
-                      value={types}
-                      onChange={(e) => setTypes(e.target.value)}
-                    />
-                  </div> */}
 
                   <select
                     name="types"

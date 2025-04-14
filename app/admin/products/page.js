@@ -71,17 +71,20 @@ const Products = () => {
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
-                            <th scope="col" className=" px-4 py-4">
+                          <th scope="col" className=" px-4 py-4">
                               #
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               نام
                             </th>
                             <th scope="col" className=" px-4 py-4">
-                              توضیحات
+                            نویسنده
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               دسته بندی
+                            </th>
+                            <th scope="col" className=" px-4 py-4">
+                              فرمت
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               تصویر
@@ -90,12 +93,8 @@ const Products = () => {
                               قیمت
                             </th>
                             <th scope="col" className=" px-4 py-4">
-                              فرمت
+                              وضعیت
                             </th>
-                            <th scope="col" className=" px-4 py-4">
-                              موجودی
-                            </th>
-
                             <th scope="col" className=" px-4 py-4">
                               عملیات
                             </th>
@@ -146,10 +145,13 @@ const Products = () => {
                               نام
                             </th>
                             <th scope="col" className=" px-4 py-4">
-                              توضیحات
+                            نویسنده
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               دسته بندی
+                            </th>
+                            <th scope="col" className=" px-4 py-4">
+                              فرمت
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               تصویر
@@ -158,12 +160,8 @@ const Products = () => {
                               قیمت
                             </th>
                             <th scope="col" className=" px-4 py-4">
-                              فرمت
-                            </th>
-                            <th scope="col" className=" px-4 py-4">
                               وضعیت
                             </th>
-
                             <th scope="col" className=" px-4 py-4">
                               عملیات
                             </th>
@@ -176,13 +174,13 @@ const Products = () => {
                                 <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
                                   <td className="whitespace-nowrap  px-4 py-4 font-medium">{index + 1}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.name}</td>
-                                  <td className="whitespace-nowrap  px-4 py-4">{product.description}</td>
+                                  <td className="whitespace-nowrap  px-4 py-4">{product.author}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.category?.name || "بدون دسته بندی"}</td>
+                                  <td className="whitespace-nowrap  px-4 py-4">{product.types.map(tp => ` ${tp}`)}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">
                                     <Image src={product.imageUrls?.[0] || "/uploads/logo2.webp"} width={100} height={100} alt={product.name || "product image"} />
                                   </td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.price.toLocaleString("fa-IR")} تومان</td>
-                                  <td className="whitespace-nowrap  px-4 py-4">{product.types}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.active ? "فعال" : "غیرفعال"}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">
                                     <div className="flex justify-center gap-x-2">

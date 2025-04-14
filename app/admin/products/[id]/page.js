@@ -10,18 +10,19 @@ import Skeleton from "react-loading-skeleton";
 const UpdateProduct = () => {
   const { id } = useParams();
   const [name, setName] = useState("");
+  const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState(null);
-  const [currentFile, setCurrentFile] = useState("");
-  const [image, setImage] = useState(null);
-  const [currentImage, setCurrentImage] = useState("");
+  const [files, setFiles] = useState([]);
+  const [images, setImages] = useState([]);
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
-  const [tags, setTags] = useState("");
-  const [types, setTypes] = useState("");
+  const [tags, setTags] = useState([]);
+  const [types, setTypes] = useState(["pdf", "docx", "ppt", "png", "jpeg"]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
   const [active, setActive] = useState("");
   const [category, setCategory] = useState("");
   const [free, setFree] = useState(false);
+  const [award, setAward] = useState(false);
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,16 +36,20 @@ const UpdateProduct = () => {
         const productResponse = await fetch(`/api/products/${id}`);
         const productData = await productResponse.json();
         setName(productData.name);
+        setAuthor(productData.author);
         setDescription(productData.description);
-        setCurrentFile(productData.fileUrl);
-        setCurrentImage(productData.imageUrl);
+        setFiles(productData.fileUrls);
+        setImages(productData.imageUrls);
         setPrice(productData.price);
         setDiscountPrice(productData.discountPrice);
-        setTags(productData.tags);
-        setTypes(productData.types);
+        setTags(Array.isArray(productData.tags) ? productData.tags : []); // Ensure tags is an array
+        setSelectedTypes(productData.types);
         setActive(productData.active);
         setFree(productData.free);
+        setAward(productData.award);
         setCategory(productData.category);
+
+     
 
         const categoriesResponse = await fetch("/api/categories");
         const categoriesData = await categoriesResponse.json();
@@ -58,6 +63,38 @@ const UpdateProduct = () => {
 
     fetchProductData();
   }, [id]);
+ 
+  const handleAddFile = () => {
+    setFiles([...files, null]); // Add a new empty file slot
+  };
+
+  const handleAddImage = () => {
+    setImages([...images, null]); // Add a new empty image slot
+  };
+
+  const handleAddTag = () => {
+    setTags([...tags, ""]); // Add a new empty tag slot
+  };
+
+  const handleFileChange = (index, file) => {
+    const updatedFiles = [...files];
+    updatedFiles[index] = file;
+    setFiles(updatedFiles);
+    console.log(files);
+  };
+
+  const handleImageChange = (index, image) => {
+    console.log(images)
+    const updatedImages = [...images];
+    updatedImages[index] = image;
+    setImages(updatedImages);
+  };
+
+  const handleTagChange = (index, tag) => {
+    const updatedTags = [...tags];
+    updatedTags[index] = tag; // Update the specific tag
+    setTags(updatedTags); // Update the state
+  };
 
   const validateForm = () => {
     if (!name || name.trim() === "") {
@@ -106,21 +143,27 @@ const UpdateProduct = () => {
     try {
       const formData = new FormData();
       formData.append("name", name);
+      formData.append("author", author);
       formData.append("description", description);
       formData.append("price", price);
       formData.append("category", category);
       formData.append("discountPrice", discountPrice);
       formData.append("tags", tags);
-      formData.append("types", types);
+      formData.append("types", selectedTypes);
       formData.append("active", active);
       formData.append("free", free);
+      formData.append("award", award);
 
-      if (image) {
-        formData.append("image", image);
-      }
-      if (file) {
-        formData.append("file", file);
-      }
+
+      // Append all files
+      files.forEach((file) => {
+        if (file) formData.append("files", file);
+      });
+
+      // Append all images
+      images.forEach((image) => {
+        if (image) formData.append("images", image);
+      });
 
       const response = await fetch(`/api/products/${id}`, {
         method: "PUT",
@@ -147,6 +190,7 @@ const UpdateProduct = () => {
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
           <h1 className="text-white absolute z-10 right-8 top-6 font-bold  text-xl md:text-3xl">ویرایش محصول </h1>
+          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت محصول انتخاب شده را ویرایش کنید.</span>
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
             src={"/uploads/top-header.png"}
@@ -174,6 +218,8 @@ const UpdateProduct = () => {
               {formError && <h3>{formError}</h3>}
               <form className="py-4" onSubmit={handleSubmit}>
                 <div className="flex flex-col items-start gap-y-4 w-full">
+
+
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">نام</label>
                     <input
@@ -184,6 +230,19 @@ const UpdateProduct = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2 w-full">
+                    <label className="text-gray-700 dark:text-gray-300">نویسنده</label>
+                    <input
+                      name="author"
+                      autoComplete="author"
+                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                      placeholder="نویسنده"
+                      type="text"
+                      value={author}
+                      onChange={(e) => setAuthor(e.target.value)}
                     />
                   </div>
 
@@ -200,43 +259,84 @@ const UpdateProduct = () => {
                     />
                   </div>
 
-                  <div className="relative w-full">
-                    <input
-                      id="image-upload"
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      autoComplete="image"
-                      onChange={(e) => setImage(e.target.files[0])}
-                      className="hidden"
-                    />
+                  {/* Multiple Images */}
+                  <div className="space-y-2">
+                    <label className="text-gray-700 dark:text-gray-300">تصاویر :</label>
+                    {images.map((image, index) => (
+                      <div key={index} className="space-y-2 pb-5">
+                        {/* Display the image name or preview */}
+                        {typeof image === "string" ? (
+                          <p className="text-gray-500 dark:text-gray-300">{image}</p> // Show the previously selected image name or URL
+                        ) : (
+                          image && (
+                            <p className="text-gray-500 dark:text-gray-300">{image.name}</p> // Show the name of the newly selected file
+                          )
+                        )}
+                        <div className="flex items-center gap-x-2">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageChange(index, e.target.files[0])}
+                            className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
+                          />
+                          <button
+                            type="button"
+                            className="bg-red-500 text-white px-2 py-1 rounded"
+                            onClick={() => setImages(images.filter((_, i) => i !== index))}
+                          >
+                            حذف
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
+                      onClick={handleAddImage}
+                    >
+                      افزودن تصویر
+                    </button>
+                  </div>
 
-                    <label
-                      htmlFor="image-upload"
-                      className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
-                      📂 تغییر تصویر
-                    </label>
-                    <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
-                      {image ? image.name : currentImage}
-                    </span>
+                  {/* Multiple Files */}
+                  <div className="space-y-2">
+                    <label className="text-gray-700 dark:text-gray-300">فایل ها :</label>
+                    {files.map((file, index) => (
+                      <div key={index} className="space-y-2 pb-5">
+                        {/* Display the file name or preview */}
+                        {typeof file === "string" ? (
+                          <p className="text-gray-500 dark:text-gray-300">{file}</p> // Show the previously selected file name or URL
+                        ) : (
+                          file && (
+                            <p className="text-gray-500 dark:text-gray-300">{file.name}</p> // Show the name of the newly selected file
+                          )
+                        )}
+                        <div className="flex items-center gap-x-2">
+                          <input
+                            type="file"
+                            accept="file/*"
+                            onChange={(e) => handleFileChange(index, e.target.files[0])}
+                            className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
+                          />
+                          <button
+                            type="button"
+                            className="bg-red-500 text-white px-2 py-1 rounded"
+                            onClick={() => setFiles(files.filter((_, i) => i !== index))}
+                          >
+                            حذف
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
+                      onClick={handleAddFile}
+                    >
+                      افزودن فایل
+                    </button>
                   </div>
-                  <div className="relative w-full">
-                    <input 
-                    id="file-upload" 
-                    name="file" type="file" 
-                    accept="file/*" 
-                    onChange={(e) => setFile(e.target.files[0])} 
-                    className="hidden" 
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="block cursor-pointer rounded border border-gray-200 bg-gray-100 px-4 py-2 text-center text-gray-700 dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 hover:bg-gray-200 transition-all duration-300">
-                      📂 تغییر فایل
-                    </label>
-                    <span id="file-name" className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
-                      {file ? file.name : currentFile}
-                    </span>
-                  </div>
+
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">قیمت</label>
                     <input
@@ -258,39 +358,81 @@ const UpdateProduct = () => {
                       className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                       placeholder="قیمت تخفیفی"
                       type="number"
-                      value={discountPrice || ""}
+                      value={discountPrice}
                       onChange={(e) => setDiscountPrice(e.target.value)}
                     />
                   </div>
 
+                  {/* Multiple tags */}
                   <div className="space-y-2 w-full">
-                    <label className="text-gray-700 dark:text-gray-300"> برچسب ها</label>
-                    <input
-                      name="tags"
-                      autoComplete="tags"
-                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                      placeholder="برچسب ها را با کاما از هم جدا کنید"
-                      type="text"
-                      value={tags || ""}
-                      onChange={(e) => setTags(e.target.value)}
-                    />
+                    <label className="text-gray-700 dark:text-gray-300">تگ ها : </label>
+                    {/* <option value="" disabled> تگ های انتخاب شده: {tags.map(tg => ` ${tg}  `)}</option> */}
+                    {tags.map((tag, index) => (
+                      <div key={index} className="flex items-center gap-x-2">
+                        <input
+                          type="text"
+                          value={tag}
+                          onChange={(e) => handleTagChange(index, e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleAddTag();
+                              setTimeout(() => {
+                                // Focus on the newly added input field
+                                const nextInput = document.querySelector(
+                                  `input[name="tag-${tags.length}"]`
+                                );
+                                if (nextInput) nextInput.focus();
+                              }, 0);
+                            }
+                          }}
+                          name={`tag-${index}`} // Add a unique name for each input
+                          className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
+                        />
+                        <button
+                          type="button"
+                          className="bg-green-500 text-white px-2 py-1 rounded"
+                          onClick={handleAddTag}
+                        >
+                          +
+                        </button>
+                        <button
+                          type="button"
+                          className="bg-red-500 text-white px-2 py-1 rounded"
+                          onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                        >
+                          -
+                        </button>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="space-y-2 w-full">
-                    <label className="text-gray-700 dark:text-gray-300">فرمت فایل ها</label>
-                    <input
-                      name="types"
-                      autoComplete="types"
-                      className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                      placeholder="در صورت داشتن چندین فرمت آنها را با کاما از هم جدا کنید"
-                      type="text"
-                      value={types || ""}
-                      onChange={(e) => setTypes(e.target.value)}
-                    />
-                  </div>
+                  <select
+                    name="types"
+                    autoComplete="types"
+                    className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                    placeholder="دسته بندی"
+                    type="text"
+                    multiple
+                    value={selectedTypes}
+                    onChange={(e) => {
+                      const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+                      setSelectedTypes(selectedOptions); // Update state with selected options
+                    }}
+                  >
+                    <option value="" disabled> فرمت های انتخاب شده: {selectedTypes.map(typ => ` ${typ} `)}</option>
+                    {types.map((type, index) => {
+                      return (
+                        <option key={index} value={type}>
+                          {type}
+                        </option>
+                      );
+                    })}
+                  </select>
+
                   <label htmlFor="custom-switch" className="flex items-center cursor-pointer">
                     <div className="relative">
-                      <input id="custom-switch" type="checkbox" className="sr-only" checked={active || ""} onChange={(e) => setActive(e.target.checked)} />
+                      <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
                         className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${active ? "transform translate-x-5" : ""
@@ -298,9 +440,21 @@ const UpdateProduct = () => {
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
                   </label>
+
+                  <label htmlFor="award-switch" className="flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input id="award-switch" type="checkbox" className="sr-only" checked={award} onChange={(e) => setAward(e.target.checked)} />
+                      <div className={`block w-10 h-5 rounded-full ${award ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
+                      <div
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${award ? "transform translate-x-5" : ""
+                          }`}></div>
+                    </div>
+                    <span className="ms-2 text-sm dark:text-white">{award ? "جایزه دار" : "غیر جایزه دار"}</span>
+                  </label>
+
                   <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
                     <div className="relative">
-                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free || ""} onChange={(e) => setFree(e.target.checked)} />
+                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
                         className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${free ? "transform translate-x-5" : ""
@@ -327,12 +481,12 @@ const UpdateProduct = () => {
                     })}
                   </select>
                   <div>
-                  <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
-                    ویرایش
-                  </button>
-                  <Link href={"/admin/products"} className="bg-red-700 text-white py-2 px-4 rounded">
-                    انصراف
-                  </Link>
+                    <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
+                      ویرایش
+                    </button>
+                    <Link href={"/admin/products"} className="bg-red-700 text-white py-2 px-4 rounded">
+                      انصراف
+                    </Link>
                   </div>
                 </div>
               </form>

@@ -2,7 +2,7 @@ import connectToDatabase from "@/app/lib/db";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { join } from "path";
-import { writeFile } from "fs/promises";
+import {unlink, writeFile } from "fs/promises";
 
 export async function GET(request) {
   await connectToDatabase();
@@ -85,7 +85,6 @@ export async function POST(request) {
         }
       );
     }
-
 
     if (description.length < 3 || description.length > 200) {
       return new Response(

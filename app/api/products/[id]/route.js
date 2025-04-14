@@ -40,126 +40,110 @@ export async function PUT(request, { params }) {
     if (!product) {
       return NextResponse.json({
         success: false,
-        message: " محصول معتبر نیست",
+        message: "محصول معتبر نیست",
       });
     }
 
     const name = data.get("name");
+    const author = data.get("author");
     const description = data.get("description");
     const price = data.get("price");
     const discountPrice = data.get("discountPrice");
     const category = data.get("category");
-    const tags = data.get("tags");
-    const types = data.get("types");
+    const types = data.get("types")?.split(",").map((tag) => tag.trim()) || [];
+    const tags = data.get("tags")?.split(",").map((tag) => tag.trim()) || [];
     const active = data.get("active");
     const free = data.get("free");
-    const file = data.get("file");
-    const image = data.get("image");
+    const award = data.get("award");
 
-    if (!name || !description || isNaN(price) || !category) {
-      return new Response(
-        JSON.stringify({ message: "تمامی فیلد ها الزامی میباشند" }),
-        {
-          status: 400,
-        }
-      );
-    }
+    // Get all files and images as arrays
+    let files = data.getAll("files");
+    let images = data.getAll("images");
 
-    if (!name || typeof name !== "string" || name.trim() === "") {
-      return new Response(
-        JSON.stringify({ message: "نام محصول الزامی میباشد" }),
-        {
-          status: 400,
-        }
-      );
-    }
-    if (name.length < 3 || name.length > 30) {
-      return new Response(
-        JSON.stringify({ message: "نام باید بین ۳ تا ۳۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
-    }
-
-    if (
-      !description ||
-      typeof description !== "string" ||
-      description.trim() === ""
-    ) {
-      return new Response(
-        JSON.stringify({ message: "توضیحات محصول الزامی میباشد" }),
-        {
-          status: 400,
-        }
-      );
-    }
-    if (description.length < 3 || description.length > 200) {
-      return new Response(
-        JSON.stringify({ message: "توضیحات باید بین ۳ تا ۲۰۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
-    }
-
-    if (price <= 0) {
-      return new Response(
-        JSON.stringify({ message: "قیمت یا موجودی باید بیش از عدد ۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
-    }
-    if (discountPrice && discountPrice <= 0 ) {
-      return new Response(
-        JSON.stringify({ message: "قیمت یا موجودی باید بیش از عدد ۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
-    }
-    let imageUrl = product.imageUrl;
-    let fileUrl = product.fileUrl;
-
-
-    if (image && image.name) {
-      const bytes = await image.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const uploadDir = join(process.cwd(), "public/uploads/images");
-      const filePath = join(uploadDir, image.name);
-
-      await writeFile(filePath, buffer);
-      imageUrl = `/uploads/images/${image.name}`;
-
-      const oldFilePath = join(process.cwd(), "public", product.imageUrl);
-      await unlink(oldFilePath).catch(() => {
-        console.log("خطا در حذف تصویر قبلی");
+    if (!files.length || !images.length) {
+      return NextResponse.json({
+        success: false,
+        console: "files",
+        message: "آپلود فایل‌ها و تصاویر الزامی میباشد",
       });
     }
 
-    if (file && file.name) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+    let imageUrls = [];
+    let fileUrls = [];
 
-      const uploadDir = join(process.cwd(), "public/uploads/files");
-      const filePath = join(uploadDir, file.name);
+    // Handle images
+    if (images && images.length > 0) {
+      for (const image of images) {
+        if (image instanceof File) {
+          // Process new image files
+          const bytes = await image.arrayBuffer();
+          const buffer = Buffer.from(bytes);
 
-      await writeFile(filePath, buffer);
-     fileUrl = `/uploads/files/${file.name}`;
+          const uploadDir = join(process.cwd(), "public/uploads/images");
+          const filePath = join(uploadDir, image.name);
 
-      const oldFilePath = join(process.cwd(), "public", product.fileUrl);
-      await unlink(oldFilePath).catch(() => {
-        console.log("خطا در حذف تصویر قبلی");
-      });
+          await writeFile(filePath, buffer);
+          imageUrls.push(`/uploads/images/${image.name}`);
+        } else if (typeof image === "string") {
+          // Keep existing image URLs
+          imageUrls.push(image);
+        } else {
+          console.log("Unexpected image type:", image);
+        }
+      }
+
+      // Delete old images that are not in the new list
+      if (product.imageUrls && product.imageUrls.length > 0) {
+        for (const oldImage of product.imageUrls) {
+          if (!imageUrls.includes(oldImage)) {
+            const oldImagePath = join(process.cwd(), "public", oldImage);
+            await unlink(oldImagePath).catch(() => {
+              console.log("خطا در حذف تصویر قبلی");
+            });
+          }
+        }
+      }
     }
 
+    // Handle files
+    if (files && files.length > 0) {
+     
+      for (const file of files) {
+        if (file instanceof File) {  
+          // Process new file uploads    
+          const bytes = await file.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+       
+          const uploadDir = join(process.cwd(), "public/uploads/files");
+          const filePath = join(uploadDir, file.name);
+
+          await writeFile(filePath, buffer);
+          fileUrls.push(`/uploads/files/${file.name}`);
+        } else if (typeof file === "string") {
+          fileUrls.push(file);
+        } else {
+          console.log("Unexpected image type:", file);
+        }
+      }
+
+       // Delete old files that are not in the new list
+      if (product.fileUrls && product.fileUrls.length > 0) {
+        for (const oldFile of product.fileUrls) {
+          if (!fileUrls.includes(oldFile)) {
+            const oldFilePath = join(process.cwd(), "public", oldFile);
+            await unlink(oldFilePath).catch(() => {
+              console.log("خطا در حذف فایل قبلی");
+            });
+          }
+        }
+      }
+    }
 
     const updateProduct = await Product.findByIdAndUpdate(
       id,
       {
         name,
+        author,
         description,
         price,
         discountPrice,
@@ -168,18 +152,19 @@ export async function PUT(request, { params }) {
         types,
         active,
         free,
-        imageUrl,
-        fileUrl,
+        award,
+        imageUrls,
+        fileUrls,
       },
       { new: true }
     );
 
     return new Response(JSON.stringify(updateProduct), { status: 200 });
   } catch (error) {
-    console.log("خطا در ویرایش محصول");
+    console.log("خطا در ویرایش محصول", error);
     return NextResponse.json({
       success: false,
-      message: "خطا در ویرایش مخصول",
+      message: "خطا در ویرایش محصول",
     });
   }
 }
