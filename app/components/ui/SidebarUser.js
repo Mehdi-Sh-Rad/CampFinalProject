@@ -102,7 +102,7 @@ const Sidebar = () => {
               <span
                 className={`${pathName.startsWith("/admin/categories") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-                دســــته بنـــــدی ها
+            ویرایش اطلاعات کاربری
               </span>
             </li>
           </Link>
@@ -131,7 +131,7 @@ const Sidebar = () => {
               <span
                 className={`${pathName.startsWith("/admin/products") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-                محـصــــولات
+                سفارشات من
               </span>
             </li>
           </Link>
@@ -190,7 +190,7 @@ const Sidebar = () => {
                   : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}
               >
-                مدیریت نظرات
+                 نظرات من
               </span>
             </li>
           </Link>
@@ -216,7 +216,44 @@ const Sidebar = () => {
               <span
                 className={`${pathName.startsWith("/admin/productQuestions") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-                سوالات محصول
+                سوالات من
+              </span>
+            </li>
+          </Link>
+
+          
+          <Link className=" " href={"/admin/payments"}>
+            <li
+              className={`flex ${pathName.startsWith("/admin/payments") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
+              <svg
+                width="25"
+                className="svg-icon"
+                viewBox="0 0 20 20">
+                <path d="M10.219,1.688c-4.471,0-8.094,3.623-8.094,8.094s3.623,8.094,8.094,8.094s8.094-3.623,8.094-8.094S14.689,1.688,10.219,1.688 M10.219,17.022c-3.994,0-7.242-3.247-7.242-7.241c0-3.994,
+                3.248-7.242,7.242-7.242c3.994,0,7.241,3.248,7.241,7.242C17.46,13.775,14.213,17.022,10.219,17.022 M15.099,7.03c-0.167-0.167-0.438-0.167-0.604,0.002L9.062,12.48l-2.269-2.277c-0.166-0.167-0.437-0.167-0.603,
+                0c-0.166,0.166-0.168,0.437-0.002,0.603l2.573,2.578c0.079,0.08,0.188,0.125,0.3,0.125s0.222-0.045,0.303-0.125l5.736-5.751C15.268,7.466,15.265,7.196,15.099,7.03">
+                </path>
+              </svg>
+              <span
+                className={`${pathName.startsWith("/admin/payments") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                  } ${!isSidebarOpen && "hidden"}`}>
+                  کیف پول
+              </span>
+            </li>
+          </Link>
+          <Link className=" " href={"/admin/tickets"}>
+            <li
+              className={`flex ${pathName.startsWith("/admin/tickets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
+              <svg className="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.079 6.839a3 3 0 0 0-4.255.1M13 20h1.083A3.916 3.916 0 0 0 18 16.083V9A6
+                6 0 1 0 6 9v7m7 4v-1a1 1 0 0 0-1-1h-1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1Zm-7-4v-6H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1Zm12-6h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1v-6Z" />
+              </svg>
+              <span
+                className={`${pathName.startsWith("/admin/tickets") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                  } ${!isSidebarOpen && "hidden"}`}>
+                 تیکت های من
               </span>
             </li>
           </Link>
@@ -240,62 +277,26 @@ const Sidebar = () => {
               <span
                 className={`${pathName.startsWith("/admin/frequentQuestions") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-                سوالات متداول
+                تغییر کلمه عبور
               </span>
             </li>
           </Link>
-          <Link className=" " href={"/admin/payments"}>
+          
+          <Link className=" " href={"/"}>
             <li
-              className={`flex ${pathName.startsWith("/admin/payments") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+              className={`flex ${pathName.startsWith("/homepage") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
-              <svg
+              <svg className="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                 width="25"
-                className="svg-icon"
-                viewBox="0 0 20 20">
-                <path d="M10.219,1.688c-4.471,0-8.094,3.623-8.094,8.094s3.623,8.094,8.094,8.094s8.094-3.623,8.094-8.094S14.689,1.688,10.219,1.688 M10.219,17.022c-3.994,0-7.242-3.247-7.242-7.241c0-3.994,
-                3.248-7.242,7.242-7.242c3.994,0,7.241,3.248,7.241,7.242C17.46,13.775,14.213,17.022,10.219,17.022 M15.099,7.03c-0.167-0.167-0.438-0.167-0.604,0.002L9.062,12.48l-2.269-2.277c-0.166-0.167-0.437-0.167-0.603,
-                0c-0.166,0.166-0.168,0.437-0.002,0.603l2.573,2.578c0.079,0.08,0.188,0.125,0.3,0.125s0.222-0.045,0.303-0.125l5.736-5.751C15.268,7.466,15.265,7.196,15.099,7.03">
-                </path>
-              </svg>
-              <span
-                className={`${pathName.startsWith("/admin/payments") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
-                  } ${!isSidebarOpen && "hidden"}`}>
-                مدیریت پرداخت ها
-              </span>
-            </li>
-          </Link>
-          <Link className=" " href={"/admin/tickets"}>
-            <li
-              className={`flex ${pathName.startsWith("/admin/tickets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
-                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
-              <svg className="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.079 6.839a3 3 0 0 0-4.255.1M13 20h1.083A3.916 3.916 0 0 0 18 16.083V9A6
-                6 0 1 0 6 9v7m7 4v-1a1 1 0 0 0-1-1h-1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1Zm-7-4v-6H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1Zm12-6h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1v-6Z" />
-              </svg>
-              <span
-                className={`${pathName.startsWith("/admin/tickets") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
-                  } ${!isSidebarOpen && "hidden"}`}>
-                مدیریت تیکت ها
-              </span>
-            </li>
-          </Link>
-          <Link className=" " href={"/admin/users"}>
-            <li
-              className={`flex ${pathName.startsWith("/admin/users") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
-                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-3 py-2"} items-center rounded`}>
-              <svg
-                className="w-[30px] h-[30px] text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                width="25"
+                height="24"
                 fill="currentColor"
                 viewBox="0 0 24 24">
-                <path fillRule="evenodd"
-                  d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"
-                  clipRule="evenodd" />
+                <path fillRule="evenodd" d="M11.293 3.293a1 1 0 0 1 1.414 0l6 6 2 2a1 1 0 0 1-1.414 1.414L19 12.414V19a2 2 0 0 1-2 2h-3a1 1 0 0 1-1-1v-3h-2v3a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2v-6.586l-.293.293a1 1 0 0 1-1.414-1.414l2-2 6-6Z" clipRule="evenodd" />
               </svg>
               <span
-                className={`${pathName.startsWith("/admin/users") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                className={`${pathName.startsWith("/homepage") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-                مدیریت کاربران
+                بازگشت به صفحه اصلی
               </span>
             </li>
           </Link>

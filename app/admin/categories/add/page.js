@@ -1,6 +1,6 @@
 "use client";
 import Header from "@/app/components/ui/Header";
-import Sidebar from "@/app/components/ui/Sidebar";
+import Sidebar from "@/app/components/ui/SidebarAdmin";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { use, useState } from "react";

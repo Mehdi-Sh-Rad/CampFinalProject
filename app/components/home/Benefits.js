@@ -1,0 +1,25 @@
+export default function Benefits() {
+  return (
+    <section className="text-center p-4 md:p-8 bg-background my-12">
+      <h3 className="text-lg md:text-xl font-semibold mb-4 text-dark">چرا از بوکینو خرید کنیم؟</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-4 bg-white border border-gray-100 rounded-lg shadow-sm">
+          <h4 className="font-bold text-dark text-sm">تخفیف تا ۵۰٪</h4>
+          <p className="text-dark text-sm">صرفه‌جویی بیشتر در هر خرید</p>
+        </div>
+        <div className="p-4 bg-white border border-gray-100 rounded-lg shadow-sm">
+          <h4 className="font-bold text-dark text-sm">ارسال رایگان</h4>
+          <p className="text-dark text-sm">تحویل سریع در سراسر ایران</p>
+        </div>
+        <div className="p-4 bg-white border border-gray-100 rounded-lg shadow-sm">
+          <h4 className="font-bold text-dark text-sm">جستجوی سریع</h4>
+          <p className="text-dark text-sm">کتاب‌ها را به راحتی پیدا کنید</p>
+        </div>
+        <div className="p-4 bg-white border border-gray-100 rounded-lg shadow-sm">
+          <h4 className="font-bold text-dark text-sm">گزینه هدیه</h4>
+          <p className="text-dark text-sm">کتاب‌ها را به عنوان هدیه بفرستید</p>
+        </div>
+      </div>
+    </section>
+  );
+}

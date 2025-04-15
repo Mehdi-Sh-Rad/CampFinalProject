@@ -2,7 +2,7 @@
 import GeneralError from "@/app/components/ui/GeneralError";
 import Header from "@/app/components/ui/Header";
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/Sidebar";
+import Sidebar from "@/app/components/ui/SidebarAdmin";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";

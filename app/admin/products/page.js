@@ -71,14 +71,14 @@ const Products = () => {
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
-                          <th scope="col" className=" px-4 py-4">
+                            <th scope="col" className=" px-4 py-4">
                               #
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               نام
                             </th>
                             <th scope="col" className=" px-4 py-4">
-                            نویسنده
+                              نویسنده
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               دسته بندی
@@ -145,7 +145,7 @@ const Products = () => {
                               نام
                             </th>
                             <th scope="col" className=" px-4 py-4">
-                            نویسنده
+                              نویسنده
                             </th>
                             <th scope="col" className=" px-4 py-4">
                               دسته بندی
@@ -173,8 +173,18 @@ const Products = () => {
                               return (
                                 <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
                                   <td className="whitespace-nowrap  px-4 py-4 font-medium">{index + 1}</td>
-                                  <td className="whitespace-nowrap  px-4 py-4">{product.name}</td>
-                                  <td className="whitespace-nowrap  px-4 py-4">{product.author}</td>
+                                  <td className="whitespace-nowrap  px-6 py-4" style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>{product.name}</td>
+                                  <td className="whitespace-nowrap  px-6 py-4" style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>{product.author}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.category?.name || "بدون دسته بندی"}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.types.map(tp => ` ${tp}`)}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">

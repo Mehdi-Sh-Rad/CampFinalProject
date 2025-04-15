@@ -1,6 +1,6 @@
 "use client";
 import { useSidebar } from "../context/SidebarContext";
-import Sidebar from "./ui/Sidebar";
+import Sidebar from "./ui/SidebarAdmin";
 import Header from "./ui/Header";
 
 export default function AdminContent({ children }) {

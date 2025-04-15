@@ -10,7 +10,9 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const { data: session, status } = useSession();
   const userName = session?.user?.name || "کاربر";
+  const userAdmin = session?.user?.isAdmin;
   const userImage = session?.user?.image || "/uploads/profile.png";
+
   return (
     <div className={`border-b dark:bg-shop-dark dark:border-b-black border-b-slate-100 py-3 px-10 flex justify-between`}>
       <div className="w-1/2">
@@ -60,7 +62,7 @@ const Header = () => {
             d="M21.4759 5.67351C20.6099 4.04151 18.9059 2.99951 17.0299 2.99951H7.04988C5.17388 2.99951 3.46988 4.04151 2.60388 5.67351C2.40988 6.03851 2.50188 6.49351 2.82488 6.75151L10.2499 12.6905C10.7699 13.1105 11.3999 13.3195 12.0299 13.3195C12.0339 13.3195 12.0369 13.3195 12.0399 13.3195C12.0429 13.3195 12.0469 13.3195 12.0499 13.3195C12.6799 13.3195 13.3099 13.1105 13.8299 12.6905L21.2549 6.75151C21.5779 6.49351 21.6699 6.03851 21.4759 5.67351Z"
             fill="currentColor"></path>
         </svg>
-        <Link className="hidden md:flex" href={"/admin"}>
+        <Link className="hidden md:flex" href={userAdmin ? "/admin" : "/user"}>
           <div className="flex items-center gap-x-2">
             <Image className="rounded-full" src={userImage} width={50} height={50} alt="پروفایل" />
             <span className="text-[#232d42] font-medium dark:text-[#8a92a6]">{userName}</span>
@@ -106,7 +108,7 @@ const Header = () => {
               d="M21.4759 5.67351C20.6099 4.04151 18.9059 2.99951 17.0299 2.99951H7.04988C5.17388 2.99951 3.46988 4.04151 2.60388 5.67351C2.40988 6.03851 2.50188 6.49351 2.82488 6.75151L10.2499 12.6905C10.7699 13.1105 11.3999 13.3195 12.0299 13.3195C12.0339 13.3195 12.0369 13.3195 12.0399 13.3195C12.0429 13.3195 12.0469 13.3195 12.0499 13.3195C12.6799 13.3195 13.3099 13.1105 13.8299 12.6905L21.2549 6.75151C21.5779 6.49351 21.6699 6.03851 21.4759 5.67351Z"
               fill="currentColor"></path>
           </svg>
-          <Link href={"/admin"}>
+          <Link href={userAdmin ? "/user" : "/user"}>
             <div className="flex items-center gap-x-2">
               <Image className="rounded-full" src={userImage} width={50} height={50} alt="پروفایل" />
               <span className="text-[#232d42] font-medium">{userName}</span>
