@@ -33,6 +33,33 @@ export async function POST(req) {
   try {
     await connectDB();
     const { code, category, percentage, date, status } = await req.json();
+
+
+    if (!category) {
+      return new Response(JSON.stringify({ message: "دسته‌بندی الزامی است" }), { status: 400 });
+    }
+
+    // Validate category existence
+    const categoryExists = await Category.findById(category);
+    if (!categoryExists) {
+      return new Response(JSON.stringify({ message: "دسته‌بندی یافت نشد" }), { status: 400 });
+    }
+
+    if (!percentage || isNaN(percentage)) {
+      return new Response(JSON.stringify({ message: "درصد تخفیف الزامی و باید عدد باشد" }), {
+        status: 400,
+      });
+    }
+    if (percentage < 1 || percentage > 100) {
+      return new Response(JSON.stringify({ message: "درصد تخفیف باید بین ۱ تا ۱۰۰ باشد" }), {
+        status: 400,
+      });
+    }
+
+    if (!date) {
+      return new Response(JSON.stringify({ message: "تاریخ انقضا الزامی است" }), { status: 400 });
+    }
+    
     const currentDate = new Date();
     const expirationDate = new Date(date);
 
