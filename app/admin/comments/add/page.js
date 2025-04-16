@@ -55,6 +55,14 @@ const AddComment = () => {
 
   // Validate form input
   const validateForm = () => {
+    if (!user) {
+      setFormError("انتخاب کاربر الزامی است");
+      return false;
+    }
+    if (!product) {
+      setFormError("انتخاب محصول الزامی است");
+      return false;
+    }
     if (text.trim() === "") {
       setFormError(" لطفا نظر خود را در مورد محصول بنویسید");
       return false;
