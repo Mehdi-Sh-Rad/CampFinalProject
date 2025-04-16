@@ -59,7 +59,7 @@ export async function POST(req) {
     if (!date) {
       return new Response(JSON.stringify({ message: "تاریخ انقضا الزامی است" }), { status: 400 });
     }
-    
+
     const currentDate = new Date();
     const expirationDate = new Date(date);
 
@@ -79,6 +79,11 @@ export async function PUT(req) {
     const { id, code, category, percentage, date, status } = await req.json();
     if (!id) {
       return new Response(JSON.stringify({ message: 'ID الزامی است' }), { status: 400 });
+    }
+    // Validate discount existence
+    const existingDiscount = await Discount.findById(id);
+    if (!existingDiscount) {
+      return new Response(JSON.stringify({ message: "کد تخفیف یافت نشد" }), { status: 404 });
     }
     const currentDate = new Date();
     const expirationDate = new Date(date);
