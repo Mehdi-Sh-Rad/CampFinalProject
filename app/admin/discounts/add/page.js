@@ -15,7 +15,7 @@ const AddDiscount = () => {
   const [percentage, setPercentage] = useState("");
   const [expirationDate, setExpirationDate] = useState(null);
   const [status, setStatus] = useState(true);
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
@@ -46,6 +46,10 @@ const AddDiscount = () => {
   const validateForm = () => {
     if (code.trim() === "") {
       setFormError("کد تخفیف الزامی می‌باشد");
+      return false;
+    }
+    if (!category) {
+      setFormError("انتخاب دسته‌بندی الزامی است");
       return false;
     }
     if (percentage.trim() === "") {
