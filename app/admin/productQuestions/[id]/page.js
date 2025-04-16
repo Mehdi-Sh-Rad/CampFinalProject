@@ -2,11 +2,10 @@
 
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 const AnswerProductQuestion = () => {
-
   const { id } = useParams();
   const [answer, setAnswer] = useState("");
   const [productQuestions, setProductQuestions] = useState([]);
@@ -15,6 +14,7 @@ const AnswerProductQuestion = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Fetch product question by ID on component mount
   useEffect(() => {
     const fetchProductQuestions = async () => {
       setLoading(true);
@@ -33,7 +33,7 @@ const AnswerProductQuestion = () => {
     fetchProductQuestions();
   }, [id]);
 
-
+  // Validate form input
   const validateForm = () => {
     if (answer.trim() === "") {
       setFormError("نام دسته بندی الزامی میباشد");
@@ -46,6 +46,7 @@ const AnswerProductQuestion = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -101,18 +102,19 @@ const AnswerProductQuestion = () => {
             {formError && <h3>{formError}</h3>}
 
             <form className="py-4" onSubmit={handleSubmit}>
-
-
               <div className="flex flex-col items-start gap-y-4 w-full">
                 <label> کاربر </label>
                 <p className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 border-gray-200 rounded px-4 py-2 w-full transition-all duration-300">
-                  {loading ? "در حال بارگذاری..." : productQuestions.user?.name || "not available"}</p>
+                  {loading ? "در حال بارگذاری..." : productQuestions.user?.name || "not available"}
+                </p>
                 <label> محصول موردنظر </label>
                 <p className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200! border-gray-200 rounded px-4 py-2 w-full transition-all duration-300">
-                  {loading ? "در حال بارگذاری..." : productQuestions.product?.name || "not available"}</p>
+                  {loading ? "در حال بارگذاری..." : productQuestions.product?.name || "not available"}
+                </p>
                 <label> سوال مشتری </label>
                 <p className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 border-gray-200 rounded px-4 py-2 w-full transition-all duration-300">
-                  {loading ? "در حال بارگذاری..." : productQuestions.question}</p>
+                  {loading ? "در حال بارگذاری..." : productQuestions.question}
+                </p>
                 <label>پاسخ شما به سوال</label>
                 <input
                   name="answer"

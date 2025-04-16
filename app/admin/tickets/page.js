@@ -1,18 +1,15 @@
 "use client";
-import GeneralError from "@/app/components/ui/GeneralError";
-import Header from "@/app/components/ui/Header";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch tickets on component mount
   useEffect(() => {
     const fetchTickets = async () => {
       setLoading(true);
@@ -31,6 +28,7 @@ const Tickets = () => {
     fetchTickets();
   }, []);
 
+  // Handle ticket deletion by ID
   const handleDelete = async (id) => {
     try {
       await fetch(`/api/tickets/${id}`, { method: "DELETE" });
@@ -69,6 +67,7 @@ const Tickets = () => {
               <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div className="overflow-hidden">
                   {loading ? (
+                    // Render skeleton table during loading
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -115,6 +114,7 @@ const Tickets = () => {
                       </tbody>
                     </table>
                   ) : (
+                    // Render tickets table
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -143,21 +143,33 @@ const Tickets = () => {
                                 <td className="whitespace-nowrap  px-1 py-1 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap  px-1 py-1">{ticket.topic}</td>
                                 <td className="whitespace-nowrap  px-1 py-1">{ticket.order}</td>
-                                <td className="whitespace-nowrap  px-1 py-4" style={{
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "150px",
-                                }}>{ticket.message.slice(-1)[0]?.text || "No messages yet"}</td>
+                                <td
+                                  className="whitespace-nowrap  px-1 py-4"
+                                  style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>
+                                  {ticket.message.slice(-1)[0]?.text || "No messages yet"}
+                                </td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <Link href={`/admin/tickets/${ticket._id}`}>
-                                      <svg className="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                      <svg
+                                        className="w-6 h-6 text-gray-600 dark:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        fill="none"
+                                        viewBox="0 0 24 24">
                                         <path
                                           stroke="currentColor"
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
-                                          strokeWidth="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"
+                                          strokeWidth="2"
+                                          d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"
                                         />
                                       </svg>
                                     </Link>

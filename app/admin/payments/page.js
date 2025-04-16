@@ -1,7 +1,5 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
-import GeneralError from "@/app/components/ui/GeneralError";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -14,7 +12,7 @@ const Payments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
+  // Fetch payments on component mount
   useEffect(() => {
     const fetchPayments = async () => {
       setLoading(true);
@@ -32,6 +30,7 @@ const Payments = () => {
     fetchPayments();
   }, []);
 
+  // Format date to Persian calendar
   const formatToPersianDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -51,8 +50,7 @@ const Payments = () => {
           <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">اطلاعات پرداخت مشتریان را از این قسمت مدیریت کنید</span>
           <Link
             href="/admin/payments/add"
-            className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg"
-          >
+            className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg">
             افزودن پرداخت - موقت
             <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -74,6 +72,7 @@ const Payments = () => {
                 <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                   <div className="overflow-hidden">
                     {loading ? (
+                      // Render skeleton rows during loading
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
@@ -135,6 +134,7 @@ const Payments = () => {
                         </tbody>
                       </table>
                     ) : (
+                      // Render payments table
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>

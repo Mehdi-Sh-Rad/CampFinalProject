@@ -1,10 +1,7 @@
 "use client";
-import Header from "@/app/components/ui/Header";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { use, useState } from "react";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 
 const AddCategory = () => {
   const [name, setName] = useState("");
@@ -12,6 +9,7 @@ const AddCategory = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Validate form input
   const validateForm = () => {
     if (name.trim() === "") {
       setFormError("نام دسته بندی الزامی میباشد");
@@ -24,6 +22,7 @@ const AddCategory = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {

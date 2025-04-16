@@ -5,13 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-import Skeleton from "react-loading-skeleton";
-
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch products on component mount
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -30,6 +29,7 @@ const Products = () => {
     fetchProducts();
   }, []);
 
+  // Delete product by ID
   const handleDelete = async (id) => {
     try {
       await fetch(`/api/products/${id}`, { method: "DELETE" });
@@ -68,6 +68,7 @@ const Products = () => {
                 <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                   <div className="overflow-hidden">
                     {loading ? (
+                      // Render skeleton rows during loading
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
@@ -135,6 +136,7 @@ const Products = () => {
                         </tbody>
                       </table>
                     ) : (
+                      // Render products table
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
@@ -173,20 +175,28 @@ const Products = () => {
                               return (
                                 <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
                                   <td className="whitespace-nowrap  px-4 py-4 font-medium">{index + 1}</td>
-                                  <td className="whitespace-nowrap  px-6 py-4" style={{
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    maxWidth: "150px",
-                                  }}>{product.name}</td>
-                                  <td className="whitespace-nowrap  px-6 py-4" style={{
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    maxWidth: "150px",
-                                  }}>{product.author}</td>
+                                  <td
+                                    className="whitespace-nowrap  px-6 py-4"
+                                    style={{
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      maxWidth: "150px",
+                                    }}>
+                                    {product.name}
+                                  </td>
+                                  <td
+                                    className="whitespace-nowrap  px-6 py-4"
+                                    style={{
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      maxWidth: "150px",
+                                    }}>
+                                    {product.author}
+                                  </td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.category?.name || "بدون دسته بندی"}</td>
-                                  <td className="whitespace-nowrap  px-4 py-4">{product.types.map(tp => ` ${tp}`)}</td>
+                                  <td className="whitespace-nowrap  px-4 py-4">{product.types.map((tp) => ` ${tp}`)}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">
                                     <Image src={product.imageUrls?.[0] || "/uploads/logo2.webp"} width={100} height={100} alt={product.name || "product image"} />
                                   </td>

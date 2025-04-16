@@ -4,8 +4,7 @@ import Link from "next/link";
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
+import React, { useEffect, useState } from "react";
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -29,6 +28,7 @@ const UpdateProduct = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Fetch product and categories data on component mount
   useEffect(() => {
     const fetchProductData = async () => {
       setLoading(true);
@@ -49,8 +49,6 @@ const UpdateProduct = () => {
         setAward(productData.award);
         setCategory(productData.category);
 
-     
-
         const categoriesResponse = await fetch("/api/categories");
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData);
@@ -63,7 +61,7 @@ const UpdateProduct = () => {
 
     fetchProductData();
   }, [id]);
- 
+
   const handleAddFile = () => {
     setFiles([...files, null]); // Add a new empty file slot
   };
@@ -76,6 +74,7 @@ const UpdateProduct = () => {
     setTags([...tags, ""]); // Add a new empty tag slot
   };
 
+  // Update file at specific index
   const handleFileChange = (index, file) => {
     const updatedFiles = [...files];
     updatedFiles[index] = file;
@@ -83,19 +82,22 @@ const UpdateProduct = () => {
     console.log(files);
   };
 
+  // Update image at specific index
   const handleImageChange = (index, image) => {
-    console.log(images)
+    console.log(images);
     const updatedImages = [...images];
     updatedImages[index] = image;
     setImages(updatedImages);
   };
 
+  // Update tag at specific index
   const handleTagChange = (index, tag) => {
     const updatedTags = [...tags];
     updatedTags[index] = tag; // Update the specific tag
     setTags(updatedTags); // Update the state
   };
 
+  // Validate form inputs
   const validateForm = () => {
     if (!name || name.trim() === "") {
       setFormError("نام محصول الزامی میباشد");
@@ -134,6 +136,7 @@ const UpdateProduct = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -153,7 +156,6 @@ const UpdateProduct = () => {
       formData.append("active", active);
       formData.append("free", free);
       formData.append("award", award);
-
 
       // Append all files
       files.forEach((file) => {
@@ -218,8 +220,6 @@ const UpdateProduct = () => {
               {formError && <h3>{formError}</h3>}
               <form className="py-4" onSubmit={handleSubmit}>
                 <div className="flex flex-col items-start gap-y-4 w-full">
-
-
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">نام</label>
                     <input
@@ -279,21 +279,13 @@ const UpdateProduct = () => {
                             onChange={(e) => handleImageChange(index, e.target.files[0])}
                             className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                           />
-                          <button
-                            type="button"
-                            className="bg-red-500 text-white px-2 py-1 rounded"
-                            onClick={() => setImages(images.filter((_, i) => i !== index))}
-                          >
+                          <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setImages(images.filter((_, i) => i !== index))}>
                             حذف
                           </button>
                         </div>
                       </div>
                     ))}
-                    <button
-                      type="button"
-                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
-                      onClick={handleAddImage}
-                    >
+                    <button type="button" className="bg-blue-500 text-white mx-3 px-4 py-2 rounded" onClick={handleAddImage}>
                       افزودن تصویر
                     </button>
                   </div>
@@ -318,21 +310,13 @@ const UpdateProduct = () => {
                             onChange={(e) => handleFileChange(index, e.target.files[0])}
                             className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                           />
-                          <button
-                            type="button"
-                            className="bg-red-500 text-white px-2 py-1 rounded"
-                            onClick={() => setFiles(files.filter((_, i) => i !== index))}
-                          >
+                          <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setFiles(files.filter((_, i) => i !== index))}>
                             حذف
                           </button>
                         </div>
                       </div>
                     ))}
-                    <button
-                      type="button"
-                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
-                      onClick={handleAddFile}
-                    >
+                    <button type="button" className="bg-blue-500 text-white mx-3 px-4 py-2 rounded" onClick={handleAddFile}>
                       افزودن فایل
                     </button>
                   </div>
@@ -379,9 +363,7 @@ const UpdateProduct = () => {
                               handleAddTag();
                               setTimeout(() => {
                                 // Focus on the newly added input field
-                                const nextInput = document.querySelector(
-                                  `input[name="tag-${tags.length}"]`
-                                );
+                                const nextInput = document.querySelector(`input[name="tag-${tags.length}"]`);
                                 if (nextInput) nextInput.focus();
                               }, 0);
                             }
@@ -389,18 +371,10 @@ const UpdateProduct = () => {
                           name={`tag-${index}`} // Add a unique name for each input
                           className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                         />
-                        <button
-                          type="button"
-                          className="bg-green-500 text-white px-2 py-1 rounded"
-                          onClick={handleAddTag}
-                        >
+                        <button type="button" className="bg-green-500 text-white px-2 py-1 rounded" onClick={handleAddTag}>
                           +
                         </button>
-                        <button
-                          type="button"
-                          className="bg-red-500 text-white px-2 py-1 rounded"
-                          onClick={() => setTags(tags.filter((_, i) => i !== index))}
-                        >
+                        <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setTags(tags.filter((_, i) => i !== index))}>
                           -
                         </button>
                       </div>
@@ -416,11 +390,13 @@ const UpdateProduct = () => {
                     multiple
                     value={selectedTypes}
                     onChange={(e) => {
-                      const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+                      const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value);
                       setSelectedTypes(selectedOptions); // Update state with selected options
-                    }}
-                  >
-                    <option value="" disabled> فرمت های انتخاب شده: {selectedTypes.map(typ => ` ${typ} `)}</option>
+                    }}>
+                    <option value="" disabled>
+                      {" "}
+                      فرمت های انتخاب شده: {selectedTypes.map((typ) => ` ${typ} `)}
+                    </option>
                     {types.map((type, index) => {
                       return (
                         <option key={index} value={type}>
@@ -435,8 +411,9 @@ const UpdateProduct = () => {
                       <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${active ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          active ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
                   </label>
@@ -446,8 +423,9 @@ const UpdateProduct = () => {
                       <input id="award-switch" type="checkbox" className="sr-only" checked={award} onChange={(e) => setAward(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${award ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${award ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          award ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{award ? "جایزه دار" : "غیر جایزه دار"}</span>
                   </label>
@@ -457,8 +435,9 @@ const UpdateProduct = () => {
                       <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${free ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          free ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{free ? "رایگان" : "غیررایگان"}</span>
                   </label>

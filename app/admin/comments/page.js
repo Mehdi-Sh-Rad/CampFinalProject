@@ -1,12 +1,8 @@
 "use client";
-import GeneralError from "@/app/components/ui/GeneralError";
-import Header from "@/app/components/ui/Header";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
@@ -14,6 +10,7 @@ const Comments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  //Fetch comments on component mount
   useEffect(() => {
     const fetchComments = async () => {
       setLoading(true);
@@ -32,6 +29,7 @@ const Comments = () => {
     fetchComments();
   }, []);
 
+  //Delete comment by ID
   const handleDelete = async (id) => {
     try {
       await fetch(`/api/comments/${id}`, { method: "DELETE" });
@@ -41,6 +39,7 @@ const Comments = () => {
     }
   };
 
+  // Toggle comment status
   const handleStatus = async (id, preStatus) => {
     const newStatus = !Boolean(preStatus);
     setStatus(newStatus);
@@ -98,6 +97,7 @@ const Comments = () => {
               <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div className="overflow-hidden">
                   {loading ? (
+                    // Render skeleton rows during loading
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -141,6 +141,7 @@ const Comments = () => {
                       </tbody>
                     </table>
                   ) : (
+                    // Render comments table
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -169,12 +170,16 @@ const Comments = () => {
                                 <td className="whitespace-nowrap  px-6 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">{comment.user?.name || "not available"}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">{comment.product?.name || "not available"}</td>
-                                <td className="whitespace-nowrap  px-6 py-4" style={{
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "150px", 
-                                }}>{comment.text}</td>
+                                <td
+                                  className="whitespace-nowrap  px-6 py-4"
+                                  style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>
+                                  {comment.text}
+                                </td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <button onClick={() => handleDelete(comment._id)}>
@@ -197,12 +202,29 @@ const Comments = () => {
                                       </svg>
                                     </button>
                                     <button onClick={() => handleStatus(comment._id, comment.status)}>
-                                      {comment.status ? <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
-                                      </svg> : <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6" />
-                                      </svg>
-                                      }
+                                      {comment.status ? (
+                                        <svg
+                                          className="w-6 h-6 text-gray-800 dark:text-white"
+                                          aria-hidden="true"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="24"
+                                          height="24"
+                                          fill="none"
+                                          viewBox="0 0 24 24">
+                                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                                        </svg>
+                                      ) : (
+                                        <svg
+                                          className="w-6 h-6 text-gray-800 dark:text-white"
+                                          aria-hidden="true"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="24"
+                                          height="24"
+                                          fill="none"
+                                          viewBox="0 0 24 24">
+                                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                        </svg>
+                                      )}
                                     </button>
                                   </div>
                                 </td>

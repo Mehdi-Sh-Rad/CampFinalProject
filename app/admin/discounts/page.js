@@ -1,7 +1,5 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
-import GeneralError from "@/app/components/ui/GeneralError";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -14,7 +12,7 @@ const Discounts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
+  // Fetch discounts on component mount
   useEffect(() => {
     const fetchDiscounts = async () => {
       setLoading(true);
@@ -32,6 +30,7 @@ const Discounts = () => {
     fetchDiscounts();
   }, []);
 
+  // Delete discount by ID
   const handleDelete = async (id) => {
     try {
       const response = await fetch(`/api/discounts?id=${id}`, { method: "DELETE" });
@@ -48,6 +47,7 @@ const Discounts = () => {
     }
   };
 
+  // Format date to Persian calendar
   const formatToPersianDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -67,8 +67,7 @@ const Discounts = () => {
           <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">کدهای تخفیف سایت را از این بخش مدیریت کنید.</span>
           <Link
             href="/admin/discounts/add"
-            className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg"
-          >
+            className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg">
             افزودن کد تخفیف
             <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -90,6 +89,7 @@ const Discounts = () => {
                 <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                   <div className="overflow-hidden">
                     {loading ? (
+                      // Render skeleton rows during loading
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
@@ -145,6 +145,7 @@ const Discounts = () => {
                         </tbody>
                       </table>
                     ) : (
+                      // Render discounts table
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
@@ -184,14 +185,7 @@ const Discounts = () => {
                                 <td className="whitespace-nowrap px-4 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <Link href={`/admin/discounts/${discount._id}`}>
-                                      <svg
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="18"
-                                        height="18"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                      >
+                                      <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor">
                                         <path
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
@@ -207,24 +201,11 @@ const Discounts = () => {
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
                                         />
-                                        <path
-                                          d="M15.1655 4.60254L19.7315 9.16854"
-                                          stroke="currentColor"
-                                          strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
+                                        <path d="M15.1655 4.60254L19.7315 9.16854" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
                                     </Link>
                                     <button onClick={() => handleDelete(discount._id)}>
-                                      <svg
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="18"
-                                        height="18"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                      >
+                                      <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor">
                                         <path
                                           d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
                                           stroke="currentColor"
@@ -232,13 +213,7 @@ const Discounts = () => {
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
                                         />
-                                        <path
-                                          d="M20.708 6.23975H3.75"
-                                          stroke="currentColor"
-                                          strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
+                                        <path d="M20.708 6.23975H3.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         <path
                                           d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
                                           stroke="currentColor"

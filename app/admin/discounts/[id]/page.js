@@ -23,12 +23,15 @@ const EditDiscount = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Fetch categories on component mount
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
   }, []);
+
+  // Fetch discount data by ID on mount
   useEffect(() => {
     const fetchDiscountData = async () => {
       setLoading(true);
@@ -48,10 +51,10 @@ const EditDiscount = () => {
         setExpirationDate(
           discount.date
             ? new DateObject({
-              date: new Date(discount.date),
-              calendar: persian,
-              locale: persian_fa,
-            })
+                date: new Date(discount.date),
+                calendar: persian,
+                locale: persian_fa,
+              })
             : null
         );
         setStatus(discount.status !== undefined ? discount.status : true);
@@ -65,6 +68,7 @@ const EditDiscount = () => {
     if (id) fetchDiscountData();
   }, [id]);
 
+  // Validate form inputs
   const validateForm = () => {
     if (percentage && (percentage < 1 || percentage > 100)) {
       setFormError("درصد تخفیف باید بین ۱ تا ۱۰۰ باشد");
@@ -74,6 +78,7 @@ const EditDiscount = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -140,24 +145,24 @@ const EditDiscount = () => {
                 />
               </div>
               <div className="space-y-2">
-              <label className="text-gray-700 dark:text-gray-300">محصول</label>
-              <select
-                name="category"
-                autoComplete={category}
-                className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                placeholder="انتخاب دسته بندی"
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}>
-                <option value="">انتخاب محصول موردنظر</option>
-                {categories.map((cat) => {
-                  return (
-                    <option key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </option>
-                  );
-                })}
-              </select>
+                <label className="text-gray-700 dark:text-gray-300">محصول</label>
+                <select
+                  name="category"
+                  autoComplete={category}
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="انتخاب دسته بندی"
+                  type="text"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}>
+                  <option value="">انتخاب محصول موردنظر</option>
+                  {categories.map((cat) => {
+                    return (
+                      <option key={cat._id} value={cat._id}>
+                        {cat.name}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">درصد تخفیف</label>
@@ -188,12 +193,7 @@ const EditDiscount = () => {
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">وضعیت</label>
                 <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={status}
-                    onChange={(e) => setStatus(e.target.checked)}
-                    className="w-4 h-4 m-1"
-                  />
+                  <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} className="w-4 h-4 m-1" />
                   <span className="text-sm text-gray-700 dark:text-gray-300">فعال</span>
                 </div>
               </div>

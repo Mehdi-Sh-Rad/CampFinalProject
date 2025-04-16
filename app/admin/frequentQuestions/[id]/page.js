@@ -2,28 +2,29 @@
 
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const UpdateCategory = () => {
+const EditFrequentQuestion = () => {
   const { id } = useParams();
-  const [frequentQuestion, setFrequentQuestion] = useState("");
+  const [topic, setTopic] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(true);
-
   const router = useRouter();
 
+  // Fetch frequent question data by ID on mount
   useEffect(() => {
     const fetchFrequentQuestion = async () => {
       setLoading(true);
       try {
         const response = await fetch(`/api/frequentQuestions/${id}`);
-
-        if (!response.ok) throw new Error(" مشکل در دریافت اطلاعات سوالات مربوط به محصولات");
+        if (!response.ok) throw new Error("مشکل در دریافت اطلاعات سوال متداول");
         const data = await response.json();
-        setFrequentQuestion(data);
+        setTopic(data.topic || "");
+        setQuestion(data.question || "");
+        setAnswer(data.answer || "");
       } catch (error) {
         setError(error.message);
       } finally {
@@ -33,18 +34,20 @@ const UpdateCategory = () => {
     fetchFrequentQuestion();
   }, [id]);
 
+  // Validate form inputs
   const validateForm = () => {
     if (question.trim() === "") {
-      setFormError("نام دسته بندی الزامی میباشد");
+      setFormError("درج سوال الزامی است");
       return false;
-    } else if (question.length < 3 || question.length > 30) {
-      setFormError("نام دستع بندی باید بین ۳ تا ۳۰ باشد");
+    } else if (question.length < 1 || question.length > 100) {
+      setFormError("تعداد کاراکترهای سوال باید بین ۱ تا ۱۰۰ باشد");
       return false;
     }
     setFormError("");
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -55,27 +58,28 @@ const UpdateCategory = () => {
       const response = await fetch(`/api/frequentQuestions/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question , answer }),
+        body: JSON.stringify({ topic, question, answer }),
       });
 
       if (response.status === 400) {
         let message = await response.json();
         setFormError(message.message);
       }
-      if (!response.ok) throw new Error("مشکلی در ساخت دسته بندی پیش آمده است");
+      if (!response.ok) throw new Error("مشکلی در به‌روزرسانی سوال متداول پیش آمده است");
       router.push("/admin/frequentQuestions");
     } catch (error) {
       setError(error.message);
     }
   };
+
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">ویرایش دسته بندی </h1>
-        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت دسته بندی محصول را ویرایش کنید.</span>
+        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">ویرایش سوال متداول</h1>
+        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت سوال و پاسخ متداول را ویرایش کنید.</span>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
-          src={"/uploads/top-header.png"}
+          src={"/Uploads/top-header.png"}
           alt="هدر"
           width={1663}
           height={277}
@@ -101,27 +105,38 @@ const UpdateCategory = () => {
             <form className="py-4" onSubmit={handleSubmit}>
               <div className="flex flex-col items-start gap-y-4 w-full">
                 <input
+                  name="topic"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder={`${loading ? "در حال بارگذاری..." : "موضوع"}`}
+                  type="text"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  disabled={loading}
+                />
+                <textarea
                   name="question"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder={`${loading ? "در حال بارگذاری..." : ""}`}
-                  type="text"
+                  placeholder={`${loading ? "در حال بارگذاری..." : "سوال"}`}
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   disabled={loading}
                 />
-                <input
+                <textarea
                   name="answer"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder={`${loading ? "در حال بارگذاری..." : ""}`}
-                  type="text"
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300 text-lg h-40"
+                  placeholder={`${loading ? "در حال بارگذاری..." : "پاسخ"}`}
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                   disabled={loading}
                 />
-
-                <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
-                  ذخیره
-                </button>
+                <div>
+                  <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded ml-3">
+                    ذخیره
+                  </button>
+                  <a href="/admin/frequentQuestions" className="bg-red-700 text-white py-2 px-4 rounded">
+                    انصراف
+                  </a>
+                </div>
               </div>
             </form>
           </div>
@@ -131,4 +146,4 @@ const UpdateCategory = () => {
   );
 };
 
-export default UpdateCategory;
+export default EditFrequentQuestion;

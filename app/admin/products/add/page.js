@@ -1,12 +1,9 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
 import Link from "next/link";
-import Header from "@/app/components/ui/Header";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 
 const AddProduct = () => {
   const [files, setFiles] = useState([]);
@@ -28,6 +25,7 @@ const AddProduct = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Fetch categories on component mount
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
@@ -35,36 +33,43 @@ const AddProduct = () => {
       .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
   }, []);
 
+  // Add a new empty file slot
   const handleAddFile = () => {
-    setFiles([...files, null]); // Add a new empty file slot
+    setFiles([...files, null]);
   };
 
+  // Add a new empty image slot
   const handleAddImage = () => {
-    setImages([...images, null]); // Add a new empty image slot
+    setImages([...images, null]);
   };
 
+  // Add a new empty tag slot
   const handleAddTag = () => {
-    setTags([...tags, ""]); // Add a new empty tag slot
+    setTags([...tags, ""]);
   };
 
+  // Update file at specific index
   const handleFileChange = (index, file) => {
     const updatedFiles = [...files];
     updatedFiles[index] = file;
     setFiles(updatedFiles);
   };
 
+  // Update image at specific index
   const handleImageChange = (index, image) => {
     const updatedImages = [...images];
     updatedImages[index] = image;
     setImages(updatedImages);
   };
 
+  // Update tag at specific index
   const handleTagChange = (index, tag) => {
     const updatedTags = [...tags];
     updatedTags[index] = tag;
     setTags(updatedTags);
-  }
+  };
 
+  // Validate form inputs
   const validateForm = () => {
     if (!files) {
       setFormError("انتخاب فایل محصول الزامی میباشد");
@@ -104,6 +109,7 @@ const AddProduct = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -120,7 +126,10 @@ const AddProduct = () => {
       formData.append("active", active ? "true" : "false");
       formData.append("category", category);
       formData.append("types", selectedTypes);
-      formData.append("tags", tags.filter(tag => tag.trim() !== "")); // Filter out empty tags
+      formData.append(
+        "tags",
+        tags.filter((tag) => tag.trim() !== "")
+      ); // Filter out empty tags
       formData.append("free", free);
       formData.append("award", award);
 
@@ -182,8 +191,7 @@ const AddProduct = () => {
               {formError && <h3>{formError}</h3>}
               <form className="py-4" onSubmit={handleSubmit}>
                 <div className="flex flex-col items-start gap-y-4 w-full">
-
-
+                  {/* Name */}
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">نام</label>
                     <input
@@ -197,6 +205,7 @@ const AddProduct = () => {
                     />
                   </div>
 
+                  {/* Author */}
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">نویسنده</label>
                     <input
@@ -210,6 +219,7 @@ const AddProduct = () => {
                     />
                   </div>
 
+                  {/* Description */}
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">توضیحات</label>
                     <input
@@ -234,20 +244,12 @@ const AddProduct = () => {
                           onChange={(e) => handleImageChange(index, e.target.files[0])}
                           className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                         />
-                        <button
-                          type="button"
-                          className="bg-red-500 text-white px-2 py-1 rounded"
-                          onClick={() => setImages(images.filter((_, i) => i !== index))}
-                        >
+                        <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setImages(images.filter((_, i) => i !== index))}>
                           حذف
                         </button>
                       </div>
                     ))}
-                    <button
-                      type="button"
-                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
-                      onClick={handleAddImage}
-                    >
+                    <button type="button" className="bg-blue-500 text-white mx-3 px-4 py-2 rounded" onClick={handleAddImage}>
                       افزودن تصویر
                     </button>
                   </div>
@@ -262,24 +264,17 @@ const AddProduct = () => {
                           onChange={(e) => handleFileChange(index, e.target.files[0])}
                           className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                         />
-                        <button
-                          type="button"
-                          className="bg-red-500 text-white px-2 py-1 rounded"
-                          onClick={() => setFiles(files.filter((_, i) => i !== index))}
-                        >
+                        <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setFiles(files.filter((_, i) => i !== index))}>
                           حذف
                         </button>
                       </div>
                     ))}
-                    <button
-                      type="button"
-                      className="bg-blue-500 text-white mx-2 px-4 py-2 rounded"
-                      onClick={handleAddFile}
-                    >
+                    <button type="button" className="bg-blue-500 text-white mx-2 px-4 py-2 rounded" onClick={handleAddFile}>
                       افزودن فایل
                     </button>
                   </div>
 
+                  {/* Price */}
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">قیمت</label>
                     <input
@@ -293,6 +288,7 @@ const AddProduct = () => {
                     />
                   </div>
 
+                  {/* Discount Price */}
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">قیمت تخفیفی</label>
                     <input
@@ -322,9 +318,7 @@ const AddProduct = () => {
                               handleAddTag();
                               setTimeout(() => {
                                 // Focus on the newly added input field
-                                const nextInput = document.querySelector(
-                                  `input[name="tag-${tags.length}"]`
-                                );
+                                const nextInput = document.querySelector(`input[name="tag-${tags.length}"]`);
                                 if (nextInput) nextInput.focus();
                               }, 0);
                             }
@@ -332,18 +326,10 @@ const AddProduct = () => {
                           name={`tag-${index}`} // Add a unique name for each input
                           className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                         />
-                        <button
-                          type="button"
-                          className="bg-green-500 text-white px-2 py-1 rounded"
-                          onClick={handleAddTag}
-                        >
+                        <button type="button" className="bg-green-500 text-white px-2 py-1 rounded" onClick={handleAddTag}>
                           +
                         </button>
-                        <button
-                          type="button"
-                          className="bg-red-500 text-white px-2 py-1 rounded"
-                          onClick={() => setTags(tags.filter((_, i) => i !== index))}
-                        >
+                        <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setTags(tags.filter((_, i) => i !== index))}>
                           -
                         </button>
                       </div>
@@ -360,10 +346,9 @@ const AddProduct = () => {
                     multiple
                     value={selectedTypes}
                     onChange={(e) => {
-                      const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+                      const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value);
                       setSelectedTypes(selectedOptions); // Update state with selected options
-                    }}
-                    >
+                    }}>
                     <option value="">انتخاب فرمت فایل ها </option>
                     {types.map((type, index) => {
                       return (
@@ -374,38 +359,46 @@ const AddProduct = () => {
                     })}
                   </select>
 
+                  {/* Active Toggle */}
                   <label htmlFor="custom-switch" className="flex items-center cursor-pointer">
                     <div className="relative">
                       <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${active ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          active ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
                   </label>
 
+                  {/* Award Toggle */}
                   <label htmlFor="award-switch" className="flex items-center cursor-pointer">
                     <div className="relative">
                       <input id="award-switch" type="checkbox" className="sr-only" checked={award} onChange={(e) => setAward(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${award ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${award ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          award ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{award ? "جایزه دار" : "غیر جایزه دار"}</span>
                   </label>
 
+                  {/* Free Toggle */}
                   <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
                     <div className="relative">
                       <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${free ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          free ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{free ? "رایگان" : "غیررایگان"}</span>
                   </label>
+
+                  {/* Category */}
                   <select
                     name="category"
                     autoComplete="category"

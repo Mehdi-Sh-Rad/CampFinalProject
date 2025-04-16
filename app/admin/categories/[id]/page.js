@@ -13,6 +13,7 @@ const UpdateCategory = () => {
 
   const router = useRouter();
 
+  // Fetch category data by ID on mount
   useEffect(() => {
     fetch(`/api/categories/${id}`)
       .then((res) => res.json())
@@ -20,6 +21,7 @@ const UpdateCategory = () => {
       .then(() => setLoading(false));
   }, [id]);
 
+  // Validate form input
   const validateForm = () => {
     if (name.trim() === "") {
       setFormError("نام دسته بندی الزامی میباشد");
@@ -32,6 +34,7 @@ const UpdateCategory = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {

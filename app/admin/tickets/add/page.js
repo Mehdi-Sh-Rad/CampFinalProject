@@ -1,11 +1,9 @@
 "use client";
-import Header from "@/app/components/ui/Header";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { use, useState } from "react";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
+import React, { useState } from "react";
 
 const AddTicket = () => {
   const [topic, setTopic] = useState("");
@@ -15,6 +13,7 @@ const AddTicket = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Validate form inputs
   const validateForm = () => {
     if (topic.trim() === "") {
       setFormError("درج موضوع تیکت الزامی میباشد");
@@ -27,6 +26,7 @@ const AddTicket = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
