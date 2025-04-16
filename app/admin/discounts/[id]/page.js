@@ -70,8 +70,18 @@ const EditDiscount = () => {
 
   // Validate form inputs
   const validateForm = () => {
+
+    if (!category) {
+      setFormError("انتخاب دسته‌بندی الزامی است");
+      return false;
+    }
+
     if (percentage && (percentage < 1 || percentage > 100)) {
       setFormError("درصد تخفیف باید بین ۱ تا ۱۰۰ باشد");
+      return false;
+    }
+    if (!expirationDate) {
+      setFormError("تاریخ انقضا الزامی است");
       return false;
     }
     setFormError("");
