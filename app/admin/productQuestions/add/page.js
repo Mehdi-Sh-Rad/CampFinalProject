@@ -131,6 +131,7 @@ const AddProductQuestions = () => {
               <div className="flex flex-col items-start gap-y-4 w-full">
                 <select
                   name="user"
+                  disabled={loading}
                   autoComplete="user"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                   placeholder="کاربر "
@@ -149,6 +150,7 @@ const AddProductQuestions = () => {
                 </select>
                 <select
                   name="product"
+                  disabled={loading}
                   autoComplete="product"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                   placeholder="انتخاب محصول"
