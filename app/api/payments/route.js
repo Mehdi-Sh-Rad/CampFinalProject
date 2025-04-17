@@ -14,21 +14,22 @@ export async function POST(request) {
 
   try {
     const body = await request.json();
+    const { orderCode, user, product, totalPrice, totalDiscount, status } = body;
 
     // Validate orderCode
-    if (!body.orderCode || body.orderCode.trim() === "") {
+    if (!orderCode || orderCode.trim() === "") {
       return new Response(JSON.stringify({ message: "کد پیگیری سفارش الزامی است" }), {
         status: 400,
       });
     }
 
     // Validate user
-    if (!body.user) {
+    if (!user) {
       return new Response(JSON.stringify({ message: "انتخاب کاربر الزامی است" }), {
         status: 400,
       });
     }
-    const userExists = await User.findById(body.user);
+    const userExists = await User.findById(user);
     if (!userExists) {
       return new Response(JSON.stringify({ message: "کاربر یافت نشد" }), {
         status: 400,
@@ -36,12 +37,12 @@ export async function POST(request) {
     }
 
     // Validate product
-    if (!body.product) {
+    if (!product) {
       return new Response(JSON.stringify({ message: "انتخاب محصول الزامی است" }), {
         status: 400,
       });
     }
-    const productExists = await Product.findById(body.product);
+    const productExists = await Product.findById(product);
     if (!productExists) {
       return new Response(JSON.stringify({ message: "محصول یافت نشد" }), {
         status: 400,
@@ -49,33 +50,44 @@ export async function POST(request) {
     }
 
     // Validate totalPrice
-    if (!body.totalPrice || isNaN(body.totalPrice) || body.totalPrice <= 0) {
+    const priceNum = parseFloat(totalPrice);
+    if (!totalPrice || isNaN(priceNum) || priceNum <= 0) {
       return new Response(JSON.stringify({ message: "قیمت نهایی فاکتور باید عدد مثبت باشد" }), {
         status: 400,
       });
     }
 
     // Validate totalDiscount
-    if (body.totalDiscount && (isNaN(body.totalDiscount) || body.totalDiscount < 0)) {
-      return new Response(JSON.stringify({ message: "قیمت تخفیفی باید عدد مثبت باشد" }), {
-        status: 400,
-      });
+    let discountNum;
+    if (totalDiscount !== undefined && totalDiscount !== "") {
+      discountNum = parseFloat(totalDiscount);
+      if (isNaN(discountNum) || discountNum < 0) {
+        return new Response(JSON.stringify({ message: "قیمت تخفیفی باید عدد مثبت باشد" }), {
+          status: 400,
+        });
+      }
+      if (discountNum >= priceNum) {
+        return new Response(JSON.stringify({ message: "قیمت تخفیفی باید کمتر از قیمت نهایی فاکتور باشد" }), {
+          status: 400,
+        });
+      }
     }
-    if (body.totalDiscount && body.totalDiscount >= body.totalPrice) {
-      return new Response(JSON.stringify({ message: "قیمت تخفیفی باید کمتر از قیمت نهایی فاکتور باشد" }), {
-        status: 400,
-      });
-    }
-
     // Validate status
-    if (typeof body.status !== "boolean") {
+    if (typeof status !== "boolean") {
       return new Response(JSON.stringify({ message: "وضعیت پرداخت باید مقدار بولین باشد" }), {
         status: 400,
       });
     }
 
     // Create payment
-    const payment = await Payment.create(body);
+    const payment = await Payment.create({
+      orderCode,
+      user,
+      product,
+      totalPrice: priceNum,
+      totalDiscount: discountNum,
+      status,
+    });
     return new Response(JSON.stringify(payment), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), {

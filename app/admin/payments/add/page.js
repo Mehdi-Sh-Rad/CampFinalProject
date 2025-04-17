@@ -69,20 +69,34 @@ const AddPayment = () => {
       return false;
     }
 
-    const discountNum = totalDiscount ?? parseFloat(totalDiscount);
+    let discountNum;
+    if (totalDiscount && totalDiscount.trim() !== "") {
+      discountNum = parseFloat(totalDiscount);
+      if (isNaN(discountNum) || discountNum < 0) {
+        setFormError("قیمت تخفیفی باید عدد مثبت باشد");
+        return false;
+      }
+      if (discountNum >= priceNum) {
+        setFormError("قیمت تخفیفی باید کمتر از قیمت نهایی باشد");
+        return false;
+      }
+    }
 
-    if (totalDiscount && (isNaN(discountNum) || discountNum < 0)) {
-      setFormError("قیمت تخفیفی باید عدد غیرمنفی باشد");
-      return false;
-    }
-    if (totalDiscount && discountNum >= priceNum) {
-      setFormError("قیمت تخفیفی باید کمتر از قیمت نهایی باشد");
-      return false;
-    }
     if (typeof status !== "boolean") {
       setFormError("وضعیت پرداخت نامعتبر است");
       return false;
     }
+    console.log("Validated form data:", {
+      orderCode,
+      user,
+      product,
+      totalPrice,
+      priceNum,
+      totalDiscount,
+      discountNum,
+      status,
+    });
+
     setFormError("");
     return true;
   };
@@ -95,6 +109,24 @@ const AddPayment = () => {
     }
     try {
       setLoading(true);
+
+      const payload = {
+        orderCode,
+        user,
+        product,
+        totalPrice: parseFloat(totalPrice),
+        totalDiscount: totalDiscount && totalDiscount.trim() !== "" ? parseFloat(totalDiscount) : undefined,
+        status,
+      };
+      console.log("Sending to backend:", payload);
+
+      console.log("Checking payload:", {
+        hasOrderCode: !!orderCode,
+        hasUser: !!user,
+        hasProduct: !!product,
+        hasTotalPrice: !isNaN(parseFloat(totalPrice)),
+      });
+
       const response = await fetch("/api/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -102,11 +134,16 @@ const AddPayment = () => {
           orderCode,
           user,
           product,
-          totalPrice,
-          totalDiscount,
+          totalPrice: parseFloat(totalPrice),
+          totalDiscount: totalDiscount && totalDiscount.trim() !== "" ? parseFloat(totalDiscount) : undefined,
           status,
         }),
       });
+
+      console.log("Response status:", response.status);
+      const responseData = await response.json();
+      console.log("Response data:", responseData);
+
       if (!response.ok) {
         if (response.status === 400) {
           const message = await response.json();
