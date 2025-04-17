@@ -53,6 +53,14 @@ const AddProductQuestions = () => {
 
   // Validate form inputs
   const validateForm = () => {
+    if (!user) {
+      setFormError("لطفا کاربر را انتخاب کنید");
+      return false;
+    }
+    if (!product) {
+      setFormError("لطفا محصول را انتخاب کنید");
+      return false;
+    }
     if (question.trim() === "") {
       setFormError(" لطفا سوال خود را در مورد محصول بنویسید");
       return false;
