@@ -63,15 +63,19 @@ const AddPayment = () => {
       setFormError("انتخاب محصول الزامی است");
       return false;
     }
-    if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
+    const priceNum = parseFloat(totalPrice);
+    if (!totalPrice || isNaN(priceNum) || priceNum <= 0) {
       setFormError("قیمت نهایی فاکتور باید عدد مثبت باشد");
       return false;
     }
-    if (totalDiscount && (isNaN(totalDiscount) || totalDiscount < 0)) {
-      setFormError("قیمت تخفیفی باید عدد مثبت باشد");
+
+    const discountNum = totalDiscount ?? parseFloat(totalDiscount);
+
+    if (totalDiscount && (isNaN(discountNum) || discountNum < 0)) {
+      setFormError("قیمت تخفیفی باید عدد غیرمنفی باشد");
       return false;
     }
-    if (totalDiscount && totalDiscount >= totalPrice) {
+    if (totalDiscount && discountNum >= priceNum) {
       setFormError("قیمت تخفیفی باید کمتر از قیمت نهایی باشد");
       return false;
     }
