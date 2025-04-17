@@ -36,10 +36,10 @@ const AnswerProductQuestion = () => {
   // Validate form input
   const validateForm = () => {
     if (answer.trim() === "") {
-      setFormError("نام دسته بندی الزامی میباشد");
+      setFormError("پاسخ به سوال الزامی میباشد");
       return false;
     } else if (answer.length < 1 || answer.length > 200) {
-      setFormError("نام دستع بندی باید بین ۳ تا ۳۰ باشد");
+      setFormError("پاسخ باید بین ۱ تا ۲۰۰ کاراکتر باشد");
       return false;
     }
     setFormError("");
