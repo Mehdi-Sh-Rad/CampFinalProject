@@ -15,7 +15,7 @@ const AddPayment = () => {
   const [totalDiscount, setTotalDiscount] = useState("");
   const [status, setStatus] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
@@ -51,24 +51,32 @@ const AddPayment = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    if (orderCode === "") {
+    if (!orderCode) {
       setFormError("کد پیگیری سفارش اختصاص پیدا نکرده است");
       return false;
     }
-    if (totalPrice == "") {
-      setFormError("مجموع مبلغ فاکتور صفر می‌باشد");
-      return false;
-    }
-    if (totalDiscount >= totalPrice) {
-      setFormError("قیمت تخفیفی باید از مبلغ فاکتور کمتر می‌باشد");
+    if (!user) {
+      setFormError("انتخاب کاربر الزامی است");
       return false;
     }
     if (!product) {
-      setFormError("انتخاب محصول الزامی می‌باشد");
+      setFormError("انتخاب محصول الزامی است");
       return false;
     }
-    if (!user) {
-      setFormError("انتخاب کاربر الزامی می‌باشد");
+    if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
+      setFormError("قیمت نهایی فاکتور باید عدد مثبت باشد");
+      return false;
+    }
+    if (totalDiscount && (isNaN(totalDiscount) || totalDiscount < 0)) {
+      setFormError("قیمت تخفیفی باید عدد مثبت باشد");
+      return false;
+    }
+    if (totalDiscount && totalDiscount >= totalPrice) {
+      setFormError("قیمت تخفیفی باید کمتر از قیمت نهایی باشد");
+      return false;
+    }
+    if (typeof status !== "boolean") {
+      setFormError("وضعیت پرداخت نامعتبر است");
       return false;
     }
     setFormError("");
