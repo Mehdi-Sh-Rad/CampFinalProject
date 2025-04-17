@@ -24,7 +24,8 @@ const AddPayment = () => {
     fetch("/api/auth")
       .then((res) => res.json())
       .then((data) => setUsers(data))
-      .catch(() => setError("مشکلی در دریافت لیست کاربران رخ داده است"));
+      .catch(() => setError("مشکلی در دریافت لیست کاربران رخ داده است"))
+      .finally(() => setLoading(false));
   }, []);
 
   // Fetch products on component mount
@@ -86,16 +87,6 @@ const AddPayment = () => {
       setFormError("وضعیت پرداخت نامعتبر است");
       return false;
     }
-    console.log("Validated form data:", {
-      orderCode,
-      user,
-      product,
-      totalPrice,
-      priceNum,
-      totalDiscount,
-      discountNum,
-      status,
-    });
 
     setFormError("");
     return true;
@@ -110,23 +101,6 @@ const AddPayment = () => {
     try {
       setLoading(true);
 
-      const payload = {
-        orderCode,
-        user,
-        product,
-        totalPrice: parseFloat(totalPrice),
-        totalDiscount: totalDiscount && totalDiscount.trim() !== "" ? parseFloat(totalDiscount) : undefined,
-        status,
-      };
-      console.log("Sending to backend:", payload);
-
-      console.log("Checking payload:", {
-        hasOrderCode: !!orderCode,
-        hasUser: !!user,
-        hasProduct: !!product,
-        hasTotalPrice: !isNaN(parseFloat(totalPrice)),
-      });
-
       const response = await fetch("/api/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -139,11 +113,6 @@ const AddPayment = () => {
           status,
         }),
       });
-
-      console.log("Response status:", response.status);
-      const responseData = await response.json();
-      console.log("Response data:", responseData);
-
       if (!response.ok) {
         if (response.status === 400) {
           const message = await response.json();
@@ -190,6 +159,7 @@ const AddPayment = () => {
               </div>
               <select
                 name="user"
+                disabled={loading}
                 autoComplete="user"
                 className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                 placeholder="انتخاب محصول"
@@ -208,6 +178,7 @@ const AddPayment = () => {
               </select>
               <select
                 name="product"
+                disabled={loading}
                 autoComplete="product"
                 className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                 placeholder="انتخاب محصول"
