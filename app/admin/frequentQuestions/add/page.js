@@ -15,11 +15,28 @@ const AddFrequentQuestions = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    if (question.trim() === "") {
-      setFormError("درج سوال الزامی میباشد");
+    if (!topic || topic.trim() === "") {
+      setFormError("موضوع الزامی است");
       return false;
-    } else if (question.length < 1 || question.length > 100) {
-      setFormError("تعداد کاراکترهای سوال باید بین ۱ تا ۱۰۰ باشد");
+    }
+    if (topic.length < 3 || topic.length > 50) {
+      setFormError("موضوع باید بین ۳ تا ۵۰ کاراکتر باشد");
+      return false;
+    }
+    if (!question || question.trim() === "") {
+      setFormError("سوال الزامی است");
+      return false;
+    }
+    if (question.length < 3 || question.length > 100) {
+      setFormError("سوال باید بین ۳ تا ۱۰۰ کاراکتر باشد");
+      return false;
+    }
+    if (!answer || answer.trim() === "") {
+      setFormError("پاسخ الزامی است");
+      return false;
+    }
+    if (answer.length < 3 || answer.length > 500) {
+      setFormError("پاسخ باید بین ۳ تا ۵۰۰ کاراکتر باشد");
       return false;
     }
     setFormError("");

@@ -70,7 +70,7 @@ const EditDiscount = () => {
 
   // Validate form inputs
   const validateForm = () => {
-
+    
     if (!category) {
       setFormError("انتخاب دسته‌بندی الزامی است");
       return false;
