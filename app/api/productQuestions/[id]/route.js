@@ -32,19 +32,42 @@ export async function DELETE(request, { params }) {
     });
   }
 }
+
+// PUT: Update a product question's answer by ID
 export async function PUT(request, { params }) {
   await connectToDatabase();
   try {
     const body = await request.json();
+    const { answer } = body;
 
-    const proQues = await ProductQuestion.findByIdAndUpdate(params.id, body, {
-      new: true,
-    });
+    // Validate answer
+    if (!answer || answer.trim() === "") {
+      return new Response(JSON.stringify({ message: "پاسخ به سوال الزامی است" }), { status: 400 });
+    }
+    if (answer.length < 1 || answer.length > 200) {
+      return new Response(JSON.stringify({ message: "پاسخ باید بین ۱ تا ۲۰۰ کاراکتر باشد" }), { status: 400 });
+    }
+
+    // Update product question
+    const proQues = await ProductQuestion.findByIdAndUpdate(
+      params.id,
+      { answer },
+      {
+        new: true,
+      }
+    );
+
+    // Check if question not found
+    if (!proQues) {
+      return new Response(JSON.stringify({ message: "سؤال مورد نظر پیدا نشد." }), { status: 404 });
+    }
+
+    // Return the updated document
     return new Response(JSON.stringify(proQues), { status: 200 });
   } catch (error) {
+    // Handle errors
     return new Response(JSON.stringify({ message: error.message }), {
       status: 500,
     });
   }
 }
-
