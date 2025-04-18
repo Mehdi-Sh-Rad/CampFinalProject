@@ -1,12 +1,7 @@
 "use client";
-import GeneralError from "@/app/components/ui/GeneralError";
-import Header from "@/app/components/ui/Header";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
+
 import Image from "next/image";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -38,7 +33,7 @@ const Users = () => {
   const handleDelete = async (id) => {
     try {
       await fetch(`/api/auth?id=${id}`, { method: "DELETE" });
-      console.log(fetch)
+      console.log(fetch);
       setUsers(users.filter((user) => user._id !== id));
     } catch (error) {
       setError("مشکلی در حذف پیش آمد");
@@ -64,7 +59,7 @@ const Users = () => {
       setError(error.message);
     } finally {
       setLoading(false);
-    };
+    }
 
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
@@ -147,25 +142,26 @@ const Users = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {users && users.map((_, index) => (
-                          <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                            <td className="whitespace-nowrap px-4 py-4 font-medium">
-                              <div className="w-10 h-4 bg-gray-300 animate-pulse"></div>
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-4">
-                              <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-4">
-                              <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-4">
-                              <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-4">
-                              <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
-                            </td>
-                          </tr>
-                        ))}
+                        {users &&
+                          users.map((_, index) => (
+                            <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
+                              <td className="whitespace-nowrap px-4 py-4 font-medium">
+                                <div className="w-10 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                   ) : (
@@ -220,22 +216,63 @@ const Users = () => {
                                       </svg>
                                     </button>
                                     <button onClick={() => handleActive(user._id, user.isActive)}>
-                                      {user.isActive ? <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
-                                      </svg> : <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6" />
-                                      </svg>
-                                      }
+                                      {user.isActive ? (
+                                        <svg
+                                          className="w-6 h-6 text-gray-800 dark:text-white"
+                                          aria-hidden="true"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="24"
+                                          height="24"
+                                          fill="none"
+                                          viewBox="0 0 24 24">
+                                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                                        </svg>
+                                      ) : (
+                                        <svg
+                                          className="w-6 h-6 text-gray-800 dark:text-white"
+                                          aria-hidden="true"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="24"
+                                          height="24"
+                                          fill="none"
+                                          viewBox="0 0 24 24">
+                                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                        </svg>
+                                      )}
                                     </button>
                                     <button onClick={() => handleAdmin(user._id, user.isAdmin)}>
-                                      {user.isAdmin ? <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m8.032 12 1.984 1.984 4.96-4.96m4.55 5.272.893-.893a1.984 1.984 0 0 0 0-2.806l-.893-.893a1.984 1.984 0 0 1-.581-1.403V7.04a1.984
+                                      {user.isAdmin ? (
+                                        <svg
+                                          className="w-6 h-6 text-gray-800 dark:text-white"
+                                          aria-hidden="true"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="24"
+                                          height="24"
+                                          fill="none"
+                                          viewBox="0 0 24 24">
+                                          <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m8.032 12 1.984 1.984 4.96-4.96m4.55 5.272.893-.893a1.984 1.984 0 0 0 0-2.806l-.893-.893a1.984 1.984 0 0 1-.581-1.403V7.04a1.984
                                         1.984 0 0 0-1.984-1.984h-1.262a1.983 1.983 0 0 1-1.403-.581l-.893-.893a1.984 1.984 0 0 0-2.806 0l-.893.893a1.984 1.984 0 0 1-1.403.581H7.04A1.984 1.984 0 0 0 5.055 7.04v1.262c0 .527-.209 1.031-.581 1.403l-.893.893a1.984
                                         1.984 0 0 0 0 2.806l.893.893c.372.372.581.876.581 1.403v1.262a1.984 1.984 0 0 0 1.984 1.984h1.262c.527 0 1.031.209 1.403.581l.893.893a1.984 1.984 0 0 0 2.806 0l.893-.893a1.985 1.985 0 0 1 1.403-.581h1.262a1.984 1.984 0 0 0
-                                        1.984-1.984V15.7c0-.527.209-1.031.581-1.403Z"/></svg>
-                                        : <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        1.984-1.984V15.7c0-.527.209-1.031.581-1.403Z"
+                                          />
+                                        </svg>
+                                      ) : (
+                                        <svg
+                                          className="w-6 h-6 text-gray-800 dark:text-white"
+                                          aria-hidden="true"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="24"
+                                          height="24"
+                                          fill="none"
+                                          viewBox="0 0 24 24">
                                           <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        </svg>}
+                                        </svg>
+                                      )}
                                     </button>
                                   </div>
                                 </td>
