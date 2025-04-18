@@ -200,7 +200,9 @@ const Products = () => {
                                   <td className="whitespace-nowrap  px-4 py-4">
                                     <Image src={product.imageUrls?.[0] || "/uploads/logo2.webp"} width={100} height={100} alt={product.name || "product image"} />
                                   </td>
-                                  <td className="whitespace-nowrap  px-4 py-4">{product.price.toLocaleString("fa-IR")} تومان</td>
+                                  <td className="whitespace-nowrap  px-4 py-4">{product.price === 0
+    ? "رایگان"
+    : `${product.price.toLocaleString("fa-IR")} تومان`} </td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.active ? "فعال" : "غیرفعال"}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">
                                     <div className="flex justify-center gap-x-2">
