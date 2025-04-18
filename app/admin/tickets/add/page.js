@@ -16,13 +16,21 @@ const AddTicket = () => {
   // Validate form inputs
   const validateForm = () => {
     if (topic.trim() === "") {
-      setFormError("درج موضوع تیکت الزامی میباشد");
+      setFormError("درج موضوع تیکت الزامی می‌باشد");
       return false;
     } else if (topic.length < 1 || topic.length > 100) {
       setFormError("تعداد کاراکترهای موضوع باید بین ۱ تا ۱۰۰ باشد");
       return false;
     }
-    setFormError("");
+  
+    if (order.trim() === "") {
+      setFormError("درج شماره سفارش یا کد محصول الزامی است");
+      return false;
+    } else if (order.length > 50) {
+      setFormError("شماره سفارش نباید بیش از ۵۰ کاراکتر باشد");
+      return false;
+    }
+    setFormError(""); 
     return true;
   };
 
