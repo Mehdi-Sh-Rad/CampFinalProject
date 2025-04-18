@@ -33,6 +33,16 @@ const AddProduct = () => {
       .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
   }, []);
 
+  // Automatically set free to true if price is 0
+  useEffect(() => {
+    if (parseFloat(price) === 0) {
+      setFree(true);
+    }
+    else {
+      setFree(false)
+    }
+  }, [price]);
+
   // Add a new empty file slot
   const handleAddFile = () => {
     setFiles([...files, null]);
@@ -71,12 +81,12 @@ const AddProduct = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    if (!files) {
-      setFormError("انتخاب فایل محصول الزامی میباشد");
+    if (!files || files.length === 0 || files.every(file => !file)) {
+      setFormError("انتخاب حداقل یک فایل محصول الزامی است");
       return false;
     }
-    if (!images) {
-      setFormError("انتخاب تصویر محصول الزامی میباشد");
+    if (!images || images.length === 0 || images.every(image => !image)) {
+      setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
       return false;
     }
     if (!name || name.trim() === "") {
@@ -86,23 +96,36 @@ const AddProduct = () => {
       setFormError("نام محصول باید بین ۳ تا ۳۰ باشد");
       return false;
     }
+
+    if (!author || author.trim() === "") {
+      setFormError("نام نویسنده الزامی است");
+      return false;
+    } else if (author.length < 3 || author.length > 30) {
+      setFormError("نام نویسنده باید بین ۳ تا ۳۰ کاراکتر باشد");
+      return false;
+    }
+
     if (!description || description.trim() === "") {
       setFormError("توضیحات محصول الزامی میباشد");
       return false;
-    } else if (description.length < 3 || description.length > 500) {
-      setFormError("توضیحات محصول باید بین ۳ تا ۵۰۰ باشد");
+    } else if (description.length < 3 || description.length > 200) {
+      setFormError("توضیحات محصول باید بین ۳ تا 200 باشد");
       return false;
     }
     if (!category) {
       setFormError("دسته بندی محصول باید باشد");
       return false;
     }
-    if (!tags) {
-      setFormError(" انتخاب حداقل یک برچسب برای محصول الزامی است");
+    if (!tags || tags.length === 0 || tags.every(tag => tag.trim() === "")) {
+      setFormError("انتخاب حداقل یک برچسب برای محصول الزامی است");
       return false;
     }
-    if (price <= 0) {
-      setFormError(" قیمت محصول باید یک مقدار مثبت باشد در غیر اینصورت گزینه رایگان را تیک بزنید");
+    if (!free && (!price || parseFloat(price) <= 0)) {
+      setFormError("قیمت محصول باید یک مقدار مثبت باشد یا گزینه رایگان را انتخاب کنید");
+      return false;
+    }
+    if (discountPrice && parseFloat(discountPrice) >= parseFloat(price)) {
+      setFormError("قیمت تخفیفی باید کمتر از قیمت اصلی باشد");
       return false;
     }
     setFormError("");
@@ -283,7 +306,8 @@ const AddProduct = () => {
                       className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                       placeholder="قیمت"
                       type="number"
-                      value={price}
+                      value={free ? "0" : price}
+                      disabled={free}
                       onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
@@ -297,7 +321,8 @@ const AddProduct = () => {
                       className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                       placeholder="قیمت تخفیفی"
                       type="number"
-                      value={discountPrice}
+                      value={free ? "" : discountPrice}
+                      disabled={free}
                       onChange={(e) => setDiscountPrice(e.target.value)}
                     />
                   </div>
