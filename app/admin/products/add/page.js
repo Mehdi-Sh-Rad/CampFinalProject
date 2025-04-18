@@ -13,6 +13,7 @@ const AddProduct = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
+  const [tempDiscountPrice, setTempDiscountPrice] = useState("");
   const [active, setActive] = useState("");
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -38,10 +39,22 @@ const AddProduct = () => {
     if (parseFloat(price) === 0) {
       setFree(true);
     }
-    else {
-      setFree(false)
-    }
   }, [price]);
+
+  // Toggle free checkbox
+  const handleFreeToggle = () => {
+    if (!free) {
+      // switch to free
+      setTempDiscountPrice(discountPrice);
+      setDiscountPrice("");
+      setPrice("0");
+      setFree(true);
+    } else {
+      // switch off free
+      setDiscountPrice(tempDiscountPrice);
+      setFree(false);
+    }
+  };
 
   // Add a new empty file slot
   const handleAddFile = () => {
@@ -81,11 +94,11 @@ const AddProduct = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    if (!files || files.length === 0 || files.every(file => !file)) {
+    if (!files || files.length === 0 || files.every((file) => !file)) {
       setFormError("انتخاب حداقل یک فایل محصول الزامی است");
       return false;
     }
-    if (!images || images.length === 0 || images.every(image => !image)) {
+    if (!images || images.length === 0 || images.every((image) => !image)) {
       setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
       return false;
     }
@@ -116,7 +129,7 @@ const AddProduct = () => {
       setFormError("دسته بندی محصول باید باشد");
       return false;
     }
-    if (!tags || tags.length === 0 || tags.every(tag => tag.trim() === "")) {
+    if (!tags || tags.length === 0 || tags.every((tag) => tag.trim() === "")) {
       setFormError("انتخاب حداقل یک برچسب برای محصول الزامی است");
       return false;
     }
@@ -145,7 +158,7 @@ const AddProduct = () => {
       formData.append("author", author);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("discountPrice", discountPrice);
+      formData.append("discountPrice", free ? "" : discountPrice);
       formData.append("active", active ? "true" : "false");
       formData.append("category", category);
       formData.append("types", selectedTypes);
@@ -413,7 +426,7 @@ const AddProduct = () => {
                   {/* Free Toggle */}
                   <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
                     <div className="relative">
-                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
+                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={handleFreeToggle} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
                         className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${

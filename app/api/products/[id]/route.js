@@ -22,6 +22,7 @@ export async function GET(request, { params }) {
   }
 }
 
+// PUT: Update an existing product by ID
 export async function PUT(request, { params }) {
   try {
     const { id } = await params;
@@ -47,13 +48,23 @@ export async function PUT(request, { params }) {
     const name = data.get("name");
     const author = data.get("author");
     const description = data.get("description");
-    const price = data.get("price");
-    const discountPrice = data.get("discountPrice");
+    let price = data.get("price");
+
+    let discountPrice = data.get("discountPrice") ? parseFloat(data.get("discountPrice")) : undefined;
     const category = data.get("category");
-    const types = data.get("types")?.split(",").map((tag) => tag.trim()) || [];
-    const tags = data.get("tags")?.split(",").map((tag) => tag.trim()) || [];
+    const types =
+      data
+        .get("types")
+        ?.split(",")
+        .map((tag) => tag.trim()) || [];
+    const tags =
+      data
+        .get("tags")
+        ?.split(",")
+        .map((tag) => tag.trim()) || [];
     const active = data.get("active");
-    const free = data.get("free");
+    const free = data.get("free") === "true";
+
     const award = data.get("award");
 
     // Get all files and images as arrays
@@ -67,6 +78,68 @@ export async function PUT(request, { params }) {
         message: "آپلود فایل‌ها و تصاویر الزامی میباشد",
       });
     }
+
+    // Validate required fields
+    if (!name || name.trim() === "") {
+      return new Response(JSON.stringify({ message: "نام محصول الزامی است" }), { status: 400 });
+    }
+    if (name.length < 3 || name.length > 30) {
+      return new Response(JSON.stringify({ message: "نام محصول باید بین 3 تا 30 کاراکتر باشد" }), { status: 400 });
+    }
+
+    if (!author || author.trim() === "") {
+      return new Response(JSON.stringify({ message: "نام نویسنده الزامی است" }), { status: 400 });
+    }
+    if (author.length < 3 || author.length > 50) {
+      return new Response(JSON.stringify({ message: "نام نویسنده باید بین 3 تا 50 کاراکتر باشد" }), { status: 400 });
+    }
+    if (!description || description.trim() === "") {
+      return new Response(JSON.stringify({ message: "توضیحات محصول الزامی است" }), { status: 400 });
+    }
+    if (description.length < 3 || description.length > 500) {
+      return new Response(JSON.stringify({ message: "توضیحات محصول باید بین 3 تا 500 کاراکتر باشد" }), { status: 400 });
+    }
+
+    if (!category) {
+      return new Response(JSON.stringify({ message: "انتخاب دسته‌بندی الزامی است" }), { status: 400 });
+    }
+
+    if (!free && (!price || isNaN(price) || price <= 0)) {
+      return new Response(JSON.stringify({ message: "قیمت محصول باید مقدار مثبت باشد یا گزینه رایگان را انتخاب کنید" }), { status: 400 });
+    }
+    if (free && discountPrice !== undefined) {
+      discountPrice = undefined; // Ignore discountPrice if free is true
+    }
+    if (discountPrice !== undefined && (isNaN(discountPrice) || discountPrice < 0)) {
+      return new Response(JSON.stringify({ message: "قیمت تخفیفی باید عدد مثبت باشد" }), { status: 400 });
+    }
+
+    if (discountPrice !== undefined && !free && discountPrice >= price) {
+      return new Response(JSON.stringify({ message: "قیمت تخفیفی باید کمتر از قیمت اصلی باشد" }), { status: 400 });
+    }
+
+    if (files.length > 10) {
+      return new Response(JSON.stringify({ message: "حداکثر 10 فایل مجاز است" }), {
+        status: 400,
+      });
+    }
+    if (images.length > 10) {
+      return new Response(JSON.stringify({ message: "حداکثر 10 تصویر مجاز است" }), {
+        status: 400,
+      });
+    }
+
+    if (tags.length === 0) {
+      return new Response(JSON.stringify({ message: "حداقل یک برچسب الزامی است" }), { status: 400 });
+    }
+
+    console.log("before : ", price);
+
+    // Set price to 0 if free is true
+    if (free) {
+      price = 0;
+    }
+    console.log("after : ", free, price);
 
     let imageUrls = [];
     let fileUrls = [];
@@ -107,13 +180,12 @@ export async function PUT(request, { params }) {
 
     // Handle files
     if (files && files.length > 0) {
-     
       for (const file of files) {
-        if (file instanceof File) {  
-          // Process new file uploads    
+        if (file instanceof File) {
+          // Process new file uploads
           const bytes = await file.arrayBuffer();
           const buffer = Buffer.from(bytes);
-       
+
           const uploadDir = join(process.cwd(), "public/uploads/files");
           const filePath = join(uploadDir, file.name);
 
@@ -126,7 +198,7 @@ export async function PUT(request, { params }) {
         }
       }
 
-       // Delete old files that are not in the new list
+      // Delete old files that are not in the new list
       if (product.fileUrls && product.fileUrls.length > 0) {
         for (const oldFile of product.fileUrls) {
           if (!fileUrls.includes(oldFile)) {
@@ -139,27 +211,28 @@ export async function PUT(request, { params }) {
       }
     }
 
-    const updateProduct = await Product.findByIdAndUpdate(
-      id,
-      {
-        name,
-        author,
-        description,
-        price,
-        discountPrice,
-        category,
-        tags,
-        types,
-        active,
-        free,
-        award,
-        imageUrls,
-        fileUrls,
-      },
-      { new: true }
-    );
+    product.name = name;
+    product.author = author;
+    product.description = description;
+    product.price = free ? 0 : price;
+    product.category = category;
+    product.tags = tags;
+    product.types = types;
+    product.active = active;
+    product.free = free;
+    product.award = award;
+    product.imageUrls = imageUrls;
+    product.fileUrls = fileUrls;
 
-    return new Response(JSON.stringify(updateProduct), { status: 200 });
+    if (free) {
+      product.discountPrice = undefined;
+    } else if (discountPrice !== undefined) {
+      product.discountPrice = discountPrice;
+    }
+
+    const saved = await product.save();
+
+    return new Response(JSON.stringify(saved), { status: 200 });
   } catch (error) {
     console.log("خطا در ویرایش محصول", error);
     return NextResponse.json({
@@ -188,38 +261,30 @@ export async function DELETE(request, { params }) {
         message: " محصول معتبر نیست",
       });
     }
-    
+
     // Delete the image file from the server
     const imageUrls = product.imageUrls;
     if (!imageUrls || imageUrls.length === 0) {
-      return new Response(
-        JSON.stringify({ message: "تصویر محصول پیدا نشد" }),
-        { status: 404 }
-      );
+      return new Response(JSON.stringify({ message: "تصویر محصول پیدا نشد" }), { status: 404 });
     }
     imageUrls.map((imageUrl) => {
       const filePath = join(process.cwd(), "public", imageUrl);
       unlink(filePath).catch(() => {
         console.log("خطا در حذف تصویر از سرور");
       });
-    }
-    );
+    });
 
     // Delete the file from the server
     const fileUrls = product.fileUrls;
     if (!fileUrls || fileUrls.length === 0) {
-      return new Response(
-        JSON.stringify({ message: "فایل محصول پیدا نشد" }),
-        { status: 404 }
-      );
-    }   
+      return new Response(JSON.stringify({ message: "فایل محصول پیدا نشد" }), { status: 404 });
+    }
     fileUrls.map((fileUrl) => {
       const filePath = join(process.cwd(), "public", fileUrl);
       unlink(filePath).catch(() => {
         console.log("خطا در حذف فایل از سرور");
       });
-    }
-    );
+    });
 
     // Delete the product from the database
     await Product.findByIdAndDelete(id);

@@ -15,6 +15,7 @@ const UpdateProduct = () => {
   const [images, setImages] = useState([]);
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
+  const [tempDiscountPrice, setTempDiscountPrice] = useState("");
   const [tags, setTags] = useState([]);
   const [types, setTypes] = useState(["pdf", "docx", "ppt", "png", "jpeg"]);
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -41,7 +42,8 @@ const UpdateProduct = () => {
         setFiles(productData.fileUrls);
         setImages(productData.imageUrls);
         setPrice(productData.price);
-        setDiscountPrice(productData.discountPrice);
+        setDiscountPrice(productData.discountPrice || "");
+        setTempDiscountPrice(productData.discountPrice || "");
         setTags(Array.isArray(productData.tags) ? productData.tags : []); // Ensure tags is an array
         setSelectedTypes(productData.types);
         setActive(productData.active);
@@ -61,6 +63,28 @@ const UpdateProduct = () => {
 
     fetchProductData();
   }, [id]);
+
+  // Automatically set free to true if price is 0
+  useEffect(() => {
+    if (parseFloat(price) === 0) {
+      setFree(true);
+    }
+  }, [price]);
+
+  // Toggle free checkbox
+  const handleFreeToggle = () => {
+    if (!free) {
+      // switching to free
+      setTempDiscountPrice(discountPrice);
+      setDiscountPrice("");
+      setPrice("0");
+      setFree(true);
+    } else {
+      // switching off free
+      setDiscountPrice(tempDiscountPrice);
+      setFree(false);
+    }
+  };
 
   const handleAddFile = () => {
     setFiles([...files, null]); // Add a new empty file slot
@@ -99,6 +123,14 @@ const UpdateProduct = () => {
 
   // Validate form inputs
   const validateForm = () => {
+    if (!files || files.length === 0 || files.every((file) => !file)) {
+      setFormError("انتخاب حداقل یک فایل محصول الزامی است");
+      return false;
+    }
+    if (!images || images.length === 0 || images.every((image) => !image)) {
+      setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
+      return false;
+    }
     if (!name || name.trim() === "") {
       setFormError("نام محصول الزامی میباشد");
       return false;
@@ -107,28 +139,35 @@ const UpdateProduct = () => {
       return false;
     }
 
-    if (!description || description.trim() === "") {
-      setFormError("توضیحات محصول الزامی میباشد");
+    if (!author || author.trim() === "") {
+      setFormError("نام نویسنده الزامی است");
       return false;
-    } else if (description.length < 3 || description.length > 500) {
-      setFormError("توضیحات محصول باید بین ۳ تا ۵۰۰ باشد");
+    } else if (author.length < 3 || author.length > 30) {
+      setFormError("نام نویسنده باید بین ۳ تا ۳۰ کاراکتر باشد");
       return false;
     }
 
-    if (price <= 0) {
-      setFormError("قیمت محصول باید یک مقدار مثبت باشد");
+    if (!description || description.trim() === "") {
+      setFormError("توضیحات محصول الزامی میباشد");
       return false;
-    }
-    if (discountPrice && discountPrice < 0) {
-      setFormError("قیمت تخفیفی محصول باید یک مقدار مثبت باشد");
-      return false;
-    }
-    if (discountPrice && discountPrice > price) {
-      setFormError("قیمت تخفیفی باید کمتر از قیمت محصول باشد");
+    } else if (description.length < 3 || description.length > 200) {
+      setFormError("توضیحات محصول باید بین ۳ تا 200 باشد");
       return false;
     }
     if (!category) {
       setFormError("دسته بندی محصول باید باشد");
+      return false;
+    }
+    if (!tags || tags.length === 0 || tags.every((tag) => tag.trim() === "")) {
+      setFormError("انتخاب حداقل یک برچسب برای محصول الزامی است");
+      return false;
+    }
+    if (!free && (!price || parseFloat(price) <= 0)) {
+      setFormError("قیمت محصول باید یک مقدار مثبت باشد یا گزینه رایگان را انتخاب کنید");
+      return false;
+    }
+    if (discountPrice && parseFloat(discountPrice) >= parseFloat(price)) {
+      setFormError("قیمت تخفیفی باید کمتر از قیمت اصلی باشد");
       return false;
     }
 
@@ -148,9 +187,9 @@ const UpdateProduct = () => {
       formData.append("name", name);
       formData.append("author", author);
       formData.append("description", description);
-      formData.append("price", price);
+      formData.append("price", free ? "0" : price);
+      formData.append("discountPrice", free ? "" : discountPrice);
       formData.append("category", category);
-      formData.append("discountPrice", discountPrice);
       formData.append("tags", tags);
       formData.append("types", selectedTypes);
       formData.append("active", active);
@@ -329,7 +368,8 @@ const UpdateProduct = () => {
                       className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                       placeholder="قیمت"
                       type="number"
-                      value={price}
+                      value={free ? "0" : price}
+                      disabled={free}
                       onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
@@ -342,7 +382,8 @@ const UpdateProduct = () => {
                       className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                       placeholder="قیمت تخفیفی"
                       type="number"
-                      value={discountPrice}
+                      value={free ? "" : discountPrice}
+                      disabled={free}
                       onChange={(e) => setDiscountPrice(e.target.value)}
                     />
                   </div>
@@ -432,7 +473,7 @@ const UpdateProduct = () => {
 
                   <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
                     <div className="relative">
-                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
+                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={handleFreeToggle} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
                         className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${

@@ -83,10 +83,7 @@ export async function POST(request) {
     }
 
     if (discountPrice !== undefined && !free && discountPrice >= price) {
-      return new Response(
-        JSON.stringify({ message: "قیمت تخفیفی باید کمتر از قیمت اصلی باشد" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ message: "قیمت تخفیفی باید کمتر از قیمت اصلی باشد" }), { status: 400 });
     }
 
     if (files.length > 10) {
@@ -104,7 +101,7 @@ export async function POST(request) {
       return new Response(JSON.stringify({ message: "حداقل یک برچسب الزامی است" }), { status: 400 });
     }
 
-    // Set price to 0 if free is true
+    // Set price to 0 and discountPrice to undefined if free is true
     if (free) {
       price = 0;
     }
@@ -136,21 +133,41 @@ export async function POST(request) {
     // Save product to database
     await connectToDatabase();
 
-    const product = await Product.create({
+    const productData = {
       fileUrls, // Array of file URLs
       imageUrls, // Array of image URLs
       name,
       author,
       description,
       price,
-      discountPrice,
       category,
       types,
       tags,
       active,
       free,
       award,
-    });
+    };
+    if (!free && discountPrice !== undefined) {
+      productData.discountPrice = discountPrice;
+    }
+
+    const product = await Product.create(productData);
+
+    // const product = await Product.create({
+    //   fileUrls, // Array of file URLs
+    //   imageUrls, // Array of image URLs
+    //   name,
+    //   author,
+    //   description,
+    //   price,
+    //   discountPrice,
+    //   category,
+    //   types,
+    //   tags,
+    //   active,
+    //   free,
+    //   award,
+    // });
 
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {
