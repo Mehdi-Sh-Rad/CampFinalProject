@@ -5,8 +5,11 @@ import { useSearchParams } from "next/navigation";
 import Script from "next/script";
 import React, { useEffect, useState } from "react";
 
+// Component for resetting user password using a token
 const ResetPasswordForm = () => {
   const searchParams = useSearchParams();
+
+  // State for form inputs and UI control
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -16,6 +19,7 @@ const ResetPasswordForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Extract token from URL on component mount
   useEffect(() => {
     const tokenFromUrl = searchParams.get("token");
     if (tokenFromUrl) {
@@ -25,6 +29,7 @@ const ResetPasswordForm = () => {
     }
   }, [searchParams]);
 
+  // Fetch reCAPTCHA token for specified action
   const getRecaptchaToken = async (action) => {
     return new Promise((resolve, reject) => {
       window.grecaptcha.ready(() => {
@@ -36,11 +41,13 @@ const ResetPasswordForm = () => {
     });
   };
 
+  // Handle password reset submission
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
+    // Validate inputs
     if (!password || password.length < 8) {
       setError("رمز عبور باید حداقل 8 کاراکتر باشد");
       return;
@@ -79,6 +86,7 @@ const ResetPasswordForm = () => {
 
   return (
     <>
+      {/* Load reCAPTCHA script */}
       <Script src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`} strategy="afterInteractive" />
       <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
         <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">
@@ -87,6 +95,7 @@ const ResetPasswordForm = () => {
             {error && <h3 className="text-white bg-shop-red py-2 px-4 w-full rounded-lg">{error}</h3>}
             {success && <h3 className="text-white bg-green-400 py-3 px-4 rounded-lg">{success}</h3>}
 
+            {/* Password reset form */}
             <form className="flex flex-col gap-y-4 w-full" onSubmit={handleResetPassword}>
               <div className="flex flex-col gap-y-2">
                 <div className="flex gap-x-2 items-center">
