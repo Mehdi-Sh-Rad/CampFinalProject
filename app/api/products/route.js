@@ -153,21 +153,6 @@ export async function POST(request) {
 
     const product = await Product.create(productData);
 
-    // const product = await Product.create({
-    //   fileUrls, // Array of file URLs
-    //   imageUrls, // Array of image URLs
-    //   name,
-    //   author,
-    //   description,
-    //   price,
-    //   discountPrice,
-    //   category,
-    //   types,
-    //   tags,
-    //   active,
-    //   free,
-    //   award,
-    // });
 
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {
