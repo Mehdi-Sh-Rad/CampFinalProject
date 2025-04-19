@@ -91,7 +91,7 @@ const ResetPasswordForm = () => {
       <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
         <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">
           <div className="bg-white dark:bg-[#2e1f38] rounded-3xl w-80 md:w-96 px-6 py-6 shadow-sm flex flex-col items-center gap-y-4 justify-center">
-            <Image src={"/uploads/logo2.webp"} width={50} height={50} alt="logo" />
+            <Image src={"/logo-min.png"} width={50} height={50} alt="logo" />
             {error && <h3 className="text-white bg-shop-red py-2 px-4 w-full rounded-lg">{error}</h3>}
             {success && <h3 className="text-white bg-green-400 py-3 px-4 rounded-lg">{success}</h3>}
 

@@ -17,7 +17,7 @@ export default function AuthWrapper({ children }) {
   if (status === "loading") {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Image className={`transition-all duration-500 animate-pulse-scale`} src="/uploads/logo2.webp" height={100} width={100} alt="لوگو فروشگاه" />
+        <Image className={`transition-all duration-500 animate-pulse-scale`} src="/logo-min.png" height={100} width={100} alt="لوگو فروشگاه" />
       </div>
     );
   }

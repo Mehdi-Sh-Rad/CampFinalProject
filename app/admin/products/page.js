@@ -198,7 +198,7 @@ const Products = () => {
                                   <td className="whitespace-nowrap  px-4 py-4">{product.category?.name || "بدون دسته بندی"}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.types.map((tp) => ` ${tp}`)}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">
-                                    <Image src={product.imageUrls?.[0] || "/uploads/logo2.webp"} width={100} height={100} alt={product.name || "product image"} />
+                                    <Image src={product.imageUrls?.[0] || "/logo-min.png"} width={100} height={100} alt={product.name || "product image"} />
                                   </td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.price === 0
     ? "رایگان"
