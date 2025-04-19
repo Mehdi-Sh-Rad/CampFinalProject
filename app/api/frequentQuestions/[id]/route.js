@@ -1,10 +1,19 @@
 import connectToDatabase from "@/app/lib/db";
 import FrequentQuestion from "@/models/FrequentQuestion";
+import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
 
+
+   if (!isValidObjectId(id)) {
+      return NextResponse.json(
+        { message: "آیدی سوال نامعتبر است" },
+        { status: 400 }
+      );
+    }
   try {
     const frequentQuestions = await FrequentQuestion.findById(id);
     if (!frequentQuestions) {
