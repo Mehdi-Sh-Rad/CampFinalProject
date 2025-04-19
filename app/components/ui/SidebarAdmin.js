@@ -30,14 +30,14 @@ const Sidebar = () => {
         <Link className={`flex justify-center items-center`} href={"/admin"}>
           <Image
             className={`transition-all duration-500 ${!isSidebarOpen ? "hidden opacity-0" : "opacity-100"}`}
-            src={"/uploads/logo.svg"}
+            src={"/logo-panel.png"}
             height={40}
             width={195}
             alt="لوگو فروشگاه"
           />
           <Image
             className={`transition-all duration-500 ${isSidebarOpen ? "hidden opacity-0" : "opacity-100"}`}
-            src={"/uploads/logo2.webp"}
+            src={"/logo-min.png"}
             height={35}
             width={35}
             alt="لوگو فروشگاه"
