@@ -1,9 +1,18 @@
 import connectToDatabase from "@/app/lib/db";
 import ProductQuestion from "@/models/ProductQuestion";
+import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
+
+  if (!isValidObjectId(id)) {
+        return NextResponse.json(
+          { message: "آیدی سوال محصول نامعتبر است" },
+          { status: 400 }
+        );
+      }
 
   try {
     const productQuestion = await ProductQuestion.findById(id).populate("user").populate("product");
