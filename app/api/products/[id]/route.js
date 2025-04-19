@@ -3,10 +3,18 @@ import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
+import { isValidObjectId } from "mongoose";
 
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
+
+  if (!isValidObjectId(id)) {
+    return NextResponse.json(
+      { message: "آیدی محصول نامعتبر است" },
+      { status: 400 }
+    );
+  }
   try {
     const product = await Product.findById(id);
     if (!product) {
