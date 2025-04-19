@@ -1,5 +1,7 @@
 import Discount from '@/models/Discount';
 import connectToDatabase from '../../lib/db';
+import { isValidObjectId } from 'mongoose';
+import { NextResponse } from 'next/server';
 
 async function connectDB() {
   try {
@@ -14,7 +16,18 @@ export async function GET(req) {
     await connectDB();
     const url = new URL(req.url);
     const id = url.searchParams.get('id');
+
+    
+
     if (id) {
+
+      if (!isValidObjectId(id)) {
+        return NextResponse.json(
+          { message: "آیدی کد تخفیف نامعتبر است" },
+          { status: 400 }
+        );
+      }
+      
       const discount = await Discount.findById(id).lean();
       if (!discount) {
         return new Response(JSON.stringify({ message: 'کد تخفیف یافت نشد' }), { status: 404 });
