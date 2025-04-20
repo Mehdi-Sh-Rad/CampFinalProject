@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
+import { useCart } from "@/app/context/CartContext";
 import {
   FaSearch,
   FaShoppingCart,
@@ -20,9 +21,13 @@ import {
   FaNewspaper,
 } from "react-icons/fa";
 
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session, status } = useSession();
+  const { cart } = useCart();
+
+  const totalItems = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -67,13 +72,25 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">
             <div className="relative group">
-              <Link href="#" className="text-dark hover:text-secondary">
-                <FaShoppingCart size={24} />
+              <Link
+                href="/cart"
+                className="btn btn-link position-relative text-dark header-cart-link"
+              >
+                <FaShoppingCart size={22} className="text-dark" />
               </Link>
-              <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
-                سبد خرید
+              <span className="absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+              سبد
               </span>
+              {totalItems > 0 && (
+                    <span
+                      style={{ top: "80%" }}
+                      className="bg-red-400 text-white rounded-full w-5 h-5 flex items-center justify-center absolute -right-2 -top-2 text-xs font-bold"
+                    >
+                      {totalItems}
+                    </span>
+                  )}
             </div>
+            
             <div className="relative group">
               <Link
                 href={"/user"}

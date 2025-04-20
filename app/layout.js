@@ -2,6 +2,7 @@ import Script from "next/script";
 import SessionProviderWrapper from "./components/auth/SessionProviderWrapper";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./styles/globals.css";
+import { CartProvider } from "./context/CartContext";
 // import "bootstrap/dist/css/bootstrap.rtl.min.css";
 
 export const metadata = {
@@ -14,7 +15,9 @@ export default function RootLayout({ children }) {
     <html lang="fa" dir="rtl">
       <body>
         <SessionProviderWrapper>
-          <ThemeProvider>{children}</ThemeProvider>
+          <CartProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </CartProvider>
         </SessionProviderWrapper>
       </body>
     </html>

@@ -8,13 +8,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import ProductCard from "@/app/components/ProductCard";
+import { useCart } from "@/app/context/CartContext";
+import AddToCartButton from "@/app/components/home/AddToCartButton";
 
 export default function ProductDetail() {
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } = useCart();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [error, setError] = useState(null);
+  const [productError, setProductError] = useState(null);
   const { data: session, status } = useSession();
   const params = useParams();
   const productId = params?.id;
@@ -32,7 +35,7 @@ export default function ProductDetail() {
         const fetchedRelatedProducts = await relatedRes.json();
         setRelatedProducts(fetchedRelatedProducts);
       } catch (err) {
-        setError(err.message);
+        setProductError(err.message);
       }
     };
 
@@ -49,7 +52,7 @@ export default function ProductDetail() {
         const data = await res.json();
         setComments(data);
       } catch (err) {
-        setError(err.message);
+        setProductError(err.message);
       }
     };
 
@@ -61,12 +64,12 @@ export default function ProductDetail() {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!session) {
-      setError("برای ثبت دیدگاه باید وارد حساب کاربری خود شوید.");
+      setProductError("برای ثبت دیدگاه باید وارد حساب کاربری خود شوید.");
       return;
     }
 
     if (!newComment.trim()) {
-      setError("لطفاً متن دیدگاه را وارد کنید.");
+      setProductError("لطفاً متن دیدگاه را وارد کنید.");
       return;
     }
 
@@ -89,9 +92,9 @@ export default function ProductDetail() {
       const newCommentData = await res.json();
       setComments([newCommentData, ...comments]);
       setNewComment("");
-      setError(null);
+      setProductError(null);
     } catch (err) {
-      setError(err.message);
+      setProductError(err.message);
     }
   };
 
@@ -149,9 +152,9 @@ export default function ProductDetail() {
                 قیمت با تخفیف: {product.discountPrice.toLocaleString()} تومان
               </p>
             )}
-            <button className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-secondary transition-all shadow-md hover:shadow-lg">
-              افزودن به سبد خرید
-            </button>
+
+            <AddToCartButton productId={product._id} />
+
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-primary">
@@ -160,7 +163,7 @@ export default function ProductDetail() {
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-primary">
           <h2 className="text-xl font-semibold text-dark mb-4">دیدگاه‌های کاربران</h2>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {productError && <p className="text-red-500 mb-4">{productError}</p>}
           {comments.length > 0 ? (
             <div className="space-y-4 mb-4">
               {comments.map((comment) => (

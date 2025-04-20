@@ -222,9 +222,9 @@ const Sidebar = () => {
           </Link>
 
           
-          <Link className=" " href={"/admin/payments"}>
+          <Link className=" " href={"/user/wallets"}>
             <li
-              className={`flex ${pathName.startsWith("/admin/payments") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+              className={`flex ${pathName.startsWith("/user/wallets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 width="25"
@@ -236,7 +236,7 @@ const Sidebar = () => {
                 </path>
               </svg>
               <span
-                className={`${pathName.startsWith("/admin/payments") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                className={`${pathName.startsWith("/user/wallets") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
                   کیف پول
               </span>
