@@ -4,12 +4,15 @@ import Link from "next/link";
 import Script from "next/script";
 import React, { useState } from "react";
 
+// Component for password reset link request
 const ForgetPasswordForm = () => {
+  // State for form input and UI control
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Fetch reCAPTCHA token for specified action
   const getRecaptchaToken = async (action) => {
     return new Promise((resolve, reject) => {
       window.grecaptcha.ready(() => {
@@ -21,11 +24,13 @@ const ForgetPasswordForm = () => {
     });
   };
 
+  // Handle sending password reset link
   const handleSendLink = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
+    // Validate email
     const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
     if (!email || !emailRegex.test(email)) {
       setError("ایمیل معتبر نیست");
@@ -57,14 +62,16 @@ const ForgetPasswordForm = () => {
 
   return (
     <>
+      {/* Load reCAPTCHA script */}
       <Script src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`} strategy="afterInteractive" />
       <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
         <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">
           <div className="bg-white dark:bg-[#2e1f38] rounded-3xl w-80 md:w-96 px-6 py-6 shadow-sm flex flex-col items-center gap-y-4 justify-center">
-            <Image src={"/uploads/logo2.webp"} width={50} height={50} alt="logo" />
+            <Image src={"/logo-min.png"} width={50} height={50} alt="logo" />
             {error && <h3 className="text-white bg-shop-red py-2 px-4 w-full rounded-lg">{error}</h3>}
             {success && <h3 className="text-white bg-green-400 py-3 px-4 rounded-lg">{success}</h3>}
 
+            {/* Password reset form */}
             <form className="flex flex-col gap-y-4 w-full" onSubmit={handleSendLink}>
               <div className="flex flex-col gap-y-2">
                 <div className="flex gap-x-2 items-center">

@@ -1,10 +1,19 @@
 import connectToDatabase from "@/app/lib/db";
 import FrequentQuestion from "@/models/FrequentQuestion";
+import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
 
+
+   if (!isValidObjectId(id)) {
+      return NextResponse.json(
+        { message: "آیدی سوال نامعتبر است" },
+        { status: 400 }
+      );
+    }
   try {
     const frequentQuestions = await FrequentQuestion.findById(id);
     if (!frequentQuestions) {
@@ -23,27 +32,61 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   await connectToDatabase();
   try {
+    const { id } = params;
     const body = await request.json();
-    // if (
-    //   !body.name ||
-    //   typeof body.name !== "string" ||
-    //   body.name.trim() === ""
-    // ) {
-    //   return new Response(
-    //     JSON.stringify({ message: "نام دسته بندی الزامی میباشد" }),
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
-    // if (body.name.length < 3 || body.name.length > 30) {
-    //   return new Response(
-    //     JSON.stringify({ message: "نام باید بین ۳ تا ۳۰ باشد" }),
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
+
+    // Validate ID
+    if (!id) {
+      return new Response(JSON.stringify({ message: "شناسه سوال الزامی است" }), {
+        status: 400,
+      });
+    }
+
+    // Check if question exists
+    const existingQuestion = await FrequentQuestion.findById(id);
+    if (!existingQuestion) {
+      return new Response(JSON.stringify({ message: "سوال متداول یافت نشد" }), {
+        status: 404,
+      });
+    }
+
+    // Validate topic
+    if (!body.topic || typeof body.topic !== "string" || body.topic.trim() === "") {
+      return new Response(JSON.stringify({ message: "موضوع الزامی است" }), {
+        status: 400,
+      });
+    }
+    if (body.topic.length < 3 || body.topic.length > 50) {
+      return new Response(JSON.stringify({ message: "موضوع باید بین ۳ تا ۵۰ کاراکتر باشد" }), {
+        status: 400,
+      });
+    }
+
+    // Validate question
+    if (!body.question || typeof body.question !== "string" || body.question.trim() === "") {
+      return new Response(JSON.stringify({ message: "سوال الزامی است" }), {
+        status: 400,
+      });
+    }
+    if (body.question.length < 3 || body.question.length > 100) {
+      return new Response(JSON.stringify({ message: "سوال باید بین ۳ تا ۱۰۰ کاراکتر باشد" }), {
+        status: 400,
+      });
+    }
+
+    // Validate answer
+    if (!body.answer || typeof body.answer !== "string" || body.answer.trim() === "") {
+      return new Response(JSON.stringify({ message: "پاسخ الزامی است" }), {
+        status: 400,
+      });
+    }
+    if (body.answer.length < 3 || body.answer.length > 500) {
+      return new Response(JSON.stringify({ message: "پاسخ باید بین ۳ تا ۵۰۰ کاراکتر باشد" }), {
+        status: 400,
+      });
+    }
+
+    // Update frequent question
     const frequentQues = await FrequentQuestion.findByIdAndUpdate(params.id, body, {
       new: true,
     });

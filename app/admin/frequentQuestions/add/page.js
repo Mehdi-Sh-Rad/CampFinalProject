@@ -1,11 +1,8 @@
 "use client";
-import Header from "@/app/components/ui/Header";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { use, useState } from "react";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
+import React, { useState } from "react";
 
 const AddFrequentQuestions = () => {
   const [topic, setTopic] = useState("");
@@ -16,18 +13,37 @@ const AddFrequentQuestions = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Validate form inputs
   const validateForm = () => {
-    if (question.trim() === "") {
-      setFormError("درج سوال الزامی میباشد");
+    if (!topic || topic.trim() === "") {
+      setFormError("موضوع الزامی است");
       return false;
-    } else if (question.length < 1 || question.length > 100) {
-      setFormError("تعداد کاراکترهای سوال باید بین ۱ تا ۱۰۰ باشد");
+    }
+    if (topic.length < 3 || topic.length > 50) {
+      setFormError("موضوع باید بین ۳ تا ۵۰ کاراکتر باشد");
+      return false;
+    }
+    if (!question || question.trim() === "") {
+      setFormError("سوال الزامی است");
+      return false;
+    }
+    if (question.length < 3 || question.length > 100) {
+      setFormError("سوال باید بین ۳ تا ۱۰۰ کاراکتر باشد");
+      return false;
+    }
+    if (!answer || answer.trim() === "") {
+      setFormError("پاسخ الزامی است");
+      return false;
+    }
+    if (answer.length < 3 || answer.length > 500) {
+      setFormError("پاسخ باید بین ۳ تا ۵۰۰ کاراکتر باشد");
       return false;
     }
     setFormError("");
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -83,8 +99,7 @@ const AddFrequentQuestions = () => {
             {formError && <h3>{formError}</h3>}
             <form className="py-4" onSubmit={handleSubmit}>
               <div className="flex flex-col items-start gap-y-4 w-full">
-
-              <input
+                <input
                   name="topic"
                   autoComplete="topic"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
@@ -112,13 +127,13 @@ const AddFrequentQuestions = () => {
                   onChange={(e) => setAnswer(e.target.value)}
                 />
                 <div>
-                <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
-                  ذخیره
-                </button>
-                <Link href={"/admin/frequentQuestions"} className="bg-red-700 text-white py-2 px-4 rounded">
-                  انصراف
-                </Link>
-              </div>
+                  <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
+                    ذخیره
+                  </button>
+                  <Link href={"/admin/frequentQuestions"} className="bg-red-700 text-white py-2 px-4 rounded">
+                    انصراف
+                  </Link>
+                </div>
               </div>
             </form>
           </div>

@@ -1,18 +1,15 @@
 "use client";
-import GeneralError from "@/app/components/ui/GeneralError";
-import Header from "@/app/components/ui/Header";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 
 const ProductQuestions = () => {
   const [productQuestions, setProductQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  //Fetch product questions on component mount
   useEffect(() => {
     setLoading(true);
     const fetchProductQuestions = async () => {
@@ -32,6 +29,7 @@ const ProductQuestions = () => {
     fetchProductQuestions();
   }, []);
 
+  //Delete product question by ID
   const handleDelete = async (id) => {
     try {
       await fetch(`/api/productQuestions/${id}`, { method: "DELETE" });
@@ -70,6 +68,7 @@ const ProductQuestions = () => {
               <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div className="overflow-hidden">
                   {loading ? (
+                    // Render skeleton rows during loading
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -119,6 +118,7 @@ const ProductQuestions = () => {
                       </tbody>
                     </table>
                   ) : (
+                    // Render product questions table
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -150,18 +150,26 @@ const ProductQuestions = () => {
                                 <td className="whitespace-nowrap  px-6 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">{proQuestion.user?.name || "not available"}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">{proQuestion.product?.name || "not available"}</td>
-                                <td className="whitespace-nowrap  px-6 py-4" style={{
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "150px",
-                                }}>{proQuestion.question}</td>
-                                <td className="whitespace-nowrap  px-6 py-4" style={{
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "150px",
-                                }}>{proQuestion.answer}</td>
+                                <td
+                                  className="whitespace-nowrap  px-6 py-4"
+                                  style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>
+                                  {proQuestion.question}
+                                </td>
+                                <td
+                                  className="whitespace-nowrap  px-6 py-4"
+                                  style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>
+                                  {proQuestion.answer}
+                                </td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <Link href={`/admin/productQuestions/${proQuestion._id}`}>

@@ -12,34 +12,12 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    // if (
-    //   !body.problem ||
-    //   typeof body.problem !== "string" ||
-    //   body.problem.trim() === ""
-    // ) {
-    //   return new Response(
-    //     JSON.stringify({ message: " درج سوال الزامی میباشد" }),
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
-    // if (body.topic.length < 1 || body.topic.length > 50) {
-    //   return new Response(
-    //     JSON.stringify({ message: "موضوع سوال باید بین ۱ تا ۵۰ کاراکتر باشد" }),
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
-    // if (body.problem.length < 1 || body.problem.length > 100) {
-    //   return new Response(
-    //     JSON.stringify({ message: "سوال باید بین ۱ تا ۱۰۰ کاراکتر باشد" }),
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
+    // Basic validation
+    if (!body.topic || typeof body.topic !== "string" || body.topic.trim().length < 1 || body.topic.trim().length > 100) {
+      return new Response(JSON.stringify({ message: "موضوع تیکت باید بین ۱ تا ۱۰۰ کاراکتر باشد" }), {
+        status: 400,
+      });
+    }
 
     const ticket = await Tickets.create(body);
 

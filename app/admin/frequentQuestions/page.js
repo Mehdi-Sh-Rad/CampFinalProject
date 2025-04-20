@@ -1,18 +1,14 @@
 "use client";
-import GeneralError from "@/app/components/ui/GeneralError";
-import Header from "@/app/components/ui/Header";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 
 const FrequentQuestions = () => {
   const [frequentQuestions, setFrequentQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch frequent questions on component mount
   useEffect(() => {
     const fetchfrequentQuestions = async () => {
       setLoading(true);
@@ -31,6 +27,7 @@ const FrequentQuestions = () => {
     fetchfrequentQuestions();
   }, []);
 
+  // Delete question by ID
   const handleDelete = async (id) => {
     try {
       await fetch(`/api/frequentQuestions/${id}`, { method: "DELETE" });
@@ -69,6 +66,7 @@ const FrequentQuestions = () => {
               <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div className="overflow-hidden">
                   {loading ? (
+                    // Render skeleton rows during loading
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -112,6 +110,7 @@ const FrequentQuestions = () => {
                       </tbody>
                     </table>
                   ) : (
+                    // Render frequent questions table
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
@@ -139,18 +138,26 @@ const FrequentQuestions = () => {
                               <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap  px-6 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">{freQue.topic}</td>
-                                <td className="whitespace-nowrap  px-6 py-4" style={{
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "150px",
-                                }}>{freQue.question}</td>
-                                <td className="whitespace-nowrap  px-6 py-4" style={{
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "150px",
-                                }}>{freQue.answer}</td>
+                                <td
+                                  className="whitespace-nowrap  px-6 py-4"
+                                  style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>
+                                  {freQue.question}
+                                </td>
+                                <td
+                                  className="whitespace-nowrap  px-6 py-4"
+                                  style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>
+                                  {freQue.answer}
+                                </td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
                                     <Link href={`/admin/frequentQuestions/${freQue._id}`}>

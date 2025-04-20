@@ -2,13 +2,10 @@
 import AuthWrapper from "@/app/components/auth/auth";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import DatePicker from "react-multi-date-picker";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
 
-const AddDiscount = () => {
+const AddPayment = () => {
   const [orderCode, setOrderCode] = useState("");
   const [user, setUser] = useState("");
   const [users, setUsers] = useState([]);
@@ -18,17 +15,20 @@ const AddDiscount = () => {
   const [totalDiscount, setTotalDiscount] = useState("");
   const [status, setStatus] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Fetch users on component mount
   useEffect(() => {
     fetch("/api/auth")
       .then((res) => res.json())
       .then((data) => setUsers(data))
-      .catch(() => setError("مشکلی در دریافت لیست کاربران رخ داده است"));
+      .catch(() => setError("مشکلی در دریافت لیست کاربران رخ داده است"))
+      .finally(() => setLoading(false));
   }, []);
 
+  // Fetch products on component mount
   useEffect(() => {
     fetch("/api/products")
       .then((res) => res.json())
@@ -36,6 +36,7 @@ const AddDiscount = () => {
       .catch(() => setError("مشکلی در دریافت محصولات رخ داده است"));
   }, []);
 
+  // Generate unique order code
   useEffect(() => {
     generateOrderCode();
   }, []);
@@ -44,44 +45,62 @@ const AddDiscount = () => {
     const characters = "0123456789";
     let result = "P-";
     for (let i = 0; i < 8; i++) {
-      result += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     setOrderCode(result);
   };
 
+  // Validate form inputs
   const validateForm = () => {
-    if (orderCode === "") {
-        setFormError("کد پیگیری سفارش اختصاص پیدا نکرده است");
-        return false;
-    }
-    if (totalPrice == "") {
-      setFormError("مجموع مبلغ فاکتور صفر می‌باشد");
+    if (!orderCode) {
+      setFormError("کد پیگیری سفارش اختصاص پیدا نکرده است");
       return false;
-  }
-  if (totalDiscount >= totalPrice ) {
-    setFormError("قیمت تخفیفی باید از مبلغ فاکتور کمتر می‌باشد");
-    return false;
-}
-    if (!product) {
-        setFormError("انتخاب محصول الزامی می‌باشد");
-        return false;
     }
     if (!user) {
-      setFormError("انتخاب کاربر الزامی می‌باشد");
+      setFormError("انتخاب کاربر الزامی است");
       return false;
-  }
+    }
+    if (!product) {
+      setFormError("انتخاب محصول الزامی است");
+      return false;
+    }
+    const priceNum = parseFloat(totalPrice);
+    if (!totalPrice || isNaN(priceNum) || priceNum <= 0) {
+      setFormError("قیمت نهایی فاکتور باید عدد مثبت باشد");
+      return false;
+    }
+
+    let discountNum;
+    if (totalDiscount && totalDiscount.trim() !== "") {
+      discountNum = parseFloat(totalDiscount);
+      if (isNaN(discountNum) || discountNum < 0) {
+        setFormError("قیمت تخفیفی باید عدد مثبت باشد");
+        return false;
+      }
+      if (discountNum >= priceNum) {
+        setFormError("قیمت تخفیفی باید کمتر از قیمت نهایی باشد");
+        return false;
+      }
+    }
+
+    if (typeof status !== "boolean") {
+      setFormError("وضعیت پرداخت نامعتبر است");
+      return false;
+    }
+
     setFormError("");
     return true;
-  }
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-        return;
+      return;
     }
     try {
       setLoading(true);
+
       const response = await fetch("/api/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,8 +108,8 @@ const AddDiscount = () => {
           orderCode,
           user,
           product,
-          totalPrice,
-          totalDiscount,
+          totalPrice: parseFloat(totalPrice),
+          totalDiscount: totalDiscount && totalDiscount.trim() !== "" ? parseFloat(totalDiscount) : undefined,
           status,
         }),
       });
@@ -115,9 +134,7 @@ const AddDiscount = () => {
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-          <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">
-            افزودن رکورد پرداخت جدید
-          </h1>
+          <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">افزودن رکورد پرداخت جدید</h1>
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
             src="/uploads/top-header.png"
@@ -128,14 +145,10 @@ const AddDiscount = () => {
         </div>
         <div className="container py-4 px-10 -mt-10 z-30 relative">
           <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
-            {formError && (
-              <div className="text-red-500 text-center">{formError}</div>
-            )}
+            {formError && <div className="text-red-500 text-center">{formError}</div>}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-gray-700 dark:text-gray-300">
-                  کدپیگیری سفارش
-                </label>
+                <label className="text-gray-700 dark:text-gray-300">کدپیگیری سفارش</label>
                 <input
                   type="text"
                   value={orderCode}
@@ -146,6 +159,7 @@ const AddDiscount = () => {
               </div>
               <select
                 name="user"
+                disabled={loading}
                 autoComplete="user"
                 className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                 placeholder="انتخاب محصول"
@@ -153,7 +167,6 @@ const AddDiscount = () => {
                 required
                 value={user}
                 onChange={(e) => setUser(e.target.value)}>
-
                 <option value="">انتخاب کاربر ثبت کننده سفارش</option>
                 {users.map((usr) => {
                   return (
@@ -165,6 +178,7 @@ const AddDiscount = () => {
               </select>
               <select
                 name="product"
+                disabled={loading}
                 autoComplete="product"
                 className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                 placeholder="انتخاب محصول"
@@ -172,7 +186,6 @@ const AddDiscount = () => {
                 required
                 value={product}
                 onChange={(e) => setProduct(e.target.value)}>
-
                 <option value="">انتخاب محصول مورد نظر</option>
                 {products.map((cat) => {
                   return (
@@ -183,9 +196,7 @@ const AddDiscount = () => {
                 })}
               </select>
               <div className="space-y-2">
-                <label className="text-gray-700 dark:text-gray-300">
-                  قیمت نهایی فاکتور
-                </label>
+                <label className="text-gray-700 dark:text-gray-300">قیمت نهایی فاکتور</label>
                 <input
                   type="number"
                   value={totalPrice}
@@ -194,9 +205,7 @@ const AddDiscount = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-gray-700 dark:text-gray-300">
-                  قیمت با تخفیف
-                </label>
+                <label className="text-gray-700 dark:text-gray-300">قیمت با تخفیف</label>
                 <input
                   type="number"
                   value={totalDiscount}
@@ -205,15 +214,8 @@ const AddDiscount = () => {
                 />
               </div>
               <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  checked={status}
-                  onChange={(e) => setStatus(e.target.checked)}
-                  className="w-4 h-4 m-1"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  تایید
-                </span>
+                <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} className="w-4 h-4 m-1" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">تایید</span>
               </div>
               <div>
                 <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
@@ -231,4 +233,4 @@ const AddDiscount = () => {
   );
 };
 
-export default AddDiscount;
+export default AddPayment;

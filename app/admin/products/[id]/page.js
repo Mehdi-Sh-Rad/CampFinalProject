@@ -4,8 +4,7 @@ import Link from "next/link";
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
+import React, { useEffect, useState } from "react";
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -16,6 +15,7 @@ const UpdateProduct = () => {
   const [images, setImages] = useState([]);
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
+  const [tempDiscountPrice, setTempDiscountPrice] = useState("");
   const [tags, setTags] = useState([]);
   const [types, setTypes] = useState(["pdf", "docx", "ppt", "png", "jpeg"]);
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -29,27 +29,32 @@ const UpdateProduct = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Fetch product and categories data on component mount
   useEffect(() => {
     const fetchProductData = async () => {
       setLoading(true);
       try {
         const productResponse = await fetch(`/api/products/${id}`);
         const productData = await productResponse.json();
+        if (!productResponse.ok) {
+          setError(productData.message || "خطا در دریافت داده");
+          setLoading(false);
+          return;
+        }
         setName(productData.name);
         setAuthor(productData.author);
         setDescription(productData.description);
         setFiles(productData.fileUrls);
         setImages(productData.imageUrls);
         setPrice(productData.price);
-        setDiscountPrice(productData.discountPrice);
+        setDiscountPrice(productData.discountPrice || "");
+        setTempDiscountPrice(productData.discountPrice || "");
         setTags(Array.isArray(productData.tags) ? productData.tags : []); // Ensure tags is an array
         setSelectedTypes(productData.types);
         setActive(productData.active);
         setFree(productData.free);
         setAward(productData.award);
         setCategory(productData.category);
-
-     
 
         const categoriesResponse = await fetch("/api/categories");
         const categoriesData = await categoriesResponse.json();
@@ -63,7 +68,29 @@ const UpdateProduct = () => {
 
     fetchProductData();
   }, [id]);
- 
+
+  // Automatically set free to true if price is 0
+  useEffect(() => {
+    if (parseFloat(price) === 0) {
+      setFree(true);
+    }
+  }, [price]);
+
+  // Toggle free checkbox
+  const handleFreeToggle = () => {
+    if (!free) {
+      // switching to free
+      setTempDiscountPrice(discountPrice);
+      setDiscountPrice("");
+      setPrice("0");
+      setFree(true);
+    } else {
+      // switching off free
+      setDiscountPrice(tempDiscountPrice);
+      setFree(false);
+    }
+  };
+
   const handleAddFile = () => {
     setFiles([...files, null]); // Add a new empty file slot
   };
@@ -76,6 +103,7 @@ const UpdateProduct = () => {
     setTags([...tags, ""]); // Add a new empty tag slot
   };
 
+  // Update file at specific index
   const handleFileChange = (index, file) => {
     const updatedFiles = [...files];
     updatedFiles[index] = file;
@@ -83,20 +111,31 @@ const UpdateProduct = () => {
     console.log(files);
   };
 
+  // Update image at specific index
   const handleImageChange = (index, image) => {
-    console.log(images)
+    console.log(images);
     const updatedImages = [...images];
     updatedImages[index] = image;
     setImages(updatedImages);
   };
 
+  // Update tag at specific index
   const handleTagChange = (index, tag) => {
     const updatedTags = [...tags];
     updatedTags[index] = tag; // Update the specific tag
     setTags(updatedTags); // Update the state
   };
 
+  // Validate form inputs
   const validateForm = () => {
+    if (!files || files.length === 0 || files.every((file) => !file)) {
+      setFormError("انتخاب حداقل یک فایل محصول الزامی است");
+      return false;
+    }
+    if (!images || images.length === 0 || images.every((image) => !image)) {
+      setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
+      return false;
+    }
     if (!name || name.trim() === "") {
       setFormError("نام محصول الزامی میباشد");
       return false;
@@ -105,28 +144,35 @@ const UpdateProduct = () => {
       return false;
     }
 
-    if (!description || description.trim() === "") {
-      setFormError("توضیحات محصول الزامی میباشد");
+    if (!author || author.trim() === "") {
+      setFormError("نام نویسنده الزامی است");
       return false;
-    } else if (description.length < 3 || description.length > 500) {
-      setFormError("توضیحات محصول باید بین ۳ تا ۵۰۰ باشد");
+    } else if (author.length < 3 || author.length > 30) {
+      setFormError("نام نویسنده باید بین ۳ تا ۳۰ کاراکتر باشد");
       return false;
     }
 
-    if (price <= 0) {
-      setFormError("قیمت محصول باید یک مقدار مثبت باشد");
+    if (!description || description.trim() === "") {
+      setFormError("توضیحات محصول الزامی میباشد");
       return false;
-    }
-    if (discountPrice && discountPrice < 0) {
-      setFormError("قیمت تخفیفی محصول باید یک مقدار مثبت باشد");
-      return false;
-    }
-    if (discountPrice && discountPrice > price) {
-      setFormError("قیمت تخفیفی باید کمتر از قیمت محصول باشد");
+    } else if (description.length < 3 || description.length > 200) {
+      setFormError("توضیحات محصول باید بین ۳ تا 200 باشد");
       return false;
     }
     if (!category) {
       setFormError("دسته بندی محصول باید باشد");
+      return false;
+    }
+    if (!tags || tags.length === 0 || tags.every((tag) => tag.trim() === "")) {
+      setFormError("انتخاب حداقل یک برچسب برای محصول الزامی است");
+      return false;
+    }
+    if (!free && (!price || parseFloat(price) <= 0)) {
+      setFormError("قیمت محصول باید یک مقدار مثبت باشد یا گزینه رایگان را انتخاب کنید");
+      return false;
+    }
+    if (discountPrice && parseFloat(discountPrice) >= parseFloat(price)) {
+      setFormError("قیمت تخفیفی باید کمتر از قیمت اصلی باشد");
       return false;
     }
 
@@ -134,6 +180,7 @@ const UpdateProduct = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -145,15 +192,14 @@ const UpdateProduct = () => {
       formData.append("name", name);
       formData.append("author", author);
       formData.append("description", description);
-      formData.append("price", price);
+      formData.append("price", free ? "0" : price);
+      formData.append("discountPrice", free ? "" : discountPrice);
       formData.append("category", category);
-      formData.append("discountPrice", discountPrice);
       formData.append("tags", tags);
       formData.append("types", selectedTypes);
       formData.append("active", active);
       formData.append("free", free);
       formData.append("award", award);
-
 
       // Append all files
       files.forEach((file) => {
@@ -185,6 +231,47 @@ const UpdateProduct = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
+
+
+
+  if (error) {
+            return (
+              <div className="flex flex-col items-center justify-center min-h-[100vh] bg-shop-bg dark:bg-[#171a26]">
+                <div className="bg-white dark:bg-shop-dark rounded-lg p-6 shadow-xl shadow-[#112692]/5 flex flex-col items-center gap-y-4">
+                  <Image src="/logo-min.png" width={50} height={50} alt="logo" />
+                  <h3 className="text-shop-red dark:text-gray-200 flex gap-x-2 items-center border border-shop-red/30 rounded py-2 px-4">
+                    <svg
+                      className="dark:text-shop-red"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8 10.5378C8 9.43327 8.89543 8.53784 10 8.53784H11.3333C12.4379 8.53784 13.3333 9.43327 13.3333 10.5378V19.8285C13.3333 20.9331 14.2288 21.8285 15.3333 21.8285H16C16 21.8285 12.7624 23.323 10.6667 22.9361C10.1372 22.8384 9.52234 22.5913 9.01654 22.3553C8.37357 22.0553 8 21.3927 8 20.6832V10.5378Z"
+                        fill="currentColor"
+                      />
+                      <path
+                        d="M13 3.5C13 2.11929 11.8807 1 10.5 1C9.11929 1 8 2.11929 8 3.5C8 4.88071 9.11929 6 10.5 6C11.8807 6 13 4.88071 13 3.5Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    {error}
+                  </h3>
+                  <button
+                    onClick={() => router.back()}
+                    className="bg-shop-red text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  >
+                    بازگشت
+                  </button>
+                </div>
+              </div>
+            );
+          }
+
+
+
   return (
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
@@ -218,8 +305,6 @@ const UpdateProduct = () => {
               {formError && <h3>{formError}</h3>}
               <form className="py-4" onSubmit={handleSubmit}>
                 <div className="flex flex-col items-start gap-y-4 w-full">
-
-
                   <div className="space-y-2 w-full">
                     <label className="text-gray-700 dark:text-gray-300">نام</label>
                     <input
@@ -279,21 +364,13 @@ const UpdateProduct = () => {
                             onChange={(e) => handleImageChange(index, e.target.files[0])}
                             className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                           />
-                          <button
-                            type="button"
-                            className="bg-red-500 text-white px-2 py-1 rounded"
-                            onClick={() => setImages(images.filter((_, i) => i !== index))}
-                          >
+                          <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setImages(images.filter((_, i) => i !== index))}>
                             حذف
                           </button>
                         </div>
                       </div>
                     ))}
-                    <button
-                      type="button"
-                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
-                      onClick={handleAddImage}
-                    >
+                    <button type="button" className="bg-blue-500 text-white mx-3 px-4 py-2 rounded" onClick={handleAddImage}>
                       افزودن تصویر
                     </button>
                   </div>
@@ -318,21 +395,13 @@ const UpdateProduct = () => {
                             onChange={(e) => handleFileChange(index, e.target.files[0])}
                             className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                           />
-                          <button
-                            type="button"
-                            className="bg-red-500 text-white px-2 py-1 rounded"
-                            onClick={() => setFiles(files.filter((_, i) => i !== index))}
-                          >
+                          <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setFiles(files.filter((_, i) => i !== index))}>
                             حذف
                           </button>
                         </div>
                       </div>
                     ))}
-                    <button
-                      type="button"
-                      className="bg-blue-500 text-white mx-3 px-4 py-2 rounded"
-                      onClick={handleAddFile}
-                    >
+                    <button type="button" className="bg-blue-500 text-white mx-3 px-4 py-2 rounded" onClick={handleAddFile}>
                       افزودن فایل
                     </button>
                   </div>
@@ -345,7 +414,8 @@ const UpdateProduct = () => {
                       className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                       placeholder="قیمت"
                       type="number"
-                      value={price}
+                      value={free ? "0" : price}
+                      disabled={free}
                       onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
@@ -358,7 +428,8 @@ const UpdateProduct = () => {
                       className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                       placeholder="قیمت تخفیفی"
                       type="number"
-                      value={discountPrice}
+                      value={free ? "" : discountPrice}
+                      disabled={free}
                       onChange={(e) => setDiscountPrice(e.target.value)}
                     />
                   </div>
@@ -379,9 +450,7 @@ const UpdateProduct = () => {
                               handleAddTag();
                               setTimeout(() => {
                                 // Focus on the newly added input field
-                                const nextInput = document.querySelector(
-                                  `input[name="tag-${tags.length}"]`
-                                );
+                                const nextInput = document.querySelector(`input[name="tag-${tags.length}"]`);
                                 if (nextInput) nextInput.focus();
                               }, 0);
                             }
@@ -389,18 +458,10 @@ const UpdateProduct = () => {
                           name={`tag-${index}`} // Add a unique name for each input
                           className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 rounded px-4 py-2 w-full"
                         />
-                        <button
-                          type="button"
-                          className="bg-green-500 text-white px-2 py-1 rounded"
-                          onClick={handleAddTag}
-                        >
+                        <button type="button" className="bg-green-500 text-white px-2 py-1 rounded" onClick={handleAddTag}>
                           +
                         </button>
-                        <button
-                          type="button"
-                          className="bg-red-500 text-white px-2 py-1 rounded"
-                          onClick={() => setTags(tags.filter((_, i) => i !== index))}
-                        >
+                        <button type="button" className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => setTags(tags.filter((_, i) => i !== index))}>
                           -
                         </button>
                       </div>
@@ -416,11 +477,13 @@ const UpdateProduct = () => {
                     multiple
                     value={selectedTypes}
                     onChange={(e) => {
-                      const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+                      const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value);
                       setSelectedTypes(selectedOptions); // Update state with selected options
-                    }}
-                  >
-                    <option value="" disabled> فرمت های انتخاب شده: {selectedTypes.map(typ => ` ${typ} `)}</option>
+                    }}>
+                    <option value="" disabled>
+                      {" "}
+                      فرمت های انتخاب شده: {selectedTypes.map((typ) => ` ${typ} `)}
+                    </option>
                     {types.map((type, index) => {
                       return (
                         <option key={index} value={type}>
@@ -435,8 +498,9 @@ const UpdateProduct = () => {
                       <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${active ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          active ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
                   </label>
@@ -446,19 +510,21 @@ const UpdateProduct = () => {
                       <input id="award-switch" type="checkbox" className="sr-only" checked={award} onChange={(e) => setAward(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${award ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${award ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          award ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{award ? "جایزه دار" : "غیر جایزه دار"}</span>
                   </label>
 
                   <label htmlFor="free-checkbox" className="flex items-center cursor-pointer">
                     <div className="relative">
-                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={(e) => setFree(e.target.checked)} />
+                      <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={handleFreeToggle} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${free ? "transform translate-x-5" : ""
-                          }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                          free ? "transform translate-x-5" : ""
+                        }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{free ? "رایگان" : "غیررایگان"}</span>
                   </label>

@@ -23,21 +23,29 @@ const EditDiscount = () => {
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
+  // Fetch categories on component mount
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
   }, []);
+
+  // Fetch discount data by ID on mount
   useEffect(() => {
     const fetchDiscountData = async () => {
       setLoading(true);
       console.log("Fetching discount with id:", id);
       try {
         const response = await fetch(`/api/discounts?id=${id}`);
-        console.log("API Response status:", response.status);
-        if (!response.ok) throw new Error("مشکل در دریافت اطلاعات کد تخفیف");
         const discount = await response.json();
+        console.log("API Response status:", response.status);
+        if (!response.ok) {
+          setError(discount.message || "خطا در دریافت داده");
+          setLoading(false);
+          return;
+        }
+       
         console.log("Discount data:", discount);
         if (discount.message) {
           throw new Error(discount.message);
@@ -48,10 +56,10 @@ const EditDiscount = () => {
         setExpirationDate(
           discount.date
             ? new DateObject({
-              date: new Date(discount.date),
-              calendar: persian,
-              locale: persian_fa,
-            })
+                date: new Date(discount.date),
+                calendar: persian,
+                locale: persian_fa,
+              })
             : null
         );
         setStatus(discount.status !== undefined ? discount.status : true);
@@ -65,15 +73,27 @@ const EditDiscount = () => {
     if (id) fetchDiscountData();
   }, [id]);
 
+  // Validate form inputs
   const validateForm = () => {
+    
+    if (!category) {
+      setFormError("انتخاب دسته‌بندی الزامی است");
+      return false;
+    }
+
     if (percentage && (percentage < 1 || percentage > 100)) {
       setFormError("درصد تخفیف باید بین ۱ تا ۱۰۰ باشد");
+      return false;
+    }
+    if (!expirationDate) {
+      setFormError("تاریخ انقضا الزامی است");
       return false;
     }
     setFormError("");
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -110,6 +130,46 @@ const EditDiscount = () => {
     return <LoadingSpinner />;
   }
 
+
+  if (error) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[100vh] bg-shop-bg dark:bg-[#171a26]">
+          <div className="bg-white dark:bg-shop-dark rounded-lg p-6 shadow-xl shadow-[#112692]/5 flex flex-col items-center gap-y-4">
+            <Image src="/logo-min.png" width={50} height={50} alt="logo" />
+            <h3 className="text-shop-red dark:text-gray-200 flex gap-x-2 items-center border border-shop-red/30 rounded py-2 px-4">
+              <svg
+                className="dark:text-shop-red"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8 10.5378C8 9.43327 8.89543 8.53784 10 8.53784H11.3333C12.4379 8.53784 13.3333 9.43327 13.3333 10.5378V19.8285C13.3333 20.9331 14.2288 21.8285 15.3333 21.8285H16C16 21.8285 12.7624 23.323 10.6667 22.9361C10.1372 22.8384 9.52234 22.5913 9.01654 22.3553C8.37357 22.0553 8 21.3927 8 20.6832V10.5378Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M13 3.5C13 2.11929 11.8807 1 10.5 1C9.11929 1 8 2.11929 8 3.5C8 4.88071 9.11929 6 10.5 6C11.8807 6 13 4.88071 13 3.5Z"
+                  fill="currentColor"
+                />
+              </svg>
+              {error}
+            </h3>
+            <button
+              onClick={() => router.back()}
+              className="bg-shop-red text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300"
+            >
+              بازگشت
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+
+
+
   return (
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
@@ -140,24 +200,24 @@ const EditDiscount = () => {
                 />
               </div>
               <div className="space-y-2">
-              <label className="text-gray-700 dark:text-gray-300">محصول</label>
-              <select
-                name="category"
-                autoComplete={category}
-                className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                placeholder="انتخاب دسته بندی"
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}>
-                <option value="">انتخاب محصول موردنظر</option>
-                {categories.map((cat) => {
-                  return (
-                    <option key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </option>
-                  );
-                })}
-              </select>
+                <label className="text-gray-700 dark:text-gray-300">محصول</label>
+                <select
+                  name="category"
+                  autoComplete={category}
+                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
+                  placeholder="انتخاب دسته بندی"
+                  type="text"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}>
+                  <option value="">انتخاب محصول موردنظر</option>
+                  {categories.map((cat) => {
+                    return (
+                      <option key={cat._id} value={cat._id}>
+                        {cat.name}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">درصد تخفیف</label>
@@ -188,12 +248,7 @@ const EditDiscount = () => {
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">وضعیت</label>
                 <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={status}
-                    onChange={(e) => setStatus(e.target.checked)}
-                    className="w-4 h-4 m-1"
-                  />
+                  <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} className="w-4 h-4 m-1" />
                   <span className="text-sm text-gray-700 dark:text-gray-300">فعال</span>
                 </div>
               </div>

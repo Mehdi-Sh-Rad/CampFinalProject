@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import Script from "next/script";
 
 const LoginForm = () => {
+  // States for login information and UI
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -13,9 +14,10 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1); // Step: 1 = Email login, 2 = Phone OTP, 3 = Verify OTP, 4 = Email OTP
   const [otp, setOtp] = useState("");
 
+  // Get reCAPTCHA token using site key
   const getRecaptchaToken = async (action) => {
     return new Promise((resolve, reject) => {
       window.grecaptcha.ready(() => {
@@ -27,6 +29,7 @@ const LoginForm = () => {
     });
   };
 
+  // Handle login with email and password
   const handleLoginByEmail = async (e) => {
     e.preventDefault();
     setError("");
@@ -65,6 +68,7 @@ const LoginForm = () => {
     }
   };
 
+  // Send OTP to phone number
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
@@ -107,6 +111,7 @@ const LoginForm = () => {
     }
   };
 
+  // Final login step with OTP verification
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -140,6 +145,7 @@ const LoginForm = () => {
     }
   };
 
+  // Send OTP to email for login
   const handleSendEmailOtp = async (e) => {
     e.preventDefault();
     setError("");
@@ -184,14 +190,16 @@ const LoginForm = () => {
   };
   return (
     <>
+      {/* Load reCAPTCHA script */}
       <Script src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`} strategy="afterInteractive" />
       <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
         <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">
           <div className="bg-white dark:bg-[#2e1f38] rounded-3xl w-80 md:w-96 px-6 py-6 shadow-sm flex flex-col items-center gap-y-4 justify-center">
-            <Image src={"/uploads/logo2.webp"} width={50} height={50} alt="logo" />
+            <Image src={"/logo-min.png"} width={50} height={50} alt="logo" />
             {error && <h3 className="text-white bg-shop-red py-2 px-4 w-full rounded-lg">{error}</h3>}
             {success && <h3 className="text-white bg-green-400 py-3 px-4 rounded-lg">{success}</h3>}
 
+            {/* Login method selection buttons */}
             <div className="flex gap-x-4 items-center py-4">
               <button
                 onClick={() => setStep(1)}
@@ -222,6 +230,7 @@ const LoginForm = () => {
                 کد ایمیل
               </button>
             </div>
+            {/* Step 1: Email and password login form */}
             {step === 1 && (
               <form className="flex flex-col gap-y-4 w-full" onSubmit={handleLoginByEmail}>
                 <div className="flex flex-col gap-y-2">
@@ -304,6 +313,7 @@ const LoginForm = () => {
               </form>
             )}
 
+            {/* Step 2: Login using phone number and OTP */}
             {step === 2 && (
               <form className="flex flex-col gap-y-4 w-full" onSubmit={handleSendOtp}>
                 <div className="flex flex-col gap-y-2">
@@ -337,6 +347,7 @@ const LoginForm = () => {
               </form>
             )}
 
+            {/* Step 3: OTP verification form */}
             {step === 3 && (
               <form className="flex flex-col gap-y-4 w-full" onSubmit={handleLogin}>
                 <div className="flex flex-col gap-y-2">
@@ -372,6 +383,7 @@ const LoginForm = () => {
               </form>
             )}
 
+            {/* Step 4: Login using email and OTP */}
             {step === 4 && (
               <form className="flex flex-col gap-y-4 w-full" onSubmit={handleSendEmailOtp}>
                 <div className="flex flex-col gap-y-2">

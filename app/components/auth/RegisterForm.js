@@ -5,6 +5,7 @@ import Script from "next/script";
 import React, { useState } from "react";
 
 const RegisterForm = () => {
+  // State for form inputs and UI control
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -18,6 +19,7 @@ const RegisterForm = () => {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
 
+   // Get reCAPTCHA token using site key
   const getRecaptchaToken = async (action) => {
     return new Promise((resolve, reject) => {
       window.grecaptcha.ready(() => {
@@ -29,10 +31,13 @@ const RegisterForm = () => {
     });
   };
 
+  // Handle sending OTP for registration
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+    // Validate form inputs
     if (!name || name.trim().length < 3 || name.trim().length > 30) {
       setError("نام باید بین 3 تا 30 کاراکتر باشد");
       return;
@@ -85,10 +90,14 @@ const RegisterForm = () => {
       setLoading(false);
     }
   };
+
+  // Handle OTP verification
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+    // Validate OTP
     if (!otp || otp.length !== 6) {
       setError("کد تایید باید 6 رقمی باشد");
       return;
@@ -119,13 +128,15 @@ const RegisterForm = () => {
 
   return (
     <>
+    {/* Load reCAPTCHA script */}
       <Script src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`} strategy="afterInteractive" />
       <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
         <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">
           <div className="bg-white dark:bg-[#2e1f38] rounded-3xl w-80 md:w-96 px-6 py-6 shadow-sm flex flex-col items-center gap-y-4 justify-center">
-            <Image src={"/uploads/logo2.webp"} width={50} height={50} alt="logo" />
+            <Image src={"/logo-min.png"} width={50} height={50} alt="logo" />
             {error && <h3 className="text-white bg-shop-red py-2 px-4 w-full rounded-lg">{error}</h3>}
             {success && <h3 className="text-white bg-green-400 py-3 px-4 rounded-lg">{success}</h3>}
+            {/* Step 1: Registration form */}
             {step === 1 && (
               <form className="flex flex-col gap-y-4 w-full" onSubmit={handleSendOtp}>
                 <div className="flex flex-col gap-y-2">
@@ -300,6 +311,7 @@ const RegisterForm = () => {
                 </button>
               </form>
             )}
+            {/* Step 2: OTP verification form */}
             {step === 2 && (
               <form className="flex flex-col gap-y-4 w-full" onSubmit={handleVerifyOtp}>
                 <div className="flex flex-col gap-y-2">

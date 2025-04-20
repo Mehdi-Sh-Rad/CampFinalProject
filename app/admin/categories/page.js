@@ -1,18 +1,15 @@
 "use client";
-import GeneralError from "@/app/components/ui/GeneralError";
-import Header from "@/app/components/ui/Header";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Sidebar from "@/app/components/ui/SidebarAdmin";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
@@ -31,6 +28,7 @@ const Categories = () => {
     fetchCategories();
   }, []);
 
+  // Delete category by ID
   const handleDelete = async (id) => {
     try {
       await fetch(`/api/categories/${id}`, { method: "DELETE" });
@@ -69,18 +67,19 @@ const Categories = () => {
               <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div className="overflow-hidden">
                   {loading ? (
+                    // Render skeleton rows during loading
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
-                            <th scope="col" className=" px-6 py-4">
-                              #
-                            </th>
-                            <th scope="col" className=" px-6 py-4">
-                              نام دسته بندی
-                            </th>
-                            <th scope="col" className=" px-6 py-4">
-                              عملیات
-                            </th>
+                          <th scope="col" className=" px-6 py-4">
+                            #
+                          </th>
+                          <th scope="col" className=" px-6 py-4">
+                            نام دسته بندی
+                          </th>
+                          <th scope="col" className=" px-6 py-4">
+                            عملیات
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -100,6 +99,7 @@ const Categories = () => {
                       </tbody>
                     </table>
                   ) : (
+                    // Render categories table
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>

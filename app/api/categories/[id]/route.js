@@ -1,9 +1,18 @@
 import connectToDatabase from "@/app/lib/db";
 import Category from "@/models/Category";
+import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
+
+  if (!isValidObjectId(id)) {
+    return NextResponse.json(
+      { message: "آیدی دسته‌بندی نامعتبر است" },
+      { status: 400 }
+    );
+  }
 
   try {
     const category = await Category.findById(id);

@@ -2,7 +2,7 @@ import connectToDatabase from "@/app/lib/db";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { join } from "path";
-import {unlink, writeFile } from "fs/promises";
+import { unlink, writeFile } from "fs/promises";
 
 export async function GET(request) {
   await connectToDatabase();
@@ -18,9 +18,9 @@ export async function POST(request) {
         success: false,
         message: "خطا در دریافت اطلاعات",
       });
-    };
+    }
 
-    // Get all files and images as arrays   
+    // Get all files and images as arrays
     let files = data.getAll("files"); // Use "files" as the key for multiple files
     let images = data.getAll("images"); // Use "images" as the key for multiple images
     if (!files.length || !images.length) {
@@ -33,75 +33,77 @@ export async function POST(request) {
     const name = data.get("name");
     const author = data.get("author");
     const description = data.get("description");
-    const price = parseFloat(data.get("price"));
-    const discountPrice = parseFloat(data.get("discountPrice"));
+    let price = parseFloat(data.get("price"));
+    const discountPrice = data.get("discountPrice") ? parseFloat(data.get("discountPrice")) : undefined;
     const active = data.get("active") === "true";
     const category = data.get("category");
-    const types = data.get("types")?.split(",").map((tag) => tag.trim()) || [];
-    const tags = data.get("tags")?.split(",").map((tag) => tag.trim()) || [];
+    const types =
+      data
+        .get("types")
+        ?.split(",")
+        .map((tag) => tag.trim()) || [];
+    const tags =
+      data
+        .get("tags")
+        ?.split(",")
+        .map((tag) => tag.trim()) || [];
     const free = data.get("free") === "true";
     const award = data.get("award") === "true";
 
-    if (!name || !description || !author || isNaN(price) || isNaN(discountPrice) || !category) {
-      return new Response(
-        JSON.stringify({ message: "تمامی فیلد ها الزامی میباشند" }),
-        {
-          status: 400,
-        }
-      );
-    }
-
     // Validate name, author, description, and price
+    if (!name || name.trim() === "") {
+      return new Response(JSON.stringify({ message: "نام محصول الزامی است" }), { status: 400 });
+    }
     if (name.length < 3 || name.length > 30) {
-      return new Response(
-        JSON.stringify({ message: "نام باید بین ۳ تا ۳۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
+      return new Response(JSON.stringify({ message: "نام محصول باید بین 3 تا 30 کاراکتر باشد" }), { status: 400 });
     }
 
-    if (author.length < 3 || author.length > 30) {
-      return new Response(
-        JSON.stringify({ message: "نام نویسنده باید بین ۳ تا ۳۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
+    if (!author || author.trim() === "") {
+      return new Response(JSON.stringify({ message: "نام نویسنده الزامی است" }), { status: 400 });
     }
+    if (author.length < 3 || author.length > 50) {
+      return new Response(JSON.stringify({ message: "نام نویسنده باید بین 3 تا 50 کاراکتر باشد" }), { status: 400 });
+    }
+    if (!description || description.trim() === "") {
+      return new Response(JSON.stringify({ message: "توضیحات محصول الزامی است" }), { status: 400 });
+    }
+    if (description.length < 3 || description.length > 500) {
+      return new Response(JSON.stringify({ message: "توضیحات محصول باید بین 3 تا 500 کاراکتر باشد" }), { status: 400 });
+    }
+
+    if (!category) {
+      return new Response(JSON.stringify({ message: "انتخاب دسته‌بندی الزامی است" }), { status: 400 });
+    }
+
+    if (!free && (!price || isNaN(price) || price <= 0)) {
+      return new Response(JSON.stringify({ message: "قیمت محصول باید مقدار مثبت باشد یا گزینه رایگان را انتخاب کنید" }), { status: 400 });
+    }
+    if (discountPrice !== undefined && (isNaN(discountPrice) || discountPrice < 0)) {
+      return new Response(JSON.stringify({ message: "قیمت تخفیفی باید عدد مثبت باشد" }), { status: 400 });
+    }
+
+    if (discountPrice !== undefined && !free && discountPrice >= price) {
+      return new Response(JSON.stringify({ message: "قیمت تخفیفی باید کمتر از قیمت اصلی باشد" }), { status: 400 });
+    }
+
     if (files.length > 10) {
-      return new Response(
-        JSON.stringify({ message: "حداکثر ۱۰ فایل مجاز است" }),
-        {
-          status: 400,
-        }
-      );
+      return new Response(JSON.stringify({ message: "حداکثر 10 فایل مجاز است" }), {
+        status: 400,
+      });
     }
     if (images.length > 10) {
-      return new Response(
-        JSON.stringify({ message: "حداکثر ۱۰ تصویر مجاز است" }),
-        {
-          status: 400,
-        }
-      );
+      return new Response(JSON.stringify({ message: "حداکثر 10 تصویر مجاز است" }), {
+        status: 400,
+      });
     }
 
-    if (description.length < 3 || description.length > 200) {
-      return new Response(
-        JSON.stringify({ message: "توضیحات باید بین ۳ تا ۲۰۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
+    if (tags.length === 0) {
+      return new Response(JSON.stringify({ message: "حداقل یک برچسب الزامی است" }), { status: 400 });
     }
 
-    if (price <= 0) {
-      return new Response(
-        JSON.stringify({ message: "قیمت باید بیش از عدد ۰ باشد" }),
-        {
-          status: 400,
-        }
-      );
+    // Set price to 0 and discountPrice to undefined if free is true
+    if (free) {
+      price = 0;
     }
 
     // Ensure upload directories exist
@@ -131,21 +133,26 @@ export async function POST(request) {
     // Save product to database
     await connectToDatabase();
 
-    const product = await Product.create({
+    const productData = {
       fileUrls, // Array of file URLs
       imageUrls, // Array of image URLs
       name,
       author,
       description,
       price,
-      discountPrice,
       category,
       types,
       tags,
       active,
       free,
       award,
-    });
+    };
+    if (!free && discountPrice !== undefined) {
+      productData.discountPrice = discountPrice;
+    }
+
+    const product = await Product.create(productData);
+
 
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {

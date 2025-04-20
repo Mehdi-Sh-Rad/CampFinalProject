@@ -1,5 +1,7 @@
 import Discount from '@/models/Discount';
 import connectToDatabase from '../../lib/db';
+import { isValidObjectId } from 'mongoose';
+import { NextResponse } from 'next/server';
 
 async function connectDB() {
   try {
@@ -14,7 +16,18 @@ export async function GET(req) {
     await connectDB();
     const url = new URL(req.url);
     const id = url.searchParams.get('id');
+
+    
+
     if (id) {
+
+      if (!isValidObjectId(id)) {
+        return NextResponse.json(
+          { message: "آیدی کد تخفیف نامعتبر است" },
+          { status: 400 }
+        );
+      }
+      
       const discount = await Discount.findById(id).lean();
       if (!discount) {
         return new Response(JSON.stringify({ message: 'کد تخفیف یافت نشد' }), { status: 404 });
@@ -33,6 +46,33 @@ export async function POST(req) {
   try {
     await connectDB();
     const { code, category, percentage, date, status } = await req.json();
+
+
+    if (!category) {
+      return new Response(JSON.stringify({ message: "دسته‌بندی الزامی است" }), { status: 400 });
+    }
+
+    // Validate category existence
+    const categoryExists = await Category.findById(category);
+    if (!categoryExists) {
+      return new Response(JSON.stringify({ message: "دسته‌بندی یافت نشد" }), { status: 400 });
+    }
+
+    if (!percentage || isNaN(percentage)) {
+      return new Response(JSON.stringify({ message: "درصد تخفیف الزامی و باید عدد باشد" }), {
+        status: 400,
+      });
+    }
+    if (percentage < 1 || percentage > 100) {
+      return new Response(JSON.stringify({ message: "درصد تخفیف باید بین ۱ تا ۱۰۰ باشد" }), {
+        status: 400,
+      });
+    }
+
+    if (!date) {
+      return new Response(JSON.stringify({ message: "تاریخ انقضا الزامی است" }), { status: 400 });
+    }
+
     const currentDate = new Date();
     const expirationDate = new Date(date);
 
@@ -52,6 +92,11 @@ export async function PUT(req) {
     const { id, code, category, percentage, date, status } = await req.json();
     if (!id) {
       return new Response(JSON.stringify({ message: 'ID الزامی است' }), { status: 400 });
+    }
+    // Validate discount existence
+    const existingDiscount = await Discount.findById(id);
+    if (!existingDiscount) {
+      return new Response(JSON.stringify({ message: "کد تخفیف یافت نشد" }), { status: 404 });
     }
     const currentDate = new Date();
     const expirationDate = new Date(date);

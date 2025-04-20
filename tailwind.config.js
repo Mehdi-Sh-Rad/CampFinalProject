@@ -11,10 +11,10 @@ module.exports = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        "shop-red": "#ed1944",
-        "shop-gray": "#8A92A6",
+        "shop-red": "#6b7280",
+        "shop-gray": "#14b8a6",
         "shop-red-light": "#FFC0D0",
-        "shop-bg": "#F5F6FA",
+        "shop-bg": "#f3f4f6",
         "shop-dark": "#222738",
       },
     },
