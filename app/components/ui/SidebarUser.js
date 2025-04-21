@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import LogoutButton from "../auth/LogoutButton";
+import { useTheme } from "@/app/context/ThemeContext";
 
 const Sidebar = () => {
   const pathName = usePathname();
   const { isSidebarOpen, toggleSidebar } = useSidebar();
-
+  const {isDarkMode} = useTheme();
   return (
     <aside
       className={` px-4 py-4 w-full dark:bg-shop-dark min-h-[100vh] relative bg-white shadow-md transition-all duration-500 ease-in-out ${!isSidebarOpen ? "max-w-[76px]" : "max-w-[260px]"
@@ -30,14 +31,14 @@ const Sidebar = () => {
         <Link className={`flex justify-center items-center`} href={"/admin"}>
           <Image
             className={`transition-all duration-500 ${!isSidebarOpen ? "hidden opacity-0" : "opacity-100"}`}
-            src={"/logo-panel.png"}
+            src={isDarkMode ? "/logo-panel-white.png" : "/logo-panel.png"}
             height={40}
             width={195}
             alt="لوگو فروشگاه"
           />
           <Image
             className={`transition-all duration-500 ${isSidebarOpen ? "hidden opacity-0" : "opacity-100"}`}
-            src={"/logo-min.png"}
+            src={isDarkMode ? "/logo-min-white.png" : "/logo-min.png"}
             height={35}
             width={35}
             alt="لوگو فروشگاه"
