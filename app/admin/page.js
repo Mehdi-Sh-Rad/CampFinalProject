@@ -13,6 +13,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useTheme } from "../context/ThemeContext";
 
 ChartJS.register(
   CategoryScale,
@@ -117,6 +118,50 @@ const AdminDashboard = () => {
   const commentsCount = comments.length;
   const ticketsCount = tickets.length;
 
+  const {isDarkMode} = useTheme();
+
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        labels: {
+          color: isDarkMode ? '#fff' : '#333',
+        },
+      },
+     
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: isDarkMode ? '#fff' : '#333',
+        },
+        grid : {
+          color:isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+        }
+      },
+      y: {
+        ticks: {
+          color: isDarkMode ? '#fff' : '#333',
+        },
+        grid : {
+          color: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+        }
+      },
+    },
+  };
+
+  const pieOptions = {
+    plugins: {
+      legend: {
+        labels: {
+          color: isDarkMode ? '#fff' : '#333',
+        },
+      },
+    },
+  };
+  
+
+
   const barData = {
     labels: ["کاربران", "محصولات", "نظرات", "تیکت ها"],
 
@@ -211,21 +256,26 @@ const pieFreeProductsData = {
             height={277}
           />
         </div>
-        <div className="container py-4 px-10">
-          <h1 className="mb-10">صفحه اصلی</h1>
+        <div className="container py-4 px-10 -mt-10 z-30 relative">
+        <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
+          <h1 className="mb-10 dark:text-neutral-200">پیشخوان</h1>
           {loading && <p>در حال بارگذاری...</p>}
-          <div style={{ width: "100%", height: "400px" }} className="my-4">
-            <Bar data={barData} />
+          <div style={{ width: "100%", height: "400px" }} className="my-4 flex justify-center ">
+            <Bar data={barData} options={barOptions} />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", marginTop: "50px" }}>
-            <div style={{ flex: 1, height: "400px" }}>
-              <Pie data={piePriceData} />
+            <div className="flex justify-center" style={{ flex: 1, height: "400px" }}>
+              <Pie data={piePriceData} options={pieOptions} />
             </div>
-            <div style={{ flex: 1, height: "400px" }}>
-              <Pie data={pieFreeProductsData} />
+            <div className="flex justify-center" style={{ flex: 1, height: "400px" }}>
+              <Pie data={pieFreeProductsData} options={pieOptions} />
             </div>
           </div>
+          </div>
         </div>
+
+
+
       </div>
     </AuthWrapper>
   );
