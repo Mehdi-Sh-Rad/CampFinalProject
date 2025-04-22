@@ -109,7 +109,6 @@ export default function Checkout() {
           setDiscountError("درصد تخفیف نامعتبر است");
           return;
         }
-
         setAppliedDiscount(
           (totalPrice * discountItem.percentage) / 100
         );
@@ -120,7 +119,7 @@ export default function Checkout() {
         return;
       }
     } finally {
-      setLoading(false); // Ensure loading is set to false in all cases
+      setLoading(false);
     }
   };
 
@@ -156,7 +155,6 @@ export default function Checkout() {
 
   const handleWalletWithraw = async (e) => {
     e.preventDefault();
-    console.log("payable:", payableAmount);
 
     if (payableAmount === 0) {
       setError("مبلغ خرید صفر می‌باشد");
@@ -186,22 +184,14 @@ export default function Checkout() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        if (response.status === 400) {
-          const message = await response.json();
-          setError(message.message);
-        } else {
-          throw new Error("مشکلی در برداشت از کیف پول پیش آمده است");
-        }
-      } else {
-        alert("سفارش شما با موفقیت ثبت شد");
-
-        clearCart();
-
-        if (discountCode) {
-          handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
-        }
+        throw new Error(data.message || "مشکلی در برداشت از کیف پول پیش آمده است");
       }
+      
+      handleOrderSubmit();
+
     } catch (error) {
       alert(error.message || "مشکلی در ثبت سفارش پیش آمده است");
     } finally {

@@ -56,7 +56,7 @@ const Discounts = () => {
       calendar: persian,
       locale: persian_fa,
     });
-    return persianDate.format("YYYY/MM/DD HH:mm");
+    return persianDate.format("HH:mm - YYYY/MM/DD");
   };
 
   return (
@@ -100,9 +100,6 @@ const Discounts = () => {
                               کد تخفیف
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              دسته بندی
-                            </th>
-                            <th scope="col" className="px-4 py-4">
                               درصد تخفیف
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -129,9 +126,6 @@ const Discounts = () => {
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
                               <td className="whitespace-nowrap px-4 py-4">
-                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
-                              </td>
-                              <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
                               <td className="whitespace-nowrap px-4 py-4">
@@ -156,9 +150,6 @@ const Discounts = () => {
                               کد تخفیف
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              دسته بندی
-                            </th>
-                            <th scope="col" className="px-4 py-4">
                               درصد تخفیف
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -178,7 +169,6 @@ const Discounts = () => {
                               <tr className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap px-4 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{discount.code}</td>
-                                <td className="whitespace-nowrap px-4 py-4">{discount.category?.name}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{discount.percentage}%</td>
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(discount.date)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{discount.status ? "فعال" : "غیرفعال"}</td>

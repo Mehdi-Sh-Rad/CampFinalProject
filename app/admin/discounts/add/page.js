@@ -10,22 +10,12 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 const AddDiscount = () => {
   const [code, setCode] = useState("");
-  const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState([]);
   const [percentage, setPercentage] = useState("");
   const [expirationDate, setExpirationDate] = useState(null);
   const [status, setStatus] = useState(true);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const router = useRouter();
-
-  // Fetch categories on component mount
-  useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
-  }, []);
 
   // Generate random discount code on mount
   useEffect(() => {
@@ -46,10 +36,6 @@ const AddDiscount = () => {
   const validateForm = () => {
     if (code.trim() === "") {
       setFormError("کد تخفیف الزامی می‌باشد");
-      return false;
-    }
-    if (!category) {
-      setFormError("انتخاب دسته‌بندی الزامی است");
       return false;
     }
     if (percentage.trim() === "") {
@@ -81,7 +67,6 @@ const AddDiscount = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code,
-          category,
           percentage,
           date: isoDate,
           status,
@@ -139,24 +124,7 @@ const AddDiscount = () => {
                   className="w-full px-3 py-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="کد خودکار تولید می‌شود"
                 />
-              </div>
-              <select
-                name="category"
-                autoComplete="category"
-                className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                placeholder="انتخاب محصول"
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}>
-                <option value="">انتخاب دسته بندی مورد نظر</option>
-                {categories.map((cat) => {
-                  return (
-                    <option key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </option>
-                  );
-                })}
-              </select>
+              </div> 
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">درصد تخفیف</label>
                 <input
@@ -174,7 +142,7 @@ const AddDiscount = () => {
                   onChange={setExpirationDate}
                   calendar={persian}
                   locale={persian_fa}
-                  format="YYYY/MM/DD HH:mm"
+                  format="YYYY/MM/DD"
                   minDate={new Date()}
                   multiple={false}
                   className="w-full"
