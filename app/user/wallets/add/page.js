@@ -23,13 +23,24 @@ const DepositWallets = () => {
       return false;
     };
 
+    if (isNaN(amount)) {
+      setFormError("مقدار شارژ باید عددی باشد");
+      return false;
+    };
+
+    if (amount < 1000) {
+      setFormError("مقدار شارژ نمی تواند کمتر از 1,000 تومان باشد");
+      return false;
+    };
+
     try {
       setLoading(true);
       const response = await fetch("/api/wallets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount
+          amount,
+          type: "credit",
         }),
       });
       if (!response.ok) {

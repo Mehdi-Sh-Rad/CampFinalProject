@@ -43,39 +43,9 @@ const Wallets = () => {
       calendar: persian,
       locale: persian_fa,
     });
-    return persianDate.format("YYYY/MM/DD HH:mm");
+    return persianDate.format("HH:mm - YYYY/MM/DD");
   };
 
-  const handleBlock = async (id, preStatus) => {
-    setLoading(true);
-    const newStatus = !Boolean(preStatus);
-    try {
-      const response = await fetch(`/api/wallets?id=${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isBlock: newStatus }),
-      });
-
-      if (response.status === 400) {
-        let message = await response.json();
-        setError(message.message);
-      }
-      if (!response.ok) throw new Error("مشکلی در تغییر وضعیت کیف پول پیش آمده است");
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    };
-
-    setWallets((prevStatus) =>
-      prevStatus.map((status) => {
-        if (status._id === id) {
-          return { ...status, isBlock: newStatus };
-        }
-        return status;
-      })
-    );
-  };
 
   return (
     <AuthWrapper>
@@ -103,7 +73,7 @@ const Wallets = () => {
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
-                            <th scope="col" className="px-4 py-4">
+                          <th scope="col" className="px-4 py-4">
                               #
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -152,7 +122,6 @@ const Wallets = () => {
                             <th scope="col" className="px-4 py-4">
                               تاریخ و ساعت آخرین شارژ / برداشت
                             </th>
-
                           </tr>
                         </thead>
                         <tbody>

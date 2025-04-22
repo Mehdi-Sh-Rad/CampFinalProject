@@ -55,7 +55,7 @@ const Wallets = () => {
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
           <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> مشاهده کیف پول </h1>
-          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت می توانید مانده، گردش کیف پول خود را مشاهده نمایید</span>
+          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت می توانید مانده و گردش های کیف پول خود را مشاهده نمایید</span>
           <Link
             href="/user/wallets/add"
             className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg"
@@ -74,6 +74,9 @@ const Wallets = () => {
           />
         </div>
         <div className="container py-4 px-10 -mt-10 z-30 relative">
+        {wallets.map((wal, indx) => (
+          <span key={wal._id + 1} className="bg-slate-200 rounded-xl p-4 mx-3 m-1"> موجودی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
+        ))}
           <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
             {error && <div className="text-red-500 text-center">{error}</div>}
             <div className="flex flex-col">
@@ -145,7 +148,7 @@ const Wallets = () => {
                                   <td className="whitespace-nowrap px-4 py-4 font-medium">{index + 1}</td>
                                   <td className="whitespace-nowrap px-4 py-4 font-medium">{tr.amount?.toLocaleString("fa-IR")}</td>
                                   <td className="whitespace-nowrap px-4 py-4 font-medium">{tr.type ==
-                                    'credit' ? "شارژ" : "خرید"}</td>
+                                    'credit' ? <p className="text-green-500">شارژ</p> : <p className="text-red-500">خرید</p>}</td>
                                   <td className="whitespace-nowrap px-4 py-4 font-medium">{formatToPersianDate(tr.date)}</td>
                                 </tr>
                               ))}
@@ -160,9 +163,7 @@ const Wallets = () => {
             </div>
           </div>
         </div>
-        {wallets.map((wal, indx) => (
-          <span key={wal._id + 1} className="bg-slate-200 rounded-xl p-4 mx-36 m-10"> موجودی فعلی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
-        ))}
+        
       </div>
 
     </AuthWrapper>

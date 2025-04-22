@@ -15,9 +15,7 @@ export async function GET(req) {
   try {
     await connectDB();
     const url = new URL(req.url);
-    const id = url.searchParams.get('id');
-
-    
+    const id = url.searchParams.get('id');  
 
     if (id) {
 
@@ -41,6 +39,7 @@ export async function GET(req) {
     return new Response(JSON.stringify({ message: error.message }), { status: 500 });
   }
 }
+
 
 export async function POST(req) {
   try {
@@ -112,8 +111,7 @@ export async function PUT(req) {
     if (category == "") {
       updateData.category = null;
     }
-
-
+    
     const discount = await Discount.findByIdAndUpdate(id, updateData , { new: true, runValidators: true });
     if (!discount) {
       return new Response(JSON.stringify({ message: 'کد تخفیف یافت نشد' }), { status: 404 });

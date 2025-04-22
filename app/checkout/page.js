@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Header from "../components/home/Header";
 import Footer from "react-multi-date-picker/plugins/range_picker_footer";
 import error from "../error";
@@ -14,8 +15,10 @@ export default function Checkout() {
   const [discountPrecent, setDiscountPrecent] = useState(null);
   const [discountCode, setDiscountCode] = useState("");
   const [wallets, setWallets] = useState([]);
+  const [walletsWithraw, setWalletsWithraw] = useState("");
   const [appliedDsicount, setAppliedDiscount] = useState(0);
   const [discountError, setDiscountError] = useState("");
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -151,6 +154,62 @@ export default function Checkout() {
     }
   };
 
+  const handleWalletWithraw = async (e) => {
+    e.preventDefault();
+    console.log("payable:", payableAmount);
+
+    if (payableAmount === 0) {
+      setError("مبلغ خرید صفر می‌باشد");
+      return false;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+
+      if (payableAmount > wallets[0].balance) {
+        setError("موجودی کیف پول شما کافی نیست");
+        return false;
+      }
+
+      // Update wallet balance locally
+      wallets.map((wal) => (wal.balance = wal.balance - payableAmount));
+      setWallets(wallets);
+
+      // Send the wallet withdrawal request
+      const response = await fetch("/api/wallets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: payableAmount,
+          type: "debit",
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 400) {
+          const message = await response.json();
+          setError(message.message);
+        } else {
+          throw new Error("مشکلی در برداشت از کیف پول پیش آمده است");
+        }
+      } else {
+        alert("سفارش شما با موفقیت ثبت شد");
+
+        clearCart();
+
+        if (discountCode) {
+          handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
+        }
+      }
+    } catch (error) {
+      alert(error.message || "مشکلی در ثبت سفارش پیش آمده است");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   async function handleOrderSubmit() {
     setLoading(true);
     try {
@@ -170,8 +229,9 @@ export default function Checkout() {
       alert("سفارش شما با موفقیت ثبت شد");
 
       clearCart();
-      console.log(discount.find((item) => item.code === discountCode)._id)
-      handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
+      if (discountCode) {
+        handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
+      }
     } catch (error) {
       alert(error.message || "مشکلی در ثبت سفارش پیش آمده است");
     } finally {
@@ -269,14 +329,16 @@ export default function Checkout() {
                   <p className="fw-bold">{payableAmount.toLocaleString()} تومان</p>
                 </section>
                 <section className="border-bottom mb-3">
-                {wallets.map((wal, indx) => (
-                  <span key={wal._id} className="bg-slate-200 rounded-xl mt-9"> موجودی فعلی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
-                ))}
+                  {wallets.map((wal, indx) => (
+                    <span key={wal._id} className="bg-slate-200 rounded-xl mt-9"> موجودی فعلی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
+                  ))}
                 </section>
                 <section className="mt-5">
+
+
                   <button
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
-                    onClick={handleOrderSubmit}
+                    onClick={handleWalletWithraw}
                     disabled={loading}
                   >
                     {loading ? "درحال پردازش ..." : "پرداخت از کیف پول"}
@@ -288,6 +350,12 @@ export default function Checkout() {
                   >
                     {loading ? "درحال پردازش ..." : "درگاه پرداخت "}
                   </button>
+                  <Link
+                    href="/cart"
+                    className="bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-3 me-5"
+                  >
+                    بازگشت به سبد خرید
+                  </Link>
                   <Link
                     href="/"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
