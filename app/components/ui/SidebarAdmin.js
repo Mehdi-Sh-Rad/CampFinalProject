@@ -307,6 +307,39 @@ const Sidebar = () => {
               )}
             </li>
           </Link>
+          <Link className=" " href={"/admin/orders"}>
+            <li
+              className={`flex ${
+                pathName.startsWith("/admin/orders") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
+              } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
+              <svg
+                className={pathName.startsWith("/admin/orders") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                width="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                {" "}
+                <path
+                  opacity="0.4"
+                  d="M16.3405 1.99976H7.67049C4.28049 1.99976 2.00049 4.37976 2.00049 7.91976V16.0898C2.00049 19.6198 4.28049 21.9998 7.67049 21.9998H16.3405C19.7305 21.9998 22.0005 19.6198 22.0005 16.0898V7.91976C22.0005 4.37976 19.7305 1.99976 16.3405 1.99976Z"
+                  fill="currentColor"></path>{" "}
+                <path
+                  d="M10.8134 15.248C10.5894 15.248 10.3654 15.163 10.1944 14.992L7.82144 12.619C7.47944 12.277 7.47944 11.723 7.82144 11.382C8.16344 11.04 8.71644 11.039 9.05844 11.381L10.8134 13.136L14.9414 9.00796C15.2834 8.66596 15.8364 8.66596 16.1784 9.00796C16.5204 9.34996 16.5204 9.90396 16.1784 10.246L11.4324 14.992C11.2614 15.163 11.0374 15.248 10.8134 15.248Z"
+                  fill="currentColor"></path>{" "}
+              </svg>
+              <span
+                className={`${
+                  pathName.startsWith("/admin/orders") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                } ${!isSidebarOpen && "hidden"}`}>
+                مدیریت  سفارشات
+              </span>
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  مدیریت سفارشات
+                </span>
+              )}
+            </li>
+          </Link>
           <Link className=" " href={"/admin/payments"}>
             <li
               className={`flex ${

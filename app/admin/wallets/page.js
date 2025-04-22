@@ -18,8 +18,8 @@ const Wallets = () => {
     const fetchWallets = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/wallets");
-        if (!response.ok) throw new Error("مشکل در دریافت کدهای تخفیف");
+        const response = await fetch("/api/walletsView");
+        if (!response.ok) throw new Error("مشکل در دریافت کیف پول");
         const data = await response.json();
         setWallets(Array.isArray(data) ? data : [data]);
       } catch (error) {
@@ -29,12 +29,8 @@ const Wallets = () => {
       }
     };
     fetchWallets();
-    console.log(wallets);
   }, []);
 
-  useEffect(() => {
-    console.log("Wallets state updated:", wallets);
-  }, [wallets]);
   const formatToPersianDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);

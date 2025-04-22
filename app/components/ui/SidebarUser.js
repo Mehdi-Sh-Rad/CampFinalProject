@@ -108,12 +108,12 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          <Link className=" " href={"/admin/products"}>
+          <Link className=" " href={"/user/orders"}>
             <li
-              className={`flex ${pathName.startsWith("/admin/products") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+              className={`flex ${pathName.startsWith("/user/orders") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
-                className={pathName.startsWith("/admin/products") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/user/orders") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -130,7 +130,7 @@ const Sidebar = () => {
                   fill="currentColor"></path>
               </svg>
               <span
-                className={`${pathName.startsWith("/admin/products") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                className={`${pathName.startsWith("/user/orders") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
                 سفارشات من
               </span>

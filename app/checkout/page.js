@@ -15,10 +15,9 @@ export default function Checkout() {
   const [discountPrecent, setDiscountPrecent] = useState(null);
   const [discountCode, setDiscountCode] = useState("");
   const [wallets, setWallets] = useState([]);
-  const [walletsWithraw, setWalletsWithraw] = useState("");
   const [appliedDsicount, setAppliedDiscount] = useState(0);
   const [discountError, setDiscountError] = useState("");
-  const router = useRouter();
+
 
 
   useEffect(() => {
@@ -76,7 +75,7 @@ export default function Checkout() {
   }
 
   const totalPrice = cart.items.reduce(
-    (total, item) => total + item.product.price * item.quantity,
+    (total, item) => total + item.product.discountPrice * item.quantity,
     0
   );
 
@@ -86,7 +85,6 @@ export default function Checkout() {
   const handleApplyDiscount = async () => {
     setLoading(true);
     setDiscountError("");
-
     try {
       if (!discountCode) {
         setDiscountError("لطفا کد تخفیف را وارد کنید");
@@ -100,7 +98,7 @@ export default function Checkout() {
       const discountItem = discount.find((item) => item.code === discountCode);
       if (discountItem) {
         setDiscountPrecent(discountItem.percentage);
-        console.log(discountPrecent)
+
         if (discountItem.percentage > 100) {
           setDiscountError("درصد تخفیف نامعتبر است");
           return;
@@ -160,7 +158,6 @@ export default function Checkout() {
       setError("مبلغ خرید صفر می‌باشد");
       return false;
     }
-
     try {
       setLoading(true);
       setError("");
@@ -288,7 +285,7 @@ export default function Checkout() {
                       <p>تعداد : {item.quantity}</p>
                       <p className="fw-bold">
                         {(
-                          item.product.price * item.quantity
+                          item.product.discountPrice * item.quantity
                         ).toLocaleString()}{" "}
                         تومان
                       </p>

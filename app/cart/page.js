@@ -33,7 +33,7 @@ export default function Cart() {
           <section className="mb-4">
             <Header />
             <section className="row">
-                <h4 className="text-center border bg-blue-100 py-3">سبد خرید</h4>
+              <h4 className="text-center border bg-blue-100 py-3">سبد خرید</h4>
             </section>
             <section className="col">
               {error && <span className="text-red-400">{error}</span>}
@@ -113,7 +113,7 @@ export default function Cart() {
                     </section>
                     <section className="align-self-end flex-shrink-1">
                       <section className="text-nowrap fw-bold">
-                        {item.product?.price?.toLocaleString()}
+                        {item.product?.discountPrice?.toLocaleString()}
                         تومان
                       </section>
                     </section>
@@ -134,7 +134,7 @@ export default function Cart() {
                         {cart.items
                           .reduce(
                             (total, item) =>
-                              total + (item.product.price || 0) * item.quantity,
+                              total + (item.product.discountPrice || 0) * item.quantity,
                             0
                           )
                           .toLocaleString()}
@@ -149,7 +149,7 @@ export default function Cart() {
                         {cart.items
                           .reduce(
                             (total, item) =>
-                              total + (item.product.price || 0) * item.quantity,
+                              total + (item.product.discountPrice || 0) * item.quantity,
                             0
                           )
                           .toLocaleString()}

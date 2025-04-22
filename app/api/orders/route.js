@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import Order from "@/models/Order";
-import Product from "@/models/Product";
+import User from "@/models/Product";
+import Product from "@/models/User";
 
 export async function GET(req) {
   try {
@@ -19,7 +20,7 @@ export async function GET(req) {
     }
 
     const orders = await Order.find({ user: session.user.id })
-      .populate("items.product", "name imageUrl price")
+      .populate("items.product", "name imageUrl price").populate("user" ,"name")
       .sort({ createdAt: -1 });
 
     return NextResponse.json(orders);
