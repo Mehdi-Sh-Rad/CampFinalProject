@@ -31,7 +31,7 @@ export async function POST(req) {
     }
 
     const totalPrice = cart.items.reduce(
-      (total, item) => total + (item.product.discountPrice * item.quantity || 0),
+      (total, item) => total + (item.product.price * item.quantity || 0),
       0
     );
 
