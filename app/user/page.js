@@ -2,11 +2,16 @@
 import Image from "next/image";
 import AuthWrapper from "../components/auth/auth";
 import React, { useEffect, useState } from "react";
+import DateObject from "react-date-object";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+import { secureHeapUsed } from "crypto";
+
 
 
 const UserDashboard = () => {
 
-  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState("");
   const [products, setProducts] = useState([]);
   const [comments, setComments] = useState([]);
   const [tickets, setTickets] = useState([]);
@@ -32,21 +37,21 @@ const UserDashboard = () => {
   }, []);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchCurrentUser = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/auth");
+        const response = await fetch("/api/users");
 
         if (!response.ok) throw new Error("مشکل در دریافت لیست کاربران ");
         const data = await response.json();
-        setUsers(data);
+        setUser(data);
       } catch (error) {
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchCurrentUser();
   }, []);
 
   useEffect(() => {
@@ -85,6 +90,16 @@ const UserDashboard = () => {
     fetchProducts();
   }, []);
 
+  const formatToPersianDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const persianDate = new DateObject({
+      date: date,
+      calendar: persian,
+      locale: persian_fa,
+    });
+    return persianDate.format("YYYY/MM/DD");
+  };
 
   return (
     <AuthWrapper>
@@ -105,8 +120,25 @@ const UserDashboard = () => {
           />
         </div>
         <div className="container py-4 px-10">
-          <h1 className="mb-10">صفحه اصلی</h1>
           {loading && <p>در حال بارگذاری...</p>}
+          {<section>
+            {user.image && (
+              <div className="mt-4 flex justify-center">
+                <img src={user.image} alt="Profile Preview" className="w-32 h-32 rounded-full object-cover" />
+              </div>
+            )}
+            {error && <p className="text-red-500">{error}</p>}
+            {user && (
+              <div>
+                <div className="bg-white dark:bg-[#171a26] p-6 rounded-lg shadow-md">
+                  <p className="pb-3"><strong>نام:</strong> {user.name}</p>
+                  <p className="pb-3"><strong>ایمیل:</strong> {user.email}</p>
+                  <p className="pb-3"><strong>تلفن:</strong> {user.phone}</p>
+                  <p className="pb-2"><strong>تاریخ ثبت نام:</strong> {formatToPersianDate(user.createdAt)}</p>
+                </div>
+              </div>
+            )}
+          </section>}
         </div>
       </div>
     </AuthWrapper>
