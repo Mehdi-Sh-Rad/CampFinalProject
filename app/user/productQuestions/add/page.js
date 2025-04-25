@@ -88,7 +88,7 @@ const AddProductQuestions = () => {
         setFormError(message.message);
       }
       if (!response.ok) throw new Error("مشکلی در ساخت سوال در دیتابیس پیش آمده است");
-      router.push("/admin/productQuestions");
+      router.push("/user/productQuestions");
     } catch (error) {
       setError(error.message);
     }

@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 const AddComment = () => {
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState("");
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState("");
   const [text, setText] = useState("");
@@ -17,23 +15,6 @@ const AddComment = () => {
   const [formError, setFormError] = useState(null);
   const router = useRouter();
 
-  //Fetch users on component mount
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/api/auth");
-        if (!response.ok) throw new Error("مشکل در دریافت اطلاعات کاربران");
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-  }, []);
 
   // Fetch products on component mount
   useEffect(() => {
@@ -55,10 +36,7 @@ const AddComment = () => {
 
   // Validate form input
   const validateForm = () => {
-    if (!user) {
-      setFormError("انتخاب کاربر الزامی است");
-      return false;
-    }
+
     if (!product) {
       setFormError("انتخاب محصول الزامی است");
       return false;
@@ -84,7 +62,7 @@ const AddComment = () => {
       const response = await fetch("/api/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user, product, text, status }),
+        body: JSON.stringify({ product, text }),
       });
 
       if (response.status === 400) {
@@ -92,7 +70,7 @@ const AddComment = () => {
         setFormError(message.message);
       }
       if (!response.ok) throw new Error("مشکلی در ساخت نظر پیش آمده است");
-      router.push("/admin/comments");
+      router.push("/user/comments");
     } catch (error) {
       setError(error.message);
     }
@@ -130,24 +108,7 @@ const AddComment = () => {
             {formError && <h3>{formError}</h3>}
             <form className="py-4" onSubmit={handleSubmit}>
               <div className="flex flex-col items-start gap-y-4 w-full">
-                <select
-                  name="user"
-                  autoComplete="user"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder="کاربر "
-                  type="text"
-                  required
-                  value={user}
-                  onChange={(e) => setUser(e.target.value)}>
-                  <option value="">انتخاب کاربر </option>
-                  {users.map((usr) => {
-                    return (
-                      <option key={usr._id} value={usr._id}>
-                        {usr.name}
-                      </option>
-                    );
-                  })}
-                </select>
+                
                 <select
                   name="product"
                   autoComplete="product"
@@ -175,10 +136,6 @@ const AddComment = () => {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                 />
-                <div className="flex items-center space-x-3">
-                  <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} className="w-4 h-4 m-1" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">فعال</span>
-                </div>
                 <div>
                   <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
                     افزودن

@@ -48,14 +48,6 @@ const Payments = () => {
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
           <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> مدیریت پرداخت ها</h1>
           <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">اطلاعات پرداخت مشتریان را از این قسمت مدیریت کنید</span>
-          <Link
-            href="/admin/payments/add"
-            className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg">
-            افزودن پرداخت - موقت
-            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-            </svg>
-          </Link>
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
             src="/uploads/top-header.png"

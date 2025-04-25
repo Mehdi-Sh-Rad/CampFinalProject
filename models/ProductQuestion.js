@@ -19,7 +19,7 @@ const ProductQuestionSchema = new mongoose.Schema({
       type: String,
    },
 },
-   { timeseries: true }
+   { timestamps: true }
 );
 
 export default mongoose.models.ProductQuestion || mongoose.model("ProductQuestion", ProductQuestionSchema);

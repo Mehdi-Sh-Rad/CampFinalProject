@@ -19,7 +19,6 @@ export default function Checkout() {
   const [discountError, setDiscountError] = useState("");
 
 
-
   useEffect(() => {
     if (cart && cart.discountPrice > 0) {
       setAppliedDiscount(cart.discountPrice);
@@ -124,7 +123,6 @@ export default function Checkout() {
   const handleRemoveDiscount = async (id) => {
     setLoading(true);
     setDiscountError("");
-    console.log(id)
     if (!id) {
       setDiscountError("لطفا کد تخفیف را وارد کنید");
       return;
@@ -151,6 +149,7 @@ export default function Checkout() {
     }
   };
 
+  
   const handleWalletWithraw = async (e) => {
     e.preventDefault();
 
@@ -195,7 +194,6 @@ export default function Checkout() {
       setLoading(false);
     }
   };
-
 
   async function handleOrderSubmit() {
     setLoading(true);

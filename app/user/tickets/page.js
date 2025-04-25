@@ -43,10 +43,10 @@ const Tickets = () => {
         <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">مدیریت تیکت ها</h1>
         <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت تیکت های مشتریان را مدیریت کنید</span>
         <Link
-          href={"/admin/tickets/add"}
-          as={"/admin/tickets/add"}
+          href={"/user/tickets/add"}
+          as={"/user/tickets/add"}
           className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg">
-          افزودن تیکت جدید - موقت
+          افزودن تیکت جدید 
           <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
           </svg>

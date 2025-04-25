@@ -11,6 +11,7 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
+  const [status, setStatus] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,7 +19,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/ordersView");
+        const response = await fetch("/api/orders");
         if (!response.ok) throw new Error("مشکل در دریافت کدهای تخفیف");
         const data = await response.json();
         setOrders(Array.isArray(data) ? data : [data]);
@@ -30,6 +31,35 @@ const Orders = () => {
     };
     fetchOrders();
   }, []);
+
+  // Toggle comment status
+  const handleStatus = async (id, preStatus) => {
+    const newStatus = !Boolean(preStatus);
+    setStatus(newStatus);
+    try {
+      const response = await fetch(`/api/orders/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.status === 400) {
+        let message = await response.json();
+        setError(message.message);
+      }
+      if (!response.ok) throw new Error("مشکلی در تغییر وضعیت آمده است");
+    } catch (error) {
+      setError(error.message);
+    }
+    setOrders(
+      orders.map((order) => {
+        if (order._id === id) {
+          return { ...order, status: newStatus };
+        }
+        return order;
+      })
+    );
+  };
 
   const formatToPersianDate = (dateString) => {
     if (!dateString) return "";
@@ -46,8 +76,8 @@ const Orders = () => {
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-          <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> گزارش سفارشات ثبت شده مشتریان</h1>
-          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت اطلاعات سفارشات مشتریان را مشاهده نمایید</span>
+          <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> گزارش و تایید سفارشات ثبت شده مشتریان</h1>
+          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت اطلاعات سفارشات مشتریان را مشاهده و تایید نمایید</span>
 
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
@@ -79,12 +109,14 @@ const Orders = () => {
                             </th>
                             <th scope="col" className="px-4 py-4">
                               وضعیت
-                            </th>
-                            <th scope="col" className="px-4 py-4">
+                            </th><th scope="col" className="px-4 py-4">
                               مبلغ پرداختی
                             </th>
                             <th scope="col" className="px-4 py-4">
                               تاریخ و ساعت
+                            </th>
+                            <th scope="col" className="px-4 py-4">
+                              عملیات
                             </th>
                           </tr>
                         </thead>
@@ -137,6 +169,9 @@ const Orders = () => {
                             <th scope="col" className="px-4 py-4">
                               تاریخ و ساعت
                             </th>
+                            <th scope="col" className="px-4 py-4">
+                              عملیات
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -153,14 +188,40 @@ const Orders = () => {
                                     textOverflow: "ellipsis",
                                     maxWidth: "150px",
                                   }}>
-                                 {order.items.map((item) => item.product.name).join(" , ")}
+                                  {order.items.map((item) => item.product.name).join(" , ")}
                                 </td>
-                                <td className="whitespace-nowrap px-4 py-4">{order.status}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{order.status ? "تایید" : "در انتظار"}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{order.finalPrice.toLocaleString("fa-IR")}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(order.updatedAt)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">
+                                  <button onClick={() => handleStatus(order._id, order.status)}>
+                                    {order.status ? (
+                                      <svg
+                                        className="w-6 h-6 text-gray-800 dark:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        fill="none"
+                                        viewBox="0 0 24 24">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                                      </svg>
+                                    ) : (
+                                      <svg className="w-5 h-5 text-gray-800 dark:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="15"
+                                        height="15"
+                                        fill="none"
+                                        viewBox="0 0 24 24">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.5 4h-13m13 16h-13M8 20v-3.333a2 2 0 0 1 .4-1.2L10 12.6a1 1 0 0 0 0-1.2L8.4 8.533a2 2 0 0 1-.4-1.2V4h8v3.333a2 2 0 0 1-.4 1.2L13.957 11.4a1 1 0 0 0 0 1.2l1.643 2.867a2 2 0 0 1 .4 1.2V20H8Z" />
+                                      </svg>
+
+                                    )}
+                                  </button>
                                   <div className="flex justify-center gap-x-2"></div>
                                 </td>
+
                               </tr>
                             </React.Fragment>
                           ))}

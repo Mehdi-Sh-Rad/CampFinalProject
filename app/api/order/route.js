@@ -23,7 +23,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "سبد خرید شما خالی است" }, { status: 400 });
     }
 
-    const totalPrice = cart.items.reduce((total, item) => total + (item.product.price * item.quantity || 0), 0);
+    const totalPrice = cart.items.reduce((total, item) => total + (item.product.discountPrice * item.quantity || 0), 0);
 
     const discountPrice = cart.discountPrice || 0;
     const finalPrice = totalPrice - discountPrice;

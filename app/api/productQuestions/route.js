@@ -27,12 +27,15 @@ export async function GET(request) {
       return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
     }
 
-    const userTickets = await ProductQuestion.find({ userId: session.user.id });
-    return new Response(JSON.stringify(userTickets), { status: 200 });
+    const userProductQues = await ProductQuestion.find({ user: session.user.id }).populate("product").populate("user")
+    .sort({ createdAt: -1 });
+
+    return new Response(JSON.stringify(userProductQues), { status: 200 });
   }
 
   // Fetch all tickets (for admin panel)
-  const tickets = await ProductQuestion.find({});
+  const tickets = await ProductQuestion.find({}).populate("product").populate("user")
+    .sort({ createdAt: -1 });
   return new Response(JSON.stringify(tickets), { status: 200 });
 }
 
@@ -50,7 +53,7 @@ export async function POST(request) {
       return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
     }
 
-    const user = session.user.id;
+    body.user = session.user.id;
     const { product, question } = body;
 
 
@@ -71,10 +74,8 @@ export async function POST(request) {
     }
 
     // Create product question
-    console.log("Creating Product Question:", { user, product, question });
-    console.log("User ID:", user);
-    const proQues = await ProductQuestion.create(user, product, question);
-    console.log("Product Question Created:", proQues);
+    const proQues = await ProductQuestion.create(body);
+
     if (!proQues) {
       return new Response(JSON.stringify({ message: "مشکلی در ساخت سوال در دیتابیس پیش آمده است" }), {
         status: 500,

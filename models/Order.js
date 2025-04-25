@@ -26,10 +26,9 @@ const OrderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
     finalPrice: { type: Number, required: true },
     status: {
-      type: String,
-      required: true,
-      enum: ["در انتظار", "در حال پردازش", "تکمیل شده", "لغو شده"],
-      default: "در انتظار",
+      type: Boolean,
+      required: true,    
+      default: false,
     },
   },
   { timestamps: true }

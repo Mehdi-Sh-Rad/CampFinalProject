@@ -84,7 +84,7 @@ const ChatTicket = () => {
         <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark flex flex-col h-full">
         {error && <div className="text-red-500 mb-3">{error}</div>}
           <div className="flex-grow overflow-y-auto p-4 border dark:border-gray-600 rounded"> 
-                    
+                   <p className="mb-2">همکاران ما بصورت آنلاین آماده پاسخگویی هستند</p>
             {messages.map((msg, index) => (
               <div
                 key={index}

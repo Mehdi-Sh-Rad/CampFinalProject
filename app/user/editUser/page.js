@@ -89,7 +89,7 @@ const EditUserInfo = () => {
         if (!validateForm()) {
             return;
         }
-    
+
         try {
             const formData = new FormData();
             formData.append("name", name);
@@ -103,7 +103,7 @@ const EditUserInfo = () => {
                 method: "PUT",
                 body: formData,
             });
-           
+
             if (response.status === 400) {
                 let message = await response.json();
                 setFormError(message.message);
@@ -182,10 +182,14 @@ const EditUserInfo = () => {
                                     onChange={(e) => handleImageChange(e.target.files[0])}
                                     disabled={loading}
                                 />
-
-                                <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
-                                    {loading ? "در حال بارگذاری..." : "ذخیره تغییرات"}
-                                </button>
+                                <div>
+                                    <button type="submit" className="bg-green-500 text-white py-2 px-4 me-3 rounded">
+                                        {loading ? "در حال بارگذاری..." : "ذخیره تغییرات"}
+                                    </button>
+                                    <button href={"/user"} className="bg-red-500 text-white py-2 px-6 rounded">
+                                        انصراف
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

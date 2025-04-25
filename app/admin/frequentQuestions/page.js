@@ -70,10 +70,10 @@ const FrequentQuestions = () => {
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-2 py-4">
                             #
                           </th>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-4 py-4">
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
@@ -90,7 +90,7 @@ const FrequentQuestions = () => {
                       <tbody>
                         {[...Array(4)].map((_, index) => (
                           <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                            <td className="whitespace-nowrap px-4 py-4 font-medium">
+                            <td className="whitespace-nowrap px-2 py-4 font-medium">
                               <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-4">
@@ -114,10 +114,10 @@ const FrequentQuestions = () => {
                     <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                       <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                         <tr>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-1 py-4">
                             #
                           </th>
-                          <th scope="col" className=" px-6 py-4">
+                          <th scope="col" className=" px-2 py-4">
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
@@ -136,8 +136,8 @@ const FrequentQuestions = () => {
                           frequentQuestions.map((freQue, index) => {
                             return (
                               <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                                <td className="whitespace-nowrap  px-6 py-4 font-medium">{index + 1}</td>
-                                <td className="whitespace-nowrap  px-6 py-4">{freQue.topic}</td>
+                                <td className="whitespace-nowrap  px-1 py-4 font-medium">{index + 1}</td>
+                                <td className="whitespace-nowrap  px-2 py-4">{freQue.topic}</td>
                                 <td
                                   className="whitespace-nowrap  px-6 py-4"
                                   style={{

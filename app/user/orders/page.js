@@ -18,7 +18,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/orders");
+        const response = await fetch("/api/orders?user=true");
         if (!response.ok) throw new Error("مشکل در دریافت کدهای تخفیف");
         const data = await response.json();
         setOrders(Array.isArray(data) ? data : [data]);
@@ -103,12 +103,6 @@ const Orders = () => {
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
-                              <td className="whitespace-nowrap px-4 py-4">
-                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
-                              </td>
-                              <td className="whitespace-nowrap px-4 py-4">
-                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
-                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -148,7 +142,7 @@ const Orders = () => {
                                   }}>
                                  {order.items.map((item) => item.product.name).join(" , ")}
                                 </td>
-                                <td className="whitespace-nowrap px-4 py-4">{order.status}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{order.status ? "تایید" : "در انتظار"}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{order.finalPrice.toLocaleString("fa-IR")}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(order.updatedAt)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">

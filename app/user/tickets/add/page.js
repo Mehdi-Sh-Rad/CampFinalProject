@@ -93,7 +93,6 @@ const AddTicket = () => {
             {formError && <h3>{formError}</h3>}
             <form className="py-4" onSubmit={handleSubmit}>
               <div className="flex flex-col items-start gap-y-4 w-full">
-
                 <input
                   name="topic"
                   autoComplete="topic"
