@@ -54,7 +54,7 @@ const AddTicket = () => {
         setFormError(message.message);
       }
       if (!response.ok) throw new Error("مشکلی در ساخت سوالات متداول پیش آمده است");
-      router.push("/admin/tickets");
+      router.push("/user/tickets");
     } catch (error) {
       setError(error.message);
     } finally {
@@ -112,12 +112,11 @@ const AddTicket = () => {
                   value={order}
                   onChange={(e) => setOrder(e.target.value)}
                 />
-
                 <div>
                   <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
                     ثبت
                   </button>
-                  <Link href={"/admin/tickets"} className="bg-red-700 text-white py-2 px-4 rounded">
+                  <Link href={"/user/tickets"} className="bg-red-700 text-white py-2 px-4 rounded">
                     انصراف
                   </Link>
                 </div>

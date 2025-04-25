@@ -57,12 +57,15 @@ export async function GET(request) {
   return new Response(JSON.stringify(tickets), { status: 200 });
 };
 
-
-
-// POST request to create a new ticket
 export async function POST(request) {
   await connectToDatabase();
   try {
+    const session = await getServerSession({ req: request, ...authOptions });
+
+    if (!session || !session.user) {
+      return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
+    }
+
     const body = await request.json();
 
     // Basic validation
@@ -72,7 +75,13 @@ export async function POST(request) {
       });
     }
 
-    const ticket = await Tickets.create(body);
+    // Add the logged-in user's ID to the ticket
+    const ticketData = {
+      ...body,
+      userId: session.user.id, // Associate the ticket with the logged-in user
+    };
+
+    const ticket = await Tickets.create(ticketData);
 
     return new Response(JSON.stringify(ticket), { status: 200 });
   } catch (error) {
@@ -80,4 +89,4 @@ export async function POST(request) {
       status: 500,
     });
   }
-};
+}

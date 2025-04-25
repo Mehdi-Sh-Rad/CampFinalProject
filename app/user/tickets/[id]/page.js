@@ -11,6 +11,7 @@ const ChatTicket = () => {
   const [socket, setSocket] = useState(null); // WebSocket connection
   const [error, setError] = useState(null);
 
+  
   useEffect(() => {
     // Establish WebSocket connection
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
@@ -23,20 +24,21 @@ const ChatTicket = () => {
     // Listen for incoming messages
     newSocket.on("message", (message) => {
       setMessages((prev) => [...prev, message]);
+      console.log(messages);
     });
 
     // Fetch initial messages
     const fetchMessages = async () => {
       try {
         const response = await fetch(`/api/tickets/${id}/messages`);
-        if (!response.ok) throw new Error("Failed to fetch messages");
+        if (!response.ok) throw new Error("تیکت یافت نشد");
         const data = await response.json();
         setMessages(data.message);
+
       } catch (err) {
         setError(err.message);
       }
     };
-
     fetchMessages();
 
     // Cleanup on component unmount
@@ -45,10 +47,12 @@ const ChatTicket = () => {
     };
   }, [id]);
 
+
+  // Handle sending a new message
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    const message = { text: newMessage, sender: "Admin" };
+    const message = { text: newMessage, sender: "User" };
 
     try {
       // Emit the message to the WebSocket server
@@ -62,7 +66,7 @@ const ChatTicket = () => {
       });
 
       if (!response.ok) throw new Error("Failed to save message");
-
+      
       // Optimistically update the UI
       setMessages((prev) => [...prev, { ...message, timestamp: new Date() }]);
       setNewMessage(""); // Clear the input field
@@ -76,17 +80,31 @@ const ChatTicket = () => {
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
         <h1 className="text-gray-500 absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">گفتگو با پشتیبانی</h1>
       </div>
-      <div className="flex-grow container py-4 px-10 -mt-10 z-50 relative">
+      <div className="flex-grow container py-4 px-10 -mt-10 z-50 relative">      
         <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark flex flex-col h-full">
-          <div className="flex-grow overflow-y-auto p-4 border dark:border-gray-600 rounded">
+        {error && <div className="text-red-500 mb-3">{error}</div>}
+          <div className="flex-grow overflow-y-auto p-4 border dark:border-gray-600 rounded"> 
+                    
             {messages.map((msg, index) => (
               <div
                 key={index}
                 className={`mb-4 p-2 rounded ${msg.sender === "Admin" ? "bg-green-100 text-right" : "bg-gray-100 text-left"
                   }`}
               >
-                <p className="text-sm">{msg.sender === "Admin" ? "پشتیبانی" : "مشتری"}:</p>
+                <p className="text-sm">{msg.sender === "Admin" ? "پشتیبانی :" : ": کاربر"}</p>
                 <p>{msg.text}</p>
+                {msg.timestamp && (
+                  <p className="text-xs text-gray-500">
+                    {new Date(msg.timestamp).toLocaleString("fa-IR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      
+                    })}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -113,7 +131,7 @@ const ChatTicket = () => {
             </button>
             <Link
               className="ml-2 bg-red-600 text-white py-2 px-4 rounded"
-              href={"/admin/tickets"}
+              href={"/user/tickets"}
             >
               بازگشت
             </Link>
