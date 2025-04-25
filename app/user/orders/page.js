@@ -68,16 +68,18 @@ const Orders = () => {
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
-                            <th scope="col" className="px-4 py-4">
+                          <th scope="col" className="px-4 py-4">
                               #
+                            </th>
+                            <th scope="col" className="px-4 py-4">
+                              شماره سفارش
                             </th>
                             <th scope="col" className="px-4 py-4">
                               محصول/محصولات سفارشی
                             </th>
                             <th scope="col" className="px-4 py-4">
                               وضعیت
-                            </th>
-                            <th scope="col" className="px-4 py-4">
+                            </th><th scope="col" className="px-4 py-4">
                               مبلغ پرداختی
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -88,10 +90,13 @@ const Orders = () => {
                         <tbody>
                           {[...Array(4)].map((_, index) => (
                             <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                              <td className="whitespace-nowrap px-4 py-4 font-medium">
+                              <td className="whitespace-nowrap px-1 py-4 font-medium">
                                 <div className="w-10 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
-                              <td className="whitespace-nowrap px-4 py-4">
+                              <td className="whitespace-nowrap px-2 py-4 font-medium">
+                                <div className="w-10 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4">
                                 <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
                               <td className="whitespace-nowrap px-4 py-4">
@@ -115,6 +120,9 @@ const Orders = () => {
                               #
                             </th>
                             <th scope="col" className="px-4 py-4">
+                              شماره سفارش
+                            </th>
+                            <th scope="col" className="px-4 py-4">
                               محصول/محصولات سفارشی
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -131,7 +139,8 @@ const Orders = () => {
                           {orders && orders.map((order, index) => (
                             <React.Fragment key={order._id + 1}>
                               <tr className="border-b border-neutral-200 dark:border-white/10">
-                                <td className="whitespace-nowrap px-4 py-4 font-medium">{index + 1}</td>
+                                <td className="whitespace-nowrap px-1 py-4 font-medium">{index + 1}</td>
+                                <td className="whitespace-nowrap px-2 py-4 font-medium">{order.orderCode}</td>
                                 <td
                                   className="whitespace-nowrap  px-6 py-4"
                                   style={{

@@ -105,12 +105,13 @@ const Orders = () => {
                               کاربر
                             </th>
                             <th scope="col" className="px-4 py-4">
+                              شماره سفارش
+                            </th>
+                            <th scope="col" className="px-4 py-4">
                               محصول/محصولات سفارشی
                             </th>
                             <th scope="col" className="px-4 py-4">
                               وضعیت
-                            </th><th scope="col" className="px-4 py-4">
-                              مبلغ پرداختی
                             </th>
                             <th scope="col" className="px-4 py-4">
                               تاریخ و ساعت
@@ -159,12 +160,13 @@ const Orders = () => {
                               کاربر
                             </th>
                             <th scope="col" className="px-4 py-4">
+                              شماره سفارش
+                            </th>
+                            <th scope="col" className="px-4 py-4">
                               محصول/محصولات سفارشی
                             </th>
                             <th scope="col" className="px-4 py-4">
                               وضعیت
-                            </th><th scope="col" className="px-4 py-4">
-                              مبلغ پرداختی
                             </th>
                             <th scope="col" className="px-4 py-4">
                               تاریخ و ساعت
@@ -180,6 +182,7 @@ const Orders = () => {
                               <tr className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap px-4 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{order.user?.name}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{order.orderCode}</td>
                                 <td
                                   className="whitespace-nowrap  px-6 py-4"
                                   style={{
@@ -191,7 +194,7 @@ const Orders = () => {
                                   {order.items.map((item) => item.product.name).join(" , ")}
                                 </td>
                                 <td className="whitespace-nowrap px-4 py-4">{order.status ? "تایید" : "در انتظار"}</td>
-                                <td className="whitespace-nowrap px-4 py-4">{order.finalPrice.toLocaleString("fa-IR")}</td>
+
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(order.updatedAt)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">
                                   <button onClick={() => handleStatus(order._id, order.status)}>

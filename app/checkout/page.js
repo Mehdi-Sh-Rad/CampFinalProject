@@ -15,6 +15,8 @@ export default function Checkout() {
   const [discountPrecent, setDiscountPrecent] = useState(null);
   const [discountCode, setDiscountCode] = useState("");
   const [wallets, setWallets] = useState([]);
+  const [orderCode, setOrderCode] = useState("");
+  const [payment, setPayment] = useState([]);
   const [appliedDsicount, setAppliedDiscount] = useState(0);
   const [discountError, setDiscountError] = useState("");
 
@@ -41,7 +43,9 @@ export default function Checkout() {
       }
     };
     fetchDiscount();
+
   }, []);
+
 
   useEffect(() => {
     const fetchWallets = async () => {
@@ -60,19 +64,7 @@ export default function Checkout() {
     fetchWallets();
   }, []);
 
-  if (!cart || cart.items.length === 0) {
-    return (
-      <main className="main-body">
-        <section className="container-xxl text-center py-5">
-          <h4>سبد خرید شما خالی هست</h4>
-          <Link href="/" className="btn btn-primary mt-3">
-            بازگشت به فروشگاه
-          </Link>
-        </section>
-      </main>
-    );
-  }
-
+ 
   const totalPrice = cart.items.reduce(
     (total, item) => total + item.product.discountPrice * item.quantity,
     0
@@ -149,7 +141,73 @@ export default function Checkout() {
     }
   };
 
-  
+  // Generate unique order code
+  useEffect(() => {
+    generateOrderCode();
+  }, []);
+
+  const generateOrderCode = () => {
+    const characters = "0123456789";
+    let result = "P-";
+    for (let i = 0; i < 8; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    setOrderCode(result);
+  };
+
+
+  if (!cart || cart.items.length === 0) {
+    return (
+      <main className="main-body">
+        <section className="container-xxl text-center py-5">
+          <h4>سبد خرید شما خالی هست</h4>
+          <Link href="/" className="btn btn-primary mt-3">
+            بازگشت به فروشگاه
+          </Link>
+        </section>
+      </main>
+    );
+  }
+
+  const handlePayment = async () => {
+
+    if (payableAmount === 0) {
+      setError("مبلغ خرید صفر می‌باشد");
+      return false;
+    };
+    if (!orderCode) {
+      setError("کد پیگیری سفارش اختصاص پیدا نکرده است");
+      return false;
+    };
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch("/api/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderCode,
+          items : cart.items,
+          totalDiscount: appliedDsicount,
+          totalPrice: payableAmount,
+          status: true,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "مشکلی در برداشت از کیف پول پیش آمده است");
+      }
+
+      } catch (error) {
+      alert(error.message || "مشکلی در ثبت اطلاعات پرداخت پیش آمده است");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleWalletWithraw = async (e) => {
     e.preventDefault();
 
@@ -185,7 +243,7 @@ export default function Checkout() {
       if (!response.ok) {
         throw new Error(data.message || "مشکلی در برداشت از کیف پول پیش آمده است");
       }
-      
+
       handleOrderSubmit();
 
     } catch (error) {
@@ -195,14 +253,19 @@ export default function Checkout() {
     }
   };
 
+
   async function handleOrderSubmit() {
     setLoading(true);
+
     try {
       const res = await fetch("/api/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          orderCode
+        }),
       });
 
       const data = await res.json();
@@ -212,7 +275,7 @@ export default function Checkout() {
       }
 
       alert("سفارش شما با موفقیت ثبت شد");
-
+      handlePayment();
       clearCart();
       if (discountCode) {
         handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
@@ -320,7 +383,6 @@ export default function Checkout() {
                 </section>
                 <section className="mt-5">
 
-
                   <button
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
                     onClick={handleWalletWithraw}
@@ -329,7 +391,7 @@ export default function Checkout() {
                     {loading ? "درحال پردازش ..." : "پرداخت از کیف پول"}
                   </button>
                   <button
-                    className="bg-orange-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
+                    className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded d-block me-5"
                     onClick={handleOrderSubmit}
                     disabled={loading}
                   >

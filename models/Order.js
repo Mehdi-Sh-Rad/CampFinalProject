@@ -7,6 +7,11 @@ const OrderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    orderCode: {
+      type: String,
+      required: [true, "Discount code is required"],
+      trim: true,
+    },
     items: [
       {
         product: {

@@ -10,7 +10,7 @@ import { useTheme } from "@/app/context/ThemeContext";
 const Sidebar = () => {
   const pathName = usePathname();
   const { isSidebarOpen, toggleSidebar } = useSidebar();
-  const {isDarkMode} = useTheme();
+  const { isDarkMode } = useTheme();
   return (
     <aside
       className={` px-4 py-4 w-full dark:bg-shop-dark min-h-[100vh] relative bg-white shadow-md transition-all duration-500 ease-in-out ${!isSidebarOpen ? "max-w-[76px]" : "max-w-[260px]"
@@ -103,7 +103,7 @@ const Sidebar = () => {
               <span
                 className={`${pathName.startsWith("/user/editUser") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-            ویرایش اطلاعات کاربری
+                ویرایش اطلاعات کاربری
               </span>
             </li>
           </Link>
@@ -156,8 +156,13 @@ const Sidebar = () => {
                   : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}
               >
-                 نظرات من
+                نظرات من
               </span>
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  نظرات من
+                </span>
+              )}
             </li>
           </Link>
 
@@ -187,25 +192,29 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          
+
           <Link className=" " href={"/user/wallets"}>
             <li
               className={`flex ${pathName.startsWith("/user/wallets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
-              <svg
-                width="25"
-                className="svg-icon"
-                viewBox="0 0 20 20">
-                <path d="M10.219,1.688c-4.471,0-8.094,3.623-8.094,8.094s3.623,8.094,8.094,8.094s8.094-3.623,8.094-8.094S14.689,1.688,10.219,1.688 M10.219,17.022c-3.994,0-7.242-3.247-7.242-7.241c0-3.994,
-                3.248-7.242,7.242-7.242c3.994,0,7.241,3.248,7.241,7.242C17.46,13.775,14.213,17.022,10.219,17.022 M15.099,7.03c-0.167-0.167-0.438-0.167-0.604,0.002L9.062,12.48l-2.269-2.277c-0.166-0.167-0.437-0.167-0.603,
-                0c-0.166,0.166-0.168,0.437-0.002,0.603l2.573,2.578c0.079,0.08,0.188,0.125,0.3,0.125s0.222-0.045,0.303-0.125l5.736-5.751C15.268,7.466,15.265,7.196,15.099,7.03">
-                </path>
+              <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                  d="M17 8H5m12 0a1 1 0 0 1 1 1v2.6M17 8l-4-4M5 8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.6M5 8l4-4 4 4m6 4h-4a2 2 0 1 0 0 4h4a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1Z" />
               </svg>
               <span
                 className={`${pathName.startsWith("/user/wallets") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-                  کیف پول
+                کیف پول
               </span>
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  مدیریت کیف پول کاربران
+                </span>
+              )}
             </li>
           </Link>
           <Link className=" " href={"/user/tickets"}>
@@ -219,7 +228,7 @@ const Sidebar = () => {
               <span
                 className={`${pathName.startsWith("/user/tickets") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}>
-                 تیکت های من
+                تیکت های من
               </span>
             </li>
           </Link>
@@ -247,7 +256,7 @@ const Sidebar = () => {
               </span>
             </li>
           </Link>
-          
+
           <Link className=" " href={"/"}>
             <li
               className={`flex ${pathName.startsWith("/homepage") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"

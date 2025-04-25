@@ -22,7 +22,8 @@ export async function POST(req) {
     if (!cart || cart.items.length === 0) {
       return NextResponse.json({ error: "سبد خرید شما خالی است" }, { status: 400 });
     }
-
+    const body = await req.json();
+    const orderCode = body.orderCode;
     const totalPrice = cart.items.reduce((total, item) => total + (item.product.discountPrice * item.quantity || 0), 0);
 
     const discountPrice = cart.discountPrice || 0;
@@ -30,11 +31,14 @@ export async function POST(req) {
 
     const newOrder = await Order.create({
       user: session.user.id,
+      orderCode,
       items: cart.items,
       totalPrice,
       discountPrice,
       finalPrice,
     });
+
+console.log(newOrder)
 
     await Cart.deleteOne({ user: session.user.id });
 

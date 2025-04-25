@@ -1,11 +1,16 @@
 import connectToDatabase from "@/app/lib/db";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import { authOptions } from "../auth/[...nextauth]/route";
 import Payment from "@/models/Payment";
 import Product from "@/models/Product";
 import User from "@/models/User";
 
 export async function GET(request) {
   await connectToDatabase();
-  const payments = await Payment.find({}).populate("product").populate("user");
+  const payments = await Payment.find({}).populate("user")
+  .populate("items.product")
+  .sort({ createdAt: -1 });
   return new Response(JSON.stringify(payments), { status: 200 });
 }
 
@@ -14,7 +19,7 @@ export async function POST(request) {
 
   try {
     const body = await request.json();
-    const { orderCode, user, product, totalPrice, totalDiscount, status } = body;
+    const { orderCode, items, totalPrice, totalDiscount, status } = body;
 
     // Validate orderCode
     if (!orderCode || orderCode.trim() === "") {
@@ -23,28 +28,16 @@ export async function POST(request) {
       });
     }
 
-    // Validate user
-    if (!user) {
-      return new Response(JSON.stringify({ message: "انتخاب کاربر الزامی است" }), {
-        status: 400,
-      });
-    }
-    const userExists = await User.findById(user);
-    if (!userExists) {
-      return new Response(JSON.stringify({ message: "کاربر یافت نشد" }), {
-        status: 400,
-      });
+    const session = await getServerSession({ req: request, ...authOptions });
+    if (!session || !session.user) {
+      return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
     }
 
-    // Validate product
-    if (!product) {
+    const userId = session.user.id; // Assign the logged-in user's ID to the payment
+
+    // Validate items
+    if (!items || items.length === 0) {
       return new Response(JSON.stringify({ message: "انتخاب محصول الزامی است" }), {
-        status: 400,
-      });
-    }
-    const productExists = await Product.findById(product);
-    if (!productExists) {
-      return new Response(JSON.stringify({ message: "محصول یافت نشد" }), {
         status: 400,
       });
     }
@@ -72,6 +65,7 @@ export async function POST(request) {
         });
       }
     }
+
     // Validate status
     if (typeof status !== "boolean") {
       return new Response(JSON.stringify({ message: "وضعیت پرداخت باید مقدار بولین باشد" }), {
@@ -82,12 +76,13 @@ export async function POST(request) {
     // Create payment
     const payment = await Payment.create({
       orderCode,
-      user,
-      product,
+      user: userId,
+      items,
       totalPrice: priceNum,
-      totalDiscount: discountNum,
+      totalDiscount: discountNum || 0,
       status,
     });
+
     return new Response(JSON.stringify(payment), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), {
