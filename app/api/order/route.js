@@ -38,8 +38,10 @@ export async function POST(req) {
 
     await Cart.deleteOne({ user: session.user.id });
 
+    //get product info for each item in the order
     await newOrder.populate("items.product");
 
+    //Create email body with html
     const emailContent = `
   <h2>سفارش شما با موفقیت ثبت شد</h2>
   <p>شماره سفارش: <strong>${newOrder._id}</strong></p>
@@ -62,6 +64,7 @@ export async function POST(req) {
   <p>از خرید شما متشکریم!</p>
 `;
 
+    // Send email to user
     await sendEmail(session.user.email, "سفارش شما با موفقیت ثبت شد", emailContent);
 
     return NextResponse.json({
