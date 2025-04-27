@@ -4,18 +4,39 @@ import Header from "../components/home/Header";
 import Benefits from "../components/home/Benefits";
 import Footer from "../components/home/Footer";
 import ProductCard from "@/app/components/ProductCard";
+import ProductsSortSelect from "../components/home/ProductsSortSelect";
 
 export default async function ProductsPage({ searchParams }) {
   await connectToDatabase();
-  const category = await searchParams.category || null;
-  let productsRaw;
 
-  if (category) {
-    productsRaw = await Product.find({ category }).populate("category");
-  } else {
-    productsRaw = await Product.find({}).populate("category");
+  //// Extract search parameters with default values
+  const category = await searchParams.category || null;
+  const sort = searchParams.sort || null;
+
+  let productsRaw;
+  let sortCondition = {};
+
+   // Set sorting condition based on the selected sort option
+  if (sort === "price-asc") {
+    sortCondition = { price: 1 };
+  } else if (sort === "price-desc") {
+    sortCondition = { price: -1 };
+  } else if (sort === "name-asc") {
+    sortCondition = { name: 1 };
+  } else if (sort === "name-desc") {
+    sortCondition = { name: -1 };
   }
 
+
+  // Fetch products from the database based on category and sort condition
+  if (category) {
+    productsRaw = await Product.find({ category }).populate("category").sort(sortCondition);
+  } else {
+    productsRaw = await Product.find({}).populate("category").sort(sortCondition);
+  }
+
+ 
+  // Map raw product data
   const products = productsRaw.map(product => ({
     _id: product._id,
     imageUrls: product.imageUrls,
@@ -26,6 +47,7 @@ export default async function ProductsPage({ searchParams }) {
     category: product.category, 
   }));
 
+  // Handle case where no products are found
   if (!products || products.length === 0) {
     return (
       <div className="min-h-screen bg-background">
@@ -44,6 +66,7 @@ export default async function ProductsPage({ searchParams }) {
         <h1 className="text-3xl font-bold text-dark mb-8 text-center">
           همه محصولات
         </h1>
+        <ProductsSortSelect/>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {products.map((product) => (
             <ProductCard key={product._id} product={product} showCategory={true} />
