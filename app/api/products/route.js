@@ -50,6 +50,8 @@ export async function GET(request) {
   else if (sort === "name-desc") sortCondition.name = -1;
   else if (sort === "sold-desc") sortCondition.soldCount = -1;
   else if (sort === "sold-asc") sortCondition.soldCount = 1;
+  else if (sort === "view-desc") sortCondition.viewCount = -1;
+  else if (sort === "view-asc")  sortCondition.viewCount = 1;
 
   // Find products in the database based on the 'query', populate the 'category' field, and apply the 'sortCondition'.
   const productsRaw = await Product.find(query).populate("category").sort(sortCondition);

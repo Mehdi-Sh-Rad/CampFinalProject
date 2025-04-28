@@ -9,9 +9,10 @@ export default function ProductsSortSelect({ sort, onSortChange }) {
         <option value="price-desc">گران‌ترین</option>
         <option value="sold-asc">کم فروش‌ترین</option>
         <option value="sold-desc">پر فروش‌ترین</option>
+        <option value="view-asc">کم بازدیدترین</option>
+        <option value="view-desc">پر بازدیدترین</option>
         <option value="name-asc">نام A-Z</option>
         <option value="name-desc">نام Z-A</option>
-        
       </select>
     </div>
   );
