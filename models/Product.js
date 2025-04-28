@@ -29,11 +29,11 @@ const ProductSchema = new mongoose.Schema(
     },
     tags: {
       type: [String],
-     required: true,
+      required: true,
     },
     free: {
       type: Boolean,
-    },   
+    },
     price: {
       type: Number,
       required: true,
@@ -51,10 +51,13 @@ const ProductSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
-    },  
+    },
+    soldCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Product ||
-  mongoose.model("Product", ProductSchema);
+export default mongoose.models.Product || mongoose.model("Product", ProductSchema);
