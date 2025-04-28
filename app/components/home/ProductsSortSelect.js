@@ -1,38 +1,18 @@
-'use client';
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-
-export default function ProductsSortSelect() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const currentSort = searchParams.get('sort') || '';
-
-  const handleSortChange = (e) => {
-    const selectedSort = e.target.value;
-    const params = new URLSearchParams(window.location.search);
-
-    if (selectedSort) {
-      params.set('sort', selectedSort);
-    } else {
-      params.delete('sort');
-    }
-
-    router.push(`?${params.toString()}`);
-  };
-
+export default function ProductsSortSelect({ sort, onSortChange }) {
   return (
-    <div className="flex justify-end mb-6">
+    <div className="mb-4 flex justify-end">
       <select
-        className="border border-gray-300 rounded-md p-2"
-        value={currentSort}
-        onChange={handleSortChange}
+        value={sort || ""}
+        onChange={(e) => onSortChange(e.target.value)}
+        className="border rounded p-2"
       >
-        <option value="">مرتب‌سازی پیشفرض</option>
-        <option value="price-asc">ارزان‌ترین</option>
-        <option value="price-desc">گران‌ترین</option>
-        <option value="name-asc">نام (الف-ی)</option>
-        <option value="name-desc">نام (ی-الف)</option>
+        <option value="">مرتب‌سازی</option>
+        <option value="price-asc">قیمت: ارزان‌ترین</option>
+        <option value="price-desc">قیمت: گران‌ترین</option>
+        <option value="name-asc">نام: الفبایی A-Z</option>
+        <option value="name-desc">نام: الفبایی Z-A</option>
       </select>
     </div>
   );

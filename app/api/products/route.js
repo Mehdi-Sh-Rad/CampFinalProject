@@ -6,7 +6,68 @@ import { unlink, writeFile } from "fs/promises";
 
 export async function GET(request) {
   await connectToDatabase();
-  const products = await Product.find({}).populate("category");
+
+  // Get the search parameters from the URL of the request.
+  const { searchParams } = new URL(request.url);
+
+  // Get the parameters from the search parameters.
+  const category = searchParams.get("category") || null;
+  const sort = searchParams.get("sort") || null;
+  const minPriceParam = searchParams.get("minPrice");
+  const maxPriceParam = searchParams.get("maxPrice");
+  const minPrice = minPriceParam ? parseInt(minPriceParam) : null;
+  const maxPrice = maxPriceParam ? parseInt(maxPriceParam) : null;
+  const award = searchParams.get("award") === "true";
+  const free = searchParams.get("free") === "true";
+
+  // Initialize an empty query object.
+  let query = {};
+
+  // If a 'category' exists, add it to the query object.
+  if (category) query.category = category;
+
+  // Handle price filtering based on the 'free', 'minPrice', and 'maxPrice' parameters.
+  if (free) {
+    query.price = 0;
+  } else if (minPrice !== null && maxPrice !== null) {
+    query.price = { $gte: minPrice, $lte: maxPrice };
+  } else if (minPrice !== null) {
+    query.price = { $gte: minPrice };
+  } else if (maxPrice !== null) {
+    query.price = { $lte: maxPrice };
+  }
+
+  // If 'award' is true, add it to the query object
+  if (award) query.award = true;
+
+  // Initialize an empty sort condition object.
+  let sortCondition = {};
+
+  // Apply sorting based on the 'sort' parameter.
+  if (sort === "price-asc") sortCondition.price = 1;
+  else if (sort === "price-desc") sortCondition.price = -1;
+  else if (sort === "name-asc") sortCondition.name = 1;
+  else if (sort === "name-desc") sortCondition.name = -1;
+
+  // Find products in the database based on the 'query', populate the 'category' field, and apply the 'sortCondition'.
+  const productsRaw = await Product.find(query).populate("category").sort(sortCondition);
+
+  // Map over the raw product data
+  const products = productsRaw.map((product) => ({
+    _id: product._id,
+    imageUrls: product.imageUrls,
+    name: product.name,
+    author: product.author,
+    price: product.price,
+    discountPrice: product.discountPrice,
+    category: product.category,
+    award: product.award,
+    fileUrls: product.fileUrls,
+    types: product.types,
+    tags: product.tags,
+    active: product.active,
+  }));
+
   return new Response(JSON.stringify(products), { status: 200 });
 }
 
@@ -152,7 +213,6 @@ export async function POST(request) {
     }
 
     const product = await Product.create(productData);
-
 
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {
