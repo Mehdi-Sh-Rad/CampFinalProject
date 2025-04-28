@@ -88,7 +88,7 @@ export default function ProductsPage() {
     if (maxF != null && maxF !== "") params.set("maxPrice", maxF);
     if (aw) params.set("award", "true");
     if (fr) params.set("free", "true");
-    if (ac)       params.set("active", "true");
+    if (ac) params.set("active", "true");
 
     // Update URL to apply filters
     router.push(`/products?${params.toString()}`, { scroll: false });
@@ -99,9 +99,14 @@ export default function ProductsPage() {
       <Header />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-dark mb-8 text-center">همه محصولات</h1>
-        <div className="flex flex-row-reverse w-full justify-between mb-6">
-          <ProductsSortSelect sort={sort} onSortChange={handleSortChange} />
-          <ProductsFilter onFilterChange={handleFilterChange} />
+        <div className="flex flex-col-reverse md:flex-row-reverse items-center md:items-start justify-between gap-4 mb-6">
+          <div className="w-full md:w-2/12" >
+            <ProductsSortSelect sort={sort} onSortChange={handleSortChange} />
+          </div>
+
+          <div className="w-full md:w-10/12 flex justify-end">
+            <ProductsFilter onFilterChange={handleFilterChange} />
+          </div>
         </div>
 
         {loading ? (

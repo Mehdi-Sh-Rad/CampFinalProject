@@ -29,44 +29,52 @@ const ProductsFilter = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="filters flex items-center gap-x-4 w-full justify-evenly">
-      <div className="">
-        <label>حداقل قیمت:</label>
+    <div className="w-full bg-white p-4 rounded-2xl shadow-md flex flex-wrap gap-6 justify-between">
+      <div className="flex-1 min-w-[120px]">
+        <label className="block text-sm font-medium text-gray-700 mb-1">حداقل قیمت:</label>
         <input
           type="number"
           min="0"
           max="1000000000"
           value={filters.minPrice || ""}
           onChange={(e) => handleChange("minPrice", e.target.value ? parseInt(e.target.value) : null)}
-          className="border rounded p-1 w-full"
+          placeholder="تومان"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
-      <div>
-        <label>حداکثر قیمت:</label>
+      <div className="flex-1 min-w-[120px]">
+        <label className="block text-sm font-medium text-gray-700 mb-1">حداکثر قیمت:</label>
         <input
           type="number"
           min="0"
           max="1000000000"
           value={filters.maxPrice || ""}
           onChange={(e) => handleChange("maxPrice", e.target.value ? parseInt(e.target.value) : null)}
-          className="border rounded p-1 w-full"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="تومان"
         />
       </div>
 
-      <div className="flex items-center gap-2">
-        <input type="checkbox" checked={filters.award} onChange={(e) => handleChange("award", e.target.checked)} />
-        <label>محصولات دارای جایزه</label>
+      <div className="flex items-center gap-x-2">
+        <input
+        id="award"
+          type="checkbox"
+          className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary"
+          checked={filters.award}
+          onChange={(e) => handleChange("award", e.target.checked)}
+        />
+        <label htmlFor="award" className="text-sm text-gray-700">محصولات دارای جایزه</label>
       </div>
 
-      <div className="flex items-center gap-2">
-        <input type="checkbox" checked={filters.active} onChange={(e) => handleChange("active", e.target.checked)} />
-        <label>فقط محصولات موجود</label>
+      <div className="flex items-center gap-x-2">
+        <input id="active" type="checkbox" className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary" checked={filters.active} onChange={(e) => handleChange("active", e.target.checked)} />
+        <label htmlFor="active" className="text-sm text-gray-700">فقط محصولات موجود</label>
       </div>
 
-      <div className="flex items-center gap-2">
-        <input type="checkbox" checked={filters.free} onChange={(e) => handleChange("free", e.target.checked)} />
-        <label>محصولات رایگان</label>
+      <div className="flex items-center gap-x-2">
+        <input type="checkbox" className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary" checked={filters.free} onChange={(e) => handleChange("free", e.target.checked)} />
+        <label htmlFor="free" className="text-sm text-gray-700">محصولات رایگان</label>
       </div>
     </div>
   );
