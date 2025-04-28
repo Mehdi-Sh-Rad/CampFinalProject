@@ -48,6 +48,8 @@ export async function GET(request) {
   else if (sort === "price-desc") sortCondition.price = -1;
   else if (sort === "name-asc") sortCondition.name = 1;
   else if (sort === "name-desc") sortCondition.name = -1;
+  else if (sort === "sold-desc") sortCondition.soldCount = -1;
+  else if (sort === "sold-asc") sortCondition.soldCount = 1;
 
   // Find products in the database based on the 'query', populate the 'category' field, and apply the 'sortCondition'.
   const productsRaw = await Product.find(query).populate("category").sort(sortCondition);
@@ -207,6 +209,7 @@ export async function POST(request) {
       active,
       free,
       award,
+      soldCount: 0,
     };
     if (!free && discountPrice !== undefined) {
       productData.discountPrice = discountPrice;
