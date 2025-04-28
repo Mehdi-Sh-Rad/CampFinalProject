@@ -8,6 +8,7 @@ const ProductsFilter = ({ onFilterChange }) => {
     maxPrice: null,
     award: false,
     free: false,
+    active: false,
   });
 
   // Handle input changes
@@ -56,6 +57,11 @@ const ProductsFilter = ({ onFilterChange }) => {
       <div className="flex items-center gap-2">
         <input type="checkbox" checked={filters.award} onChange={(e) => handleChange("award", e.target.checked)} />
         <label>محصولات دارای جایزه</label>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input type="checkbox" checked={filters.active} onChange={(e) => handleChange("active", e.target.checked)} />
+        <label>فقط محصولات موجود</label>
       </div>
 
       <div className="flex items-center gap-2">

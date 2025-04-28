@@ -19,6 +19,7 @@ export async function GET(request) {
   const maxPrice = maxPriceParam ? parseInt(maxPriceParam) : null;
   const award = searchParams.get("award") === "true";
   const free = searchParams.get("free") === "true";
+  const active = searchParams.get("active") === "true";
 
   // Initialize an empty query object.
   let query = {};
@@ -40,6 +41,8 @@ export async function GET(request) {
   // If 'award' is true, add it to the query object
   if (award) query.award = true;
 
+  if (active) query.active = true;
+
   // Initialize an empty sort condition object.
   let sortCondition = {};
 
@@ -51,7 +54,7 @@ export async function GET(request) {
   else if (sort === "sold-desc") sortCondition.soldCount = -1;
   else if (sort === "sold-asc") sortCondition.soldCount = 1;
   else if (sort === "view-desc") sortCondition.viewCount = -1;
-  else if (sort === "view-asc")  sortCondition.viewCount = 1;
+  else if (sort === "view-asc") sortCondition.viewCount = 1;
 
   // Find products in the database based on the 'query', populate the 'category' field, and apply the 'sortCondition'.
   const productsRaw = await Product.find(query).populate("category").sort(sortCondition);

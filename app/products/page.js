@@ -24,6 +24,7 @@ export default function ProductsPage() {
   const maxPrice = searchParams.get("maxPrice");
   const award = searchParams.get("award");
   const free = searchParams.get("free");
+  const active = searchParams.get("active");
 
   // Fetch products based on URL parameters
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function ProductsPage() {
         if (maxPrice) params.set("maxPrice", maxPrice);
         if (award) params.set("award", "true");
         if (free) params.set("free", "true");
+        if (active) params.set("active", "true");
 
         // Fetch products from API
         const res = await fetch(`/api/products?${params.toString()}`);
@@ -52,7 +54,7 @@ export default function ProductsPage() {
     fetchProducts();
 
     // re-fetch when these change
-  }, [category, sort, minPrice, maxPrice, award, free]);
+  }, [category, sort, minPrice, maxPrice, award, free, active]);
 
   // Handle sort option change
   const handleSortChange = (newSort) => {
@@ -66,6 +68,7 @@ export default function ProductsPage() {
     if (maxPrice != null) params.set("maxPrice", maxPrice);
     if (award) params.set("award", "true");
     if (free) params.set("free", "true");
+    if (active) params.set("active", "true");
     if (newSort) params.set("sort", newSort);
 
     // Update URL to reflect new sort
@@ -75,7 +78,7 @@ export default function ProductsPage() {
   // Handle filter changes
   const handleFilterChange = (filters) => {
     // Extract filter values
-    const { minPrice: minF, maxPrice: maxF, award: aw, free: fr } = filters;
+    const { minPrice: minF, maxPrice: maxF, award: aw, free: fr, active: ac } = filters;
     const params = new URLSearchParams();
 
     // Preserve category and sort
@@ -85,6 +88,7 @@ export default function ProductsPage() {
     if (maxF != null && maxF !== "") params.set("maxPrice", maxF);
     if (aw) params.set("award", "true");
     if (fr) params.set("free", "true");
+    if (ac)       params.set("active", "true");
 
     // Update URL to apply filters
     router.push(`/products?${params.toString()}`, { scroll: false });
