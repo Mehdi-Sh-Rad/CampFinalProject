@@ -22,26 +22,32 @@ export async function POST(req) {
     if (!cart || cart.items.length === 0) {
       return NextResponse.json({ error: "سبد خرید شما خالی است" }, { status: 400 });
     }
-
-    const totalPrice = cart.items.reduce((total, item) => total + (item.product.price * item.quantity || 0), 0);
+    const body = await req.json();
+    const orderCode = body.orderCode;
+    const totalPrice = cart.items.reduce((total, item) => total + (item.product.discountPrice * item.quantity || 0), 0);
 
     const discountPrice = cart.discountPrice || 0;
     const finalPrice = totalPrice - discountPrice;
 
     const newOrder = await Order.create({
       user: session.user.id,
+      orderCode,
       items: cart.items,
       totalPrice,
       discountPrice,
       finalPrice,
     });
 
-    // Update soldCount for each product
-    for (const item of cart.items) {
-      await Product.findByIdAndUpdate(item.product._id, {
-        $inc: { soldCount: item.quantity },
-      });
-    }
+// <<<<<<< Home
+//     // Update soldCount for each product
+//     for (const item of cart.items) {
+//       await Product.findByIdAndUpdate(item.product._id, {
+//         $inc: { soldCount: item.quantity },
+//       });
+//     }
+// =======
+// console.log(newOrder)
+// >>>>>>> main
 
     await Cart.deleteOne({ user: session.user.id });
 

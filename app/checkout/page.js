@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Header from "../components/home/Header";
 import Footer from "react-multi-date-picker/plugins/range_picker_footer";
 import error from "../error";
@@ -14,6 +15,8 @@ export default function Checkout() {
   const [discountPrecent, setDiscountPrecent] = useState(null);
   const [discountCode, setDiscountCode] = useState("");
   const [wallets, setWallets] = useState([]);
+  const [orderCode, setOrderCode] = useState("");
+  const [payment, setPayment] = useState([]);
   const [appliedDsicount, setAppliedDiscount] = useState(0);
   const [discountError, setDiscountError] = useState("");
 
@@ -40,7 +43,9 @@ export default function Checkout() {
       }
     };
     fetchDiscount();
+
   }, []);
+
 
   useEffect(() => {
     const fetchWallets = async () => {
@@ -59,21 +64,9 @@ export default function Checkout() {
     fetchWallets();
   }, []);
 
-  if (!cart || cart.items.length === 0) {
-    return (
-      <main className="main-body">
-        <section className="container-xxl text-center py-5">
-          <h4>سبد خرید شما خالی هست</h4>
-          <Link href="/" className="btn btn-primary mt-3">
-            بازگشت به فروشگاه
-          </Link>
-        </section>
-      </main>
-    );
-  }
-
+ 
   const totalPrice = cart.items.reduce(
-    (total, item) => total + item.product.price * item.quantity,
+    (total, item) => total + item.product.discountPrice * item.quantity,
     0
   );
 
@@ -83,7 +76,6 @@ export default function Checkout() {
   const handleApplyDiscount = async () => {
     setLoading(true);
     setDiscountError("");
-
     try {
       if (!discountCode) {
         setDiscountError("لطفا کد تخفیف را وارد کنید");
@@ -97,7 +89,7 @@ export default function Checkout() {
       const discountItem = discount.find((item) => item.code === discountCode);
       if (discountItem) {
         setDiscountPrecent(discountItem.percentage);
-        console.log(discountPrecent)
+
         if (discountItem.percentage > 100) {
           setDiscountError("درصد تخفیف نامعتبر است");
           return;
@@ -106,7 +98,6 @@ export default function Checkout() {
           setDiscountError("درصد تخفیف نامعتبر است");
           return;
         }
-
         setAppliedDiscount(
           (totalPrice * discountItem.percentage) / 100
         );
@@ -117,14 +108,13 @@ export default function Checkout() {
         return;
       }
     } finally {
-      setLoading(false); // Ensure loading is set to false in all cases
+      setLoading(false);
     }
   };
 
   const handleRemoveDiscount = async (id) => {
     setLoading(true);
     setDiscountError("");
-    console.log(id)
     if (!id) {
       setDiscountError("لطفا کد تخفیف را وارد کنید");
       return;
@@ -151,14 +141,131 @@ export default function Checkout() {
     }
   };
 
+  // Generate unique order code
+  useEffect(() => {
+    generateOrderCode();
+  }, []);
+
+  const generateOrderCode = () => {
+    const characters = "0123456789";
+    let result = "P-";
+    for (let i = 0; i < 8; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    setOrderCode(result);
+  };
+
+
+  if (!cart || cart.items.length === 0) {
+    return (
+      <main className="main-body">
+        <section className="container-xxl text-center py-5">
+          <h4>سبد خرید شما خالی هست</h4>
+          <Link href="/" className="btn btn-primary mt-3">
+            بازگشت به فروشگاه
+          </Link>
+        </section>
+      </main>
+    );
+  }
+
+  const handlePayment = async () => {
+
+    if (payableAmount === 0) {
+      setError("مبلغ خرید صفر می‌باشد");
+      return false;
+    };
+    if (!orderCode) {
+      setError("کد پیگیری سفارش اختصاص پیدا نکرده است");
+      return false;
+    };
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch("/api/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderCode,
+          items : cart.items,
+          totalDiscount: appliedDsicount,
+          totalPrice: payableAmount,
+          status: true,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "مشکلی در برداشت از کیف پول پیش آمده است");
+      }
+
+      } catch (error) {
+      alert(error.message || "مشکلی در ثبت اطلاعات پرداخت پیش آمده است");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWalletWithraw = async (e) => {
+    e.preventDefault();
+
+    if (payableAmount === 0) {
+      setError("مبلغ خرید صفر می‌باشد");
+      return false;
+    }
+    try {
+      setLoading(true);
+      setError("");
+
+      if (payableAmount > wallets[0].balance) {
+        setError("موجودی کیف پول شما کافی نیست");
+        return false;
+      }
+
+      // Update wallet balance locally
+      wallets.map((wal) => (wal.balance = wal.balance - payableAmount));
+      setWallets(wallets);
+
+      // Send the wallet withdrawal request
+      const response = await fetch("/api/wallets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: payableAmount,
+          type: "debit",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "مشکلی در برداشت از کیف پول پیش آمده است");
+      }
+
+      handleOrderSubmit();
+
+    } catch (error) {
+      alert(error.message || "مشکلی در ثبت سفارش پیش آمده است");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   async function handleOrderSubmit() {
     setLoading(true);
+
     try {
       const res = await fetch("/api/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          orderCode
+        }),
       });
 
       const data = await res.json();
@@ -168,10 +275,11 @@ export default function Checkout() {
       }
 
       alert("سفارش شما با موفقیت ثبت شد");
-
+      handlePayment();
       clearCart();
-      console.log(discount.find((item) => item.code === discountCode)._id)
-      handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
+      if (discountCode) {
+        handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
+      }
     } catch (error) {
       alert(error.message || "مشکلی در ثبت سفارش پیش آمده است");
     } finally {
@@ -238,7 +346,7 @@ export default function Checkout() {
                       <p>تعداد : {item.quantity}</p>
                       <p className="fw-bold">
                         {(
-                          item.product.price * item.quantity
+                          item.product.discountPrice * item.quantity
                         ).toLocaleString()}{" "}
                         تومان
                       </p>
@@ -269,25 +377,32 @@ export default function Checkout() {
                   <p className="fw-bold">{payableAmount.toLocaleString()} تومان</p>
                 </section>
                 <section className="border-bottom mb-3">
-                {wallets.map((wal, indx) => (
-                  <span key={wal._id} className="bg-slate-200 rounded-xl mt-9"> موجودی فعلی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
-                ))}
+                  {wallets.map((wal, indx) => (
+                    <span key={wal._id} className="bg-slate-200 rounded-xl mt-9"> موجودی فعلی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
+                  ))}
                 </section>
                 <section className="mt-5">
+
                   <button
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
-                    onClick={handleOrderSubmit}
+                    onClick={handleWalletWithraw}
                     disabled={loading}
                   >
                     {loading ? "درحال پردازش ..." : "پرداخت از کیف پول"}
                   </button>
                   <button
-                    className="bg-orange-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
+                    className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded d-block me-5"
                     onClick={handleOrderSubmit}
                     disabled={loading}
                   >
                     {loading ? "درحال پردازش ..." : "درگاه پرداخت "}
                   </button>
+                  <Link
+                    href="/cart"
+                    className="bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-3 me-5"
+                  >
+                    بازگشت به سبد خرید
+                  </Link>
                   <Link
                     href="/"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"

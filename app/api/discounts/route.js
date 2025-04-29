@@ -17,8 +17,6 @@ export async function GET(req) {
     const url = new URL(req.url);
     const id = url.searchParams.get('id');
 
-    
-
     if (id) {
 
       if (!isValidObjectId(id)) {
@@ -27,14 +25,14 @@ export async function GET(req) {
           { status: 400 }
         );
       }
-      
+
       const discount = await Discount.findById(id).lean();
       if (!discount) {
         return new Response(JSON.stringify({ message: 'کد تخفیف یافت نشد' }), { status: 404 });
       }
       return new Response(JSON.stringify(discount), { status: 200 });
     } else {
-      const discounts = await Discount.find({}).populate('category').lean();
+      const discounts = await Discount.find({}).lean();
       return new Response(JSON.stringify(discounts), { status: 200 });
     }
   } catch (error) {
@@ -42,21 +40,11 @@ export async function GET(req) {
   }
 }
 
+
 export async function POST(req) {
   try {
     await connectDB();
-    const { code, category, percentage, date, status } = await req.json();
-
-
-    if (!category) {
-      return new Response(JSON.stringify({ message: "دسته‌بندی الزامی است" }), { status: 400 });
-    }
-
-    // Validate category existence
-    const categoryExists = await Category.findById(category);
-    if (!categoryExists) {
-      return new Response(JSON.stringify({ message: "دسته‌بندی یافت نشد" }), { status: 400 });
-    }
+    const { code, percentage, date, status } = await req.json();
 
     if (!percentage || isNaN(percentage)) {
       return new Response(JSON.stringify({ message: "درصد تخفیف الزامی و باید عدد باشد" }), {
@@ -79,7 +67,7 @@ export async function POST(req) {
     if (expirationDate <= currentDate) {
       return new Response(JSON.stringify({ message: 'تاریخ انقضا باید بزرگ‌تر از امروز باشد' }), { status: 400 });
     }
-    const discount = await Discount.create({ code, category, percentage, date, status });
+    const discount = await Discount.create({ code, percentage, date, status });
     return new Response(JSON.stringify(discount.toJSON()), { status: 201 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), { status: 400 });
@@ -89,7 +77,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     await connectDB();
-    const { id, code, category, percentage, date, status } = await req.json();
+    const { id, code, percentage, date, status } = await req.json();
     if (!id) {
       return new Response(JSON.stringify({ message: 'ID الزامی است' }), { status: 400 });
     }
@@ -106,15 +94,8 @@ export async function PUT(req) {
     }
 
     const updateData = { code, percentage, date, status };
-    if (category) {
-      updateData.category = category;
-    }
-    if (category == "") {
-      updateData.category = null;
-    }
 
-
-    const discount = await Discount.findByIdAndUpdate(id, updateData , { new: true, runValidators: true });
+    const discount = await Discount.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
     if (!discount) {
       return new Response(JSON.stringify({ message: 'کد تخفیف یافت نشد' }), { status: 404 });
     }

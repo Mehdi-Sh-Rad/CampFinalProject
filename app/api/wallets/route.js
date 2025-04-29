@@ -43,8 +43,8 @@ export async function POST(req) {
       return NextResponse.json({ error: "شما وارد نشده اید" }, { status: 401 });
     }
 
-    const { amount } = await req.json();
-  
+    const { amount, type } = await req.json();
+
     if (!amount || isNaN(amount) || amount <= 0) {
       return NextResponse.json(
         { error: "مقدار نامعتبر است" },
@@ -58,18 +58,34 @@ export async function POST(req) {
       wallet = new Wallet({ user: session.user.id, balance: 0 });
     }
 
-    wallet.balance += Number(amount);
+    if (type === "debit") {
+      if (wallet.balance < amount) {
+        return NextResponse.json(
+          { error: "موجودی کافی نیست" },
+          { status: 400 }
+        );
+      }
+      wallet.balance -= Number(amount);
+    } else if (type === "credit") {
+      if (amount < 1000) {
+        return NextResponse.json(
+          { error: "مقدار شارژ نمی تواند کمتر از 1,000 تومان باشد" },
+          { status: 400 }
+        );
+      }
+      wallet.balance += Number(amount);
+    };
 
     wallet.transactionHistory.push({
       amount: Number(amount),
-      type: "credit",
+      type: type,
       date: new Date(),
     });
 
     await wallet.save();
 
     return NextResponse.json({
-      message: "مقدار با موفقیت به کیف پول اضافه شد",
+      message: "مقدار با موفقیت در کیف پول اعمال شد",
       balance: wallet.balance,
     });
   } catch (error) {

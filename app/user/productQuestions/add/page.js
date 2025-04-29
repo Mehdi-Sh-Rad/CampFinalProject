@@ -1,23 +1,21 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
-const AddComment = () => {
+const AddProductQuestions = () => {
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState("");
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState("");
-  const [text, setText] = useState("");
-  const [status, setStatus] = useState(false);
+  const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState(null);
   const router = useRouter();
 
-  //Fetch users on component mount
+  // Fetch users on component mount
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
@@ -53,21 +51,18 @@ const AddComment = () => {
     fetchProducts();
   }, []);
 
-  // Validate form input
+  // Validate form inputs
   const validateForm = () => {
-    if (!user) {
-      setFormError("انتخاب کاربر الزامی است");
-      return false;
-    }
+
     if (!product) {
-      setFormError("انتخاب محصول الزامی است");
+      setFormError("لطفا محصول را انتخاب کنید");
       return false;
     }
-    if (text.trim() === "") {
-      setFormError(" لطفا نظر خود را در مورد محصول بنویسید");
+    if (question.trim() === "") {
+      setFormError(" لطفا سوال خود را در مورد محصول بنویسید");
       return false;
-    } else if (text.length < 1 || text.length > 200) {
-      setFormError("تعداد کاراکترهای نظر شما باید بین ۱ تا ۲۰۰ باشد");
+    } else if (question.length < 1 || question.length > 200) {
+      setFormError("تعداد کاراکترهای سوال شما باید بین ۱ تا ۲۰۰ باشد");
       return false;
     }
     setFormError("");
@@ -80,19 +75,20 @@ const AddComment = () => {
     if (!validateForm()) {
       return;
     }
+
     try {
-      const response = await fetch("/api/comments", {
+      const response = await fetch("/api/productQuestions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user, product, text, status }),
+        body: JSON.stringify({ product, question }),
       });
 
       if (response.status === 400) {
         let message = await response.json();
         setFormError(message.message);
       }
-      if (!response.ok) throw new Error("مشکلی در ساخت نظر پیش آمده است");
-      router.push("/admin/comments");
+      if (!response.ok) throw new Error("مشکلی در ساخت سوال در دیتابیس پیش آمده است");
+      router.push("/user/productQuestions");
     } catch (error) {
       setError(error.message);
     }
@@ -100,8 +96,8 @@ const AddComment = () => {
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">اضافه کردن نظرات جدید - موقت</h1>
-        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت نظرات جدید برای محصولات را اضافه کنید.</span>
+        <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">اضافه کردن سوالات جدید - موقت</h1>
+        <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت سوالات جدید برای محصولات را اضافه کنید.</span>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
           src={"/uploads/top-header.png"}
@@ -131,25 +127,8 @@ const AddComment = () => {
             <form className="py-4" onSubmit={handleSubmit}>
               <div className="flex flex-col items-start gap-y-4 w-full">
                 <select
-                  name="user"
-                  autoComplete="user"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder="کاربر "
-                  type="text"
-                  required
-                  value={user}
-                  onChange={(e) => setUser(e.target.value)}>
-                  <option value="">انتخاب کاربر </option>
-                  {users.map((usr) => {
-                    return (
-                      <option key={usr._id} value={usr._id}>
-                        {usr.name}
-                      </option>
-                    );
-                  })}
-                </select>
-                <select
                   name="product"
+                  disabled={loading}
                   autoComplete="product"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
                   placeholder="انتخاب محصول"
@@ -170,20 +149,16 @@ const AddComment = () => {
                   name="text"
                   autoComplete="text"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300 text-lg h-40"
-                  placeholder="لطفا نظر خود را بنویسید"
+                  placeholder="لطفا سوال خود را بنویسید"
                   type="text"
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
                 />
-                <div className="flex items-center space-x-3">
-                  <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} className="w-4 h-4 m-1" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">فعال</span>
-                </div>
                 <div>
                   <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">
                     افزودن
                   </button>
-                  <Link href={"/admin/comments"} className="bg-red-700 text-white py-2 px-4 rounded">
+                  <Link href={"/admin/productQuestions"} className="bg-red-700 text-white py-2 px-4 rounded">
                     انصراف
                   </Link>
                 </div>
@@ -196,4 +171,4 @@ const AddComment = () => {
   );
 };
 
-export default AddComment;
+export default AddProductQuestions;

@@ -166,7 +166,7 @@ export default function ProductDetail() {
               )}
               <p className="text-gray-600">رایگان: <span className="text-dark">{product.free ? "بله" : "خیر"}</span></p>
             </div>
-            <p className="text-xl font-semibold text-dark mb-2">
+            <p className="text-xl line-through font-semibold text-gray-500 mb-2">
               {product.price.toLocaleString()} تومان
             </p>
             {product.discountPrice && (

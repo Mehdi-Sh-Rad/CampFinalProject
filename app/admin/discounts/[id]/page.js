@@ -13,8 +13,6 @@ import DateObject from "react-date-object";
 const EditDiscount = () => {
   const { id } = useParams();
   const [code, setCode] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState(null);
   const [percentage, setPercentage] = useState("");
   const [expirationDate, setExpirationDate] = useState(null);
   const [status, setStatus] = useState(true);
@@ -22,14 +20,6 @@ const EditDiscount = () => {
   const [loading, setLoading] = useState(true);
   const [formError, setFormError] = useState("");
   const router = useRouter();
-
-  // Fetch categories on component mount
-  useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
-  }, []);
 
   // Fetch discount data by ID on mount
   useEffect(() => {
@@ -46,12 +36,10 @@ const EditDiscount = () => {
           return;
         }
        
-        console.log("Discount data:", discount);
         if (discount.message) {
           throw new Error(discount.message);
         }
         setCode(discount.code || "");
-        setCategory(discount.category || "");
         setPercentage(discount.percentage || "");
         setExpirationDate(
           discount.date
@@ -75,11 +63,6 @@ const EditDiscount = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    
-    if (!category) {
-      setFormError("انتخاب دسته‌بندی الزامی است");
-      return false;
-    }
 
     if (percentage && (percentage < 1 || percentage > 100)) {
       setFormError("درصد تخفیف باید بین ۱ تا ۱۰۰ باشد");
@@ -106,7 +89,6 @@ const EditDiscount = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id,
-          category,
           code,
           percentage: percentage || undefined,
           date: expirationDate ? expirationDate.toDate().toISOString() : undefined,
@@ -167,9 +149,6 @@ const EditDiscount = () => {
       );
     }
 
-
-
-
   return (
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
@@ -201,23 +180,6 @@ const EditDiscount = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">محصول</label>
-                <select
-                  name="category"
-                  autoComplete={category}
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder="انتخاب دسته بندی"
-                  type="text"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}>
-                  <option value="">انتخاب محصول موردنظر</option>
-                  {categories.map((cat) => {
-                    return (
-                      <option key={cat._id} value={cat._id}>
-                        {cat.name}
-                      </option>
-                    );
-                  })}
-                </select>
               </div>
               <div className="space-y-2">
                 <label className="text-gray-700 dark:text-gray-300">درصد تخفیف</label>
@@ -236,7 +198,7 @@ const EditDiscount = () => {
                   onChange={setExpirationDate}
                   calendar={persian}
                   locale={persian_fa}
-                  format="YYYY/MM/DD HH:mm"
+                  format="YYYY/MM/DD"
                   minDate={new Date()}
                   multiple={false}
                   className="w-full"

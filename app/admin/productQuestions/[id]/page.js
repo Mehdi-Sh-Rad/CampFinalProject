@@ -69,12 +69,11 @@ const AnswerProductQuestion = () => {
         setFormError(message.message);
       }
       if (!response.ok) throw new Error("مشکلی در ساخت سوال محصول پیش آمده است");
-      router.push("/admin/productQuestions");
+      router.push("/user/productQuestions");
     } catch (error) {
       setError(error.message);
     }
   };
-
 
 
   if (error) {
@@ -112,7 +111,6 @@ const AnswerProductQuestion = () => {
             </div>
           );
         }
-
 
         
   return (
@@ -164,7 +162,7 @@ const AnswerProductQuestion = () => {
                 <input
                   name="answer"
                   className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder={`${loading ? "در حال بارگذاری..." : productQuestions.answer}`}
+                  placeholder={`${loading ? "در حال بارگذاری..." : productQuestions.answer || "پاسخی ثبت نشده است"}`}
                   autoComplete="answer"
                   type="text"
                   value={answer}

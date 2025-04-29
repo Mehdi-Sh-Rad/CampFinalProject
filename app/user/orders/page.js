@@ -9,36 +9,27 @@ import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 
-const Wallets = () => {
-  const [wallets, setWallets] = useState([]);
+const Orders = () => {
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
   useEffect(() => {
-    const fetchWallets = async () => {
+    const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/wallets");
-        if (!response.ok) throw new Error("مشکل در دریافت اطلاعات کیف پول");
+        const response = await fetch("/api/orders?user=true");
+        if (!response.ok) throw new Error("مشکل در دریافت کدهای تخفیف");
         const data = await response.json();
-        setWallets(Array.isArray(data) ? data : [data]);
+        setOrders(Array.isArray(data) ? data : [data]);
       } catch (error) {
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchWallets();
+    fetchOrders();
   }, []);
-
-  useEffect(() => {
-    if (wallets.length === 0) {
-      setError("کیف پولی وجود ندارد");
-    } else {
-      setError(null);
-    }
-  }, [wallets]);
 
   const formatToPersianDate = (dateString) => {
     if (!dateString) return "";
@@ -55,17 +46,9 @@ const Wallets = () => {
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
-          <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> مشاهده کیف پول </h1>
-          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت می توانید مانده و گردش های کیف پول خود را مشاهده نمایید</span>
-          <Link
-            href="/user/wallets/add"
-            className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg"
-          >
-            شارژ کیف پول
-            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-            </svg>
-          </Link>
+          <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> گزارش سفارشات ثبت شده مشتریان</h1>
+          <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت اطلاعات سفارشات مشتریان را مشاهده نمایید</span>
+
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
             src="/uploads/top-header.png"
@@ -75,9 +58,6 @@ const Wallets = () => {
           />
         </div>
         <div className="container py-4 px-10 -mt-10 z-30 relative">
-        {wallets.map((wal, indx) => (
-          <span key={wal._id + 1} className="bg-slate-200 rounded-xl p-4 mx-3 m-1"> موجودی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
-        ))}
           <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
             {error && <div className="text-red-500 text-center">{error}</div>}
             <div className="flex flex-col">
@@ -85,37 +65,45 @@ const Wallets = () => {
                 <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                   <div className="overflow-hidden">
                     {loading ? (
-
                       <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                         <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                           <tr>
-                            <th scope="col" className="px-4 py-4">
+                          <th scope="col" className="px-4 py-4">
                               #
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              تراکنش
-                            </th><th scope="col" className="px-4 py-4">
-                              شارژ / خرید
+                              شماره سفارش
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              تاریخ و ساعت شارژ / خرید
+                              محصول/محصولات سفارشی
+                            </th>
+                            <th scope="col" className="px-4 py-4">
+                              وضعیت
+                            </th><th scope="col" className="px-4 py-4">
+                              مبلغ پرداختی
+                            </th>
+                            <th scope="col" className="px-4 py-4">
+                              تاریخ و ساعت
                             </th>
                           </tr>
                         </thead>
                         <tbody>
                           {[...Array(4)].map((_, index) => (
                             <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                              <td className="whitespace-nowrap px-4 py-4 font-medium">
-                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              <td className="whitespace-nowrap px-1 py-4 font-medium">
+                                <div className="w-10 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-2 py-4 font-medium">
+                                <div className="w-10 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4">
+                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
-                              </td>
-                              <td className="whitespace-nowrap px-4 py-4">
-                                <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
@@ -132,27 +120,44 @@ const Wallets = () => {
                               #
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              تراکنش
-                            </th><th scope="col" className="px-4 py-4">
-                              شارژ / خرید
+                              شماره سفارش
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              تاریخ و ساعت شارژ / خرید
+                              محصول/محصولات سفارشی
+                            </th>
+                            <th scope="col" className="px-4 py-4">
+                              وضعیت
+                            </th><th scope="col" className="px-4 py-4">
+                              مبلغ پرداختی
+                            </th>
+                            <th scope="col" className="px-4 py-4">
+                              تاریخ و ساعت
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {wallets && wallets.map((wallet) => (
-                            <React.Fragment key={wallet._id}>
-                              {wallet.transactionHistory.map((tr, index) => (
-                                <tr key={tr._id}>
-                                  <td className="whitespace-nowrap px-4 py-4 font-medium">{index + 1}</td>
-                                  <td className="whitespace-nowrap px-4 py-4 font-medium">{tr.amount?.toLocaleString("fa-IR")}</td>
-                                  <td className="whitespace-nowrap px-4 py-4 font-medium">{tr.type ==
-                                    'credit' ? <p className="text-green-500">شارژ</p> : <p className="text-red-500">خرید</p>}</td>
-                                  <td className="whitespace-nowrap px-4 py-4 font-medium">{formatToPersianDate(tr.date)}</td>
-                                </tr>
-                              ))}
+                          {orders && orders.map((order, index) => (
+                            <React.Fragment key={order._id + 1}>
+                              <tr className="border-b border-neutral-200 dark:border-white/10">
+                                <td className="whitespace-nowrap px-1 py-4 font-medium">{index + 1}</td>
+                                <td className="whitespace-nowrap px-2 py-4 font-medium">{order.orderCode}</td>
+                                <td
+                                  className="whitespace-nowrap  px-6 py-4"
+                                  style={{
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}>
+                                 {order.items.map((item) => item.product.name).join(" , ")}
+                                </td>
+                                <td className="whitespace-nowrap px-4 py-4">{order.status ? "تایید" : "در انتظار"}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{order.finalPrice.toLocaleString("fa-IR")}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(order.updatedAt)}</td>
+                                <td className="whitespace-nowrap px-4 py-4">
+                                  <div className="flex justify-center gap-x-2"></div>
+                                </td>
+                              </tr>
                             </React.Fragment>
                           ))}
                         </tbody>
@@ -164,11 +169,9 @@ const Wallets = () => {
             </div>
           </div>
         </div>
-        
       </div>
-
     </AuthWrapper>
   );
 };
 
-export default Wallets;
+export default Orders;
