@@ -38,7 +38,16 @@ export async function POST(req) {
       finalPrice,
     });
 
-console.log(newOrder)
+// <<<<<<< Home
+//     // Update soldCount for each product
+//     for (const item of cart.items) {
+//       await Product.findByIdAndUpdate(item.product._id, {
+//         $inc: { soldCount: item.quantity },
+//       });
+//     }
+// =======
+// console.log(newOrder)
+// >>>>>>> main
 
     await Cart.deleteOne({ user: session.user.id });
 
