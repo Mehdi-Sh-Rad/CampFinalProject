@@ -4,7 +4,7 @@ import { FaArrowUp } from "react-icons/fa";
 import Header from "./components/home/Header";
 import Banner from "./components/home/Banner";
 import NewArrivals from "./components/home/NewArrivals";
-import NewBlogs from "./components/home/NewBlogs"; 
+import NewBlogs from "./components/home/NewBlogs";
 import Categories from "./components/home/Categories";
 import Benefits from "./components/home/Benefits";
 import AwardsSection from "./components/home/AwardsSection";
@@ -20,14 +20,14 @@ export default function Home() {
   const [loading, setLoading] = useState({
     banners: true,
     newArrivals: true,
-    newBlogs: true, 
+    newBlogs: true,
     categories: true,
     awards: true,
   });
   const [errors, setErrors] = useState({
     banners: null,
     newArrivals: null,
-    newBlogs: null, 
+    newBlogs: null,
     categories: null,
     awards: null,
   });
@@ -36,7 +36,7 @@ export default function Home() {
     const fetchBanners = async () => {
       try {
         const res = await fetch(`/api/banners`, {
-          credentials: "omit", 
+          credentials: "omit",
         });
         if (!res.ok) {
           const errorData = await res.text();
@@ -58,7 +58,7 @@ export default function Home() {
     const fetchNewArrivals = async () => {
       try {
         const res = await fetch(`/api/products?type=newArrivals`, {
-          credentials: "omit", 
+          credentials: "omit",
         });
         if (!res.ok) {
           const errorData = await res.text();
@@ -80,7 +80,7 @@ export default function Home() {
     const fetchNewBlogs = async () => {
       try {
         const res = await fetch(`/api/blogPosts?type=newBlogs`, {
-          credentials: "omit", 
+          credentials: "omit",
         });
         if (!res.ok) {
           const errorData = await res.text();
@@ -102,7 +102,7 @@ export default function Home() {
     const fetchCategories = async () => {
       try {
         const res = await fetch(`/api/categories`, {
-          credentials: "omit", 
+          credentials: "omit",
         });
         if (!res.ok) {
           const errorData = await res.text();
@@ -124,7 +124,7 @@ export default function Home() {
     const fetchAwards = async () => {
       try {
         const res = await fetch(`/api/products?type=awards`, {
-          credentials: "omit", 
+          credentials: "omit",
         });
         if (!res.ok) {
           const errorData = await res.text();
@@ -187,11 +187,11 @@ export default function Home() {
     <div className="bg-background min-h-screen">
       <Header />
       <Banner banners={banners} />
-      <NewArrivals products={newArrivals} />
-      <NewBlogs blogPosts={newBlogs} /> 
-      <Categories categories={categories} />
-      <AwardsSection awards={awards} />
-      <Benefits />
+      <NewArrivals products={newArrivals.slice(0, 4)} totalProducts={newArrivals.length} id="new-arrivals" />
+      <NewBlogs blogPosts={newBlogs.slice(0, 3)} totalPosts={newBlogs.length} id="new-blogs" />
+      <Categories categories={categories.slice(0, 3)} totalCategories={categories.length} id="categories" />
+      <AwardsSection awards={awards.slice(0, 4)} totalAwards={awards.length} id="awards-section" />
+      <Benefits id="benefits" />
       <Footer />
 
       {showScrollTop && (

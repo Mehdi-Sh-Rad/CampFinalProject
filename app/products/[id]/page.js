@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import ProductCard from "@/app/components/ProductCard";
 import { useCart } from "@/app/context/CartContext";
 import AddToCartButton from "@/app/components/home/AddToCartButton";
+import LoadingSpinner from "@/app/components/ui/LoadingSpinner"; 
 
 export default function ProductDetail() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } = useCart();
@@ -18,6 +19,9 @@ export default function ProductDetail() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [productError, setProductError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [loading, setLoading] = useState(true); 
   const { data: session, status } = useSession();
   const params = useParams();
   const productId = params?.id;
@@ -25,17 +29,26 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        setLoading(true); 
         const res = await fetch(`/api/products/${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن محصول");
         const fetchedProduct = await res.json();
         setProduct(fetchedProduct);
+        if (fetchedProduct.imageUrls && fetchedProduct.imageUrls.length > 0) {
+          setSelectedImage(fetchedProduct.imageUrls[0]);
+        }
 
-        const relatedRes = await fetch(`/api/products?category=${fetchedProduct.category}&exclude=${productId}`);
+        const relatedRes = await fetch(
+          `/api/products?category=${fetchedProduct.category}&exclude=${productId}`
+        );
         if (!relatedRes.ok) throw new Error("خطا در گرفتن محصولات پیشنهادی");
         const fetchedRelatedProducts = await relatedRes.json();
         setRelatedProducts(fetchedRelatedProducts);
       } catch (err) {
         setProductError(err.message);
+        setProduct(null); 
+      } finally {
+        setLoading(false); 
       }
     };
 
@@ -47,12 +60,15 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
+        setLoading(true); 
         const res = await fetch(`/api/comments?productId=${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن دیدگاه‌ها");
         const data = await res.json();
         setComments(data);
       } catch (err) {
         setProductError(err.message);
+      } finally {
+        setLoading(false); 
       }
     };
 
@@ -98,6 +114,17 @@ export default function ProductDetail() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <LoadingSpinner />
+        <Benefits />
+        <Footer />
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="min-h-screen bg-background">
@@ -114,35 +141,73 @@ export default function ProductDetail() {
       <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-lg shadow-xl mb-8 border border-gray-100">
-          <div className="md:w-1/3 flex justify-center">
-            {product.imageUrls ? (
-              <Image
-                src={product.imageUrls[0]}
-                alt={product.name}
-                width={250}
-                height={350}
-                className="w-auto h-auto object-contain rounded-md shadow-md"
-              />
+          <div className="md:w-1/3 w-full flex flex-col items-center">
+            {selectedImage ? (
+              <div
+                className="relative w-[200px] h-[280px] sm:w-[250px] sm:h-[350px] mb-4 cursor-pointer"
+                onClick={() => setIsLightboxOpen(true)}
+              >
+                <Image
+                  src={selectedImage}
+                  alt={product.name}
+                  fill
+                  className="object-contain rounded-md shadow-md"
+                />
+              </div>
             ) : (
-              <div className="w-[250px] h-[350px] bg-gray-200 flex items-center justify-center rounded-md">
+              <div className="w-[200px] h-[280px] sm:w-[250px] sm:h-[350px] bg-gray-200 flex items-center justify-center rounded-md mb-4">
                 <span className="text-gray-500">تصویر موجود نیست</span>
+              </div>
+            )}
+
+            {product.imageUrls && product.imageUrls.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {product.imageUrls.map((imageUrl, index) => (
+                  <div
+                    key={index}
+                    className={`relative w-12 h-12 sm:w-16 sm:h-16 cursor-pointer rounded-md border-2 ${
+                      selectedImage === imageUrl
+                        ? "border-primary"
+                        : "border-gray-300"
+                    }`}
+                    onClick={() => setSelectedImage(imageUrl)}
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt={`${product.name} - تصویر ${index + 1}`}
+                      fill
+                      className="object-cover rounded-md"
+                    />
+                  </div>
+                ))}
               </div>
             )}
           </div>
           <div className="md:w-2/3">
             <h1 className="text-2xl font-bold text-dark mb-3">{product.name}</h1>
             <div className="space-y-1 mb-3 text-sm">
-              <p className="text-gray-600">نویسنده: <span className="text-dark">{product.author}</span></p>
               <p className="text-gray-600">
-                دسته‌بندی: <Link href="#" className="text-primary hover:underline">{product.category?.name || "نامشخص"}</Link>
+                نویسنده: <span className="text-dark">{product.author}</span>
+              </p>
+              <p className="text-gray-600">
+                دسته‌بندی:{" "}
+                <Link href="#" className="text-primary hover:underline">
+                  {product.category?.name || "نامشخص"}
+                </Link>
               </p>
               {product.types && product.types.length > 0 && (
-                <p className="text-gray-600">نوع: <span className="text-dark">{product.types.join(", ")}</span></p>
+                <p className="text-gray-600">
+                  نوع: <span className="text-dark">{product.types.join(", ")}</span>
+                </p>
               )}
               {product.tags && product.tags.length > 0 && (
-                <p className="text-gray-600">تگ‌ها: <span className="text-dark">{product.tags.join(", ")}</span></p>
+                <p className="text-gray-600">
+                  تگ‌ها: <span className="text-dark">{product.tags.join(", ")}</span>
+                </p>
               )}
-              <p className="text-gray-600">رایگان: <span className="text-dark">{product.free ? "بله" : "خیر"}</span></p>
+              <p className="text-gray-600">
+                رایگان: <span className="text-dark">{product.free ? "بله" : "خیر"}</span>
+              </p>
             </div>
             <p className="text-xl line-through font-semibold text-gray-500 mb-2">
               {product.price.toLocaleString()} تومان
@@ -154,12 +219,36 @@ export default function ProductDetail() {
             )}
 
             <AddToCartButton productId={product._id} />
-
           </div>
         </div>
+
+        {isLightboxOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            <div className="relative max-w-3xl w-full h-[80vh] p-4">
+              <Image
+                src={selectedImage}
+                alt={product.name}
+                fill
+                className="object-contain"
+              />
+              <button
+                className="absolute top-4 right-4 text-white text-3xl"
+                onClick={() => setIsLightboxOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-primary">
           <h2 className="text-xl font-semibold text-dark mb-4">توضیحات کتاب</h2>
-          <p className="text-gray-600 leading-relaxed">{product.description || "توضیحاتی برای این کتاب موجود نیست."}</p>
+          <p className="text-gray-600 leading-relaxed">
+            {product.description || "توضیحاتی برای این کتاب موجود نیست."}
+          </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-primary">
           <h2 className="text-xl font-semibold text-dark mb-4">دیدگاه‌های کاربران</h2>
@@ -199,7 +288,7 @@ export default function ProductDetail() {
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-dark mb-4">کتاب‌های پیشنهادی</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {relatedProducts.map((relatedProduct) => (
+              {relatedProducts.slice(0, 4).map((relatedProduct) => (
                 <ProductCard key={relatedProduct._id} product={relatedProduct} />
               ))}
             </div>

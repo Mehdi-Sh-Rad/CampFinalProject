@@ -9,17 +9,17 @@ const BannerSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      required: [true, "Banner title is required"],
+      required: false,
       trim: true,
     },
     subtitle: {
       type: String,
-      required: [true, "Banner subtitle is required"],
+      required: false,
       trim: true,
     },
     link: {
       type: String,
-      required: [true, "Banner extra text is required"],
+      required: false,
       trim: true,
     },
   },

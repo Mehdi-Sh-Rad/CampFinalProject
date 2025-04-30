@@ -12,7 +12,7 @@ export default async function AwardsProductsPage() {
 
   const products = productsRaw.map(product => ({
     _id: product._id,
-    imageUrl: product.imageUrl,
+    imageUrls: product.imageUrls,
     name: product.name,
     author: product.author,
     price: product.price,

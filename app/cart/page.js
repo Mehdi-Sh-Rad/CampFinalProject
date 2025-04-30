@@ -7,27 +7,20 @@ import { useState } from "react";
 import "../styles/cart.css";
 import Header from "../components/home/Header";
 import Benefits from "../components/home/Benefits";
-import Footer from "react-multi-date-picker/plugins/range_picker_footer";
+import Footer from "../components/home/Footer";
 import { FaTrashAlt } from "react-icons/fa";
+import EmptyCart from "../components/carts/EmptyCart"; 
 
 export default function Cart() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } = useCart();
   const [loadingItem, setLoadingItem] = useState(null);
 
-  if (!cart || cart.items.length === 0)
-    return (
-      <main className="main-body">
-        <section className="container-xxl text-center py-5">
-          <h4>سبد خرید شما خالی هست</h4>
-          <Link href="/" className="btn btn-primary mt-3">
-            بازگشت به فروشگاه
-          </Link>
-        </section>
-      </main>
-    );
+  if (!cart || cart.items.length === 0) {
+    return <EmptyCart />;
+  }
 
   return (
-    <main className="main-body" >
+    <main className="main-body">
       <section className="mb-4">
         <section className="container">
           <section className="mb-4">
@@ -122,8 +115,7 @@ export default function Cart() {
               })}
 
               <section className="row mt-4">
-                <section className="col-md-9 mb-3">
-                </section>
+                <section className="col-md-9 mb-3"></section>
                 <section className="col-md-3">
                   <section className="content-wrapper bg-white p-3 rounded-2 cart-total-price">
                     <section className="d-flex justify-content-between align-items-center">
@@ -157,10 +149,16 @@ export default function Cart() {
                       </p>
                     </section>
                     <section className="py-6 mx-auto">
-                      <Link href="/checkout" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5">
+                      <Link
+                        href="/checkout"
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
+                      >
                         تکمیل فرآیند خرید
                       </Link>
-                      <Link href="/" className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3">
+                      <Link
+                        href="/"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
+                      >
                         بازگشت به فروشگاه
                       </Link>
                     </section>
@@ -172,7 +170,5 @@ export default function Cart() {
         </section>
       </section>
     </main>
-
-
-  )
+  );
 }
