@@ -114,16 +114,38 @@ export default function ProductDetail() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <LoadingSpinner />
-        <Benefits />
-        <Footer />
-      </div>
-    );
-  }
+// <<<<<<< dash-3
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-background">
+//         <Header />
+//         <LoadingSpinner />
+//         <Benefits />
+//         <Footer />
+//       </div>
+//     );
+//   }
+// =======
+//   useEffect(() => {
+
+//     if (!product) return;  
+
+//     const key = `viewed_${product._id}`;
+//     const last = localStorage.getItem(key);
+//     const now = Date.now();
+
+//     if (!last || now - parseInt(last, 10) > 1000 * 60 * 60 * 24) {
+//       fetch("/api/products/view", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ productId: product._id }),
+//       }).catch(console.error);
+
+//       localStorage.setItem(key, now.toString());
+//     }
+
+//   },[product])
+// >>>>>>> main
 
   if (!product) {
     return (
@@ -135,6 +157,8 @@ export default function ProductDetail() {
       </div>
     );
   }
+
+  
 
   return (
     <div className="min-h-screen bg-background">
