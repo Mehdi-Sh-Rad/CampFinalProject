@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-export default function Categories({ categories }) {
+export default function Categories({ categories, totalCategories, id }) {
   return (
-    <section className="p-4 md:p-8 bg-background my-12">
+    <section id={id} className="p-4 md:p-8 bg-background my-12">
       <h3 className="text-lg md:text-xl font-semibold mb-4 text-dark">دسته‌بندی‌ها</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {categories.map((category) => (
@@ -17,7 +17,7 @@ export default function Categories({ categories }) {
         ))}
       </div>
       <Link href="/categories" className="block mt-4 text-primary hover:text-secondary text-center text-sm">
-        مشاهده همه ({categories.length} دسته‌بندی)
+        مشاهده همه ({totalCategories} دسته)
       </Link>
     </section>
   );

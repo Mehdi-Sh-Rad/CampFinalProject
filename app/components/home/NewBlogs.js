@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-export default function NewBlogs({ blogPosts }) {
+export default function NewBlogs({ blogPosts, totalPosts, id }) {
   return (
-    <section className="p-4 md:p-8 bg-background my-12">
+    <section id={id} className="p-4 md:p-8 bg-background my-12">
       <h3 className="text-lg md:text-xl font-semibold mb-4 text-dark">تازه‌های مقالات</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {blogPosts.map((blogPost) => (
@@ -15,7 +15,7 @@ export default function NewBlogs({ blogPosts }) {
                   src={blogPost.imageUrl}
                   alt={blogPost.title}
                   className="w-28 h-36 object-cover mb-2"
-                  onError={(e) => (e.target.style.display = "none")} 
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               ) : (
                 <div className="w-28 h-36 bg-gray-200 flex items-center justify-center mb-2">
@@ -31,7 +31,7 @@ export default function NewBlogs({ blogPosts }) {
         ))}
       </div>
       <Link href="/blogs" className="block mt-4 text-primary hover:text-secondary text-center text-sm">
-        مشاهده همه ({blogPosts.length} مقاله)
+        مشاهده همه ({totalPosts} مقاله)
       </Link>
     </section>
   );

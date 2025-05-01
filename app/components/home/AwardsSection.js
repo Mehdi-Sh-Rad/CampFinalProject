@@ -1,9 +1,9 @@
 import Link from "next/link";
-import ProductCard from "@/app/components/ProductCard"; 
+import ProductCard from "@/app/components/ProductCard";
 
-export default function AwardsSection({ awards }) {
+export default function AwardsSection({ awards, totalAwards, id }) {
   return (
-    <section className="p-4 md:p-8 bg-background my-12">
+    <section id={id} className="p-4 md:p-8 bg-background my-12">
       <h3 className="text-lg md:text-xl font-semibold mb-4 text-dark">
         جوایز و پرفروش‌ها
       </h3>
@@ -12,8 +12,11 @@ export default function AwardsSection({ awards }) {
           <ProductCard key={product._id} product={product} />
         ))}
       </div>
-      <Link href="/products/awards" className="block mt-4 text-primary hover:text-secondary text-center text-sm">
-        مشاهده همه ({awards.length} کتاب)
+      <Link
+        href="/products/awards"
+        className="block mt-4 text-primary hover:text-secondary text-center text-sm"
+      >
+        مشاهده همه ({totalAwards} کتاب)
       </Link>
     </section>
   );
