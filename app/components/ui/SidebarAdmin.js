@@ -31,7 +31,7 @@ const Sidebar = () => {
         </svg>
       </button>
       <div className="flex justify-center items-center border-b border-b-[#E9ECEF] py-4">
-        <Link className={`flex justify-center items-center`} href={"/admin"}>
+        <Link className={`flex justify-center items-center`} href={"/"}>
           <Image
             className={`transition-all duration-500 ${!isSidebarOpen ? "hidden opacity-0" : "opacity-100"}`}
             src={isDarkMode ? "/logo-panel-white.png" : "/logo-panel.png"}

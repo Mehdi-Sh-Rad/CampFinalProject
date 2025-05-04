@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 import ProductCard from "@/app/components/ProductCard";
 import { useCart } from "@/app/context/CartContext";
 import AddToCartButton from "@/app/components/home/AddToCartButton";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner"; 
+import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 
 export default function ProductDetail() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } = useCart();
@@ -21,7 +21,7 @@ export default function ProductDetail() {
   const [productError, setProductError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
   const params = useParams();
   const productId = params?.id;
@@ -29,7 +29,7 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true); 
+        setLoading(true);
         const res = await fetch(`/api/products/${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن محصول");
         const fetchedProduct = await res.json();
@@ -46,9 +46,9 @@ export default function ProductDetail() {
         setRelatedProducts(fetchedRelatedProducts);
       } catch (err) {
         setProductError(err.message);
-        setProduct(null); 
+        setProduct(null);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -60,7 +60,7 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        setLoading(true); 
+        setLoading(true);
         const res = await fetch(`/api/comments?productId=${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن دیدگاه‌ها");
         const data = await res.json();
@@ -68,7 +68,7 @@ export default function ProductDetail() {
       } catch (err) {
         setProductError(err.message);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -114,38 +114,26 @@ export default function ProductDetail() {
     }
   };
 
-// <<<<<<< dash-3
-//   if (loading) {
-//     return (
-//       <div className="min-h-screen bg-background">
-//         <Header />
-//         <LoadingSpinner />
-//         <Benefits />
-//         <Footer />
-//       </div>
-//     );
-//   }
-// =======
-//   useEffect(() => {
+  useEffect(() => {
 
-//     if (!product) return;  
+    if (!product) return;
 
-//     const key = `viewed_${product._id}`;
-//     const last = localStorage.getItem(key);
-//     const now = Date.now();
+    const key = `viewed_${product._id}`;
+    const last = localStorage.getItem(key);
+    const now = Date.now();
 
-//     if (!last || now - parseInt(last, 10) > 1000 * 60 * 60 * 24) {
-//       fetch("/api/products/view", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ productId: product._id }),
-//       }).catch(console.error);
+    if (!last || now - parseInt(last, 10) > 1000 * 60 * 60 * 24) {
+      fetch("/api/products/view", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product._id }),
+      }).catch(console.error);
 
-//       localStorage.setItem(key, now.toString());
-//     }
+      localStorage.setItem(key, now.toString());
+    }
 
-//   },[product])
-// >>>>>>> main
+  }, [product])
+
 
   if (!product) {
     return (
@@ -157,8 +145,6 @@ export default function ProductDetail() {
       </div>
     );
   }
-
-  
 
   return (
     <div className="min-h-screen bg-background">
@@ -189,11 +175,10 @@ export default function ProductDetail() {
                 {product.imageUrls.map((imageUrl, index) => (
                   <div
                     key={index}
-                    className={`relative w-12 h-12 sm:w-16 sm:h-16 cursor-pointer rounded-md border-2 ${
-                      selectedImage === imageUrl
+                    className={`relative w-12 h-12 sm:w-16 sm:h-16 cursor-pointer rounded-md border-2 ${selectedImage === imageUrl
                         ? "border-primary"
                         : "border-gray-300"
-                    }`}
+                      }`}
                     onClick={() => setSelectedImage(imageUrl)}
                   >
                     <Image
@@ -233,15 +218,20 @@ export default function ProductDetail() {
                 رایگان: <span className="text-dark">{product.free ? "بله" : "خیر"}</span>
               </p>
             </div>
-            <p className="text-xl line-through font-semibold text-gray-500 mb-2">
-              {product.price.toLocaleString()} تومان
-            </p>
-            {product.discountPrice && (
-              <p className="text-sm text-red-500 mb-10">
-                قیمت با تخفیف: {product.discountPrice.toLocaleString()} تومان
-              </p>
-            )}
-
+            {product.discountPrice ? (
+              <section>
+                <p className="text-xl line-through font-semibold text-gray-500 mb-2">
+                  {product.price.toLocaleString()} تومان
+                </p>
+                <p className="text-sm text-red-500 mb-10">
+                  قیمت با تخفیف: {product.discountPrice.toLocaleString()} تومان
+                </p>
+              </section>)
+              :
+              (<p className="text-xl font-semibold text-dark mb-6">
+                {product.price.toLocaleString()} تومان
+              </p>)          
+              }
             <AddToCartButton productId={product._id} />
           </div>
         </div>
@@ -280,10 +270,10 @@ export default function ProductDetail() {
           {comments.length > 0 ? (
             <div className="space-y-4 mb-4">
               {comments.map((comment) => (
-                <div key={comment._id} className="border-b border-gray-200 pb-4">
+                comment.status && <div key={comment._id} className="border-b border-gray-200 pb-4">
                   <p className="text-gray-600">{comment.text}</p>
                   <p className="text-sm text-gray-500 mt-1">
-                    توسط: {comment.user?.email || "کاربر ناشناس"} -{" "}
+                    توسط: {comment.user?.name || "کاربر ناشناس"} - {" "}
                     {new Date(comment.createdAt).toLocaleDateString("fa-IR")}
                   </p>
                 </div>

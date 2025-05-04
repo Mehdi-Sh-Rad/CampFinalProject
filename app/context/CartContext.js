@@ -12,6 +12,7 @@ export function CartProvider({ children }) {
   useEffect(() => {
     async function fetchCart() {
       try {
+        setLoading(true);
         setError(null);
         const res = await fetch("/api/cart");
         if (!res.ok) {
@@ -46,9 +47,18 @@ export function CartProvider({ children }) {
   }
 
   async function addToCart(productId, quantity = 1) {
-    try {
+
+    try {    
+      // Check if the product already exists in the cart
+      const existingItem = cart.items.find((item) => item.product._id === productId);
+      if (existingItem) {
+        setError("این محصول به سبد خرید شما اضافه شده است");
+        return; // Exit the function if the product is already in the cart
+      }
+
       setUpdatingItem(productId);
       setError(null);
+
       const res = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,58 +76,6 @@ export function CartProvider({ children }) {
       await updateCart();
     } catch (error) {
       setError("مشکلی در اضافه کردن به سبد خرید پیش آمده است");
-    } finally {
-      setUpdatingItem(null);
-    }
-  }
-
-  async function decreaseQuantity(productId) {
-    try {
-      const item = cart.items.find((item) => item.product._id === productId);
-      if (!item) {
-        setError("محصول مورد نظر یافت نشد");
-        return;
-      }
-
-      setUpdatingItem(productId);
-
-      if (item.quantity <= 1) {
-        await removeFromCart(productId);
-        return;
-      }
-
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity: -1 }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        setError(errorData.message || "مشکلی در کاهش تعداد پیش آمده است");
-      }
-
-      await updateCart();
-    } catch (error) {
-      setError("مشکلی در کاهش تعداد پیش آمده است");
-    } finally {
-      setUpdatingItem(null);
-    }
-  }
-
-  async function increaseQuantity(productId) {
-    try {
-      const item = cart.items.find((item) => item.product._id === productId);
-      if (!item || item.quantity >= item.product.stock) {
-        setError("موجودی کافی نیست");
-        return;
-      }
-
-      setUpdatingItem(productId);
-
-      await addToCart(productId, 1);
-    } catch (error) {
-      setError("مشکلی در کاهش افزایش پیش آمده است");
     } finally {
       setUpdatingItem(null);
     }
@@ -150,6 +108,10 @@ export function CartProvider({ children }) {
     setCart({ items: [], discountPrice: 0 });
   }
 
+  function clearError() {
+    setError(null);
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -159,10 +121,9 @@ export function CartProvider({ children }) {
         loading,
         updatingItem,
         addToCart,
-        decreaseQuantity,
-        increaseQuantity,
         removeFromCart,
         clearCart,
+        clearError,
       }}
     >
       {children}

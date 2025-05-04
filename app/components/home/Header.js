@@ -44,6 +44,7 @@ const staticMenuItems = [
 ];
 
 export default function Header() {
+  const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -54,7 +55,6 @@ export default function Header() {
     slogan: "جهان کتاب، در دستان شما",
   });
   const [categories, setCategories] = useState([]);
-  const { data: session, status } = useSession();
   const { cart } = useCart();
 
   const totalItems =
@@ -190,7 +190,7 @@ export default function Header() {
               <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
                 {isLoading ? (
                   <div className="p-4 text-center text-dark">
-                    در حال بارگذاریYOU...
+                    در حال جستجو...
                   </div>
                 ) : searchResults.length > 0 ? (
                   searchResults.map((product) => (
@@ -275,17 +275,20 @@ export default function Header() {
                   کاربر
                 </span>
               </div>
-              <div className="relative group">
-                <button
-                  onClick={handleAdminClick}
-                  className="text-dark hover:text-secondary flex items-center gap-2"
-                >
-                  <FaUserCog size={28} className="text-dark" />
-                </button>
-                <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
-                  ادمین
-                </span>
-              </div>
+              {session?.user?.isAdmin ? (
+                <div className="relative group">
+                  <button
+                    onClick={handleAdminClick}
+                    className="text-dark hover:text-secondary flex items-center gap-2"
+                  >
+                    <FaUserCog size={28} className="text-dark" />
+                  </button>
+                  <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                    ادمین
+                  </span>
+                </div>
+              ): ""}
+             
               {status === "authenticated" ? (
                 <div className="relative group">
                   <button

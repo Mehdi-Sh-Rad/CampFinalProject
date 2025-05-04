@@ -218,7 +218,8 @@ export async function POST(request) {
     };
     if (!free && discountPrice !== undefined) {
       productData.discountPrice = discountPrice;
-    }
+    };
+
 
     const product = await Product.create(productData);
 

@@ -6,11 +6,15 @@ import { useRouter } from "next/navigation";
 import Header from "../components/home/Header";
 import Footer from "react-multi-date-picker/plugins/range_picker_footer";
 import error from "../error";
+import EmptyCart from "../components/carts/EmptyCart";
+import Loading from "../loading";
 
 export default function Checkout() {
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, loading: cartLoading } = useCart();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [payableAmount, setPayableAmount] = useState(0);
   const [discount, setDiscount] = useState(null);
   const [discountPrecent, setDiscountPrecent] = useState(null);
   const [discountCode, setDiscountCode] = useState("");
@@ -43,7 +47,6 @@ export default function Checkout() {
       }
     };
     fetchDiscount();
-
   }, []);
 
 
@@ -64,14 +67,16 @@ export default function Checkout() {
     fetchWallets();
   }, []);
 
- 
   const totalPrice = cart.items.reduce(
-    (total, item) => total + item.product.discountPrice * item.quantity,
+    (total, item) => total + ((item.product.discountPrice ?? 0) * item.quantity),
     0
   );
 
-  const payableAmount = totalPrice - appliedDsicount;
-
+  useEffect(() => {
+    if (totalPrice > 0) {
+      setPayableAmount(totalPrice - appliedDsicount);
+    }
+  }, [totalPrice, appliedDsicount]);
 
   const handleApplyDiscount = async () => {
     setLoading(true);
@@ -156,22 +161,9 @@ export default function Checkout() {
   };
 
 
-  if (!cart || cart.items.length === 0) {
-    return (
-      <main className="main-body">
-        <section className="container-xxl text-center py-5">
-          <h4>سبد خرید شما خالی هست</h4>
-          <Link href="/" className="btn btn-primary mt-3">
-            بازگشت به فروشگاه
-          </Link>
-        </section>
-      </main>
-    );
-  }
-
   const handlePayment = async () => {
 
-    if (payableAmount === 0) {
+    if (payableAmount === 0 || payableAmount === NaN) {
       setError("مبلغ خرید صفر می‌باشد");
       return false;
     };
@@ -188,7 +180,7 @@ export default function Checkout() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderCode,
-          items : cart.items,
+          items: cart.items,
           totalDiscount: appliedDsicount,
           totalPrice: payableAmount,
           status: true,
@@ -201,7 +193,7 @@ export default function Checkout() {
         throw new Error(data.message || "مشکلی در برداشت از کیف پول پیش آمده است");
       }
 
-      } catch (error) {
+    } catch (error) {
       alert(error.message || "مشکلی در ثبت اطلاعات پرداخت پیش آمده است");
     } finally {
       setLoading(false);
@@ -241,6 +233,9 @@ export default function Checkout() {
       const data = await response.json();
 
       if (!response.ok) {
+        // Take back the wallet balance locally
+        wallets.map((wal) => (wal.balance = wal.balance + payableAmount));
+        setWallets(wallets);
         throw new Error(data.message || "مشکلی در برداشت از کیف پول پیش آمده است");
       }
 
@@ -277,6 +272,7 @@ export default function Checkout() {
       alert("سفارش شما با موفقیت ثبت شد");
       handlePayment();
       clearCart();
+      router.push("/");
       if (discountCode) {
         handleRemoveDiscount(discount.find((item) => item.code === discountCode)._id);
       }
@@ -288,134 +284,158 @@ export default function Checkout() {
   }
 
   return (
-    <main className="main-body">
-      <section className="mb-4">
-        <section className="container">
-          <section className="row">
-            <Header />
-            <section className="col">
-              <section className="content-header">
-                <h4 className="text-center border py-3 bg-blue-100">انتخاب نوع پرداخت</h4>
-              </section>
-              <section className="content-wrapper bg-white p-1 rounded-2 mb-2">
-                {loading && loading}
-                {error && <section className="alert text-red-500">{error}</section>}
-                {discountError && (
-                  <section className="alert text-red-500">{discountError}</section>
-                )}
-
-                <section
-                  className="payment-alert alert alert-primary d-flex align-items-center p-2"
-                  role="alert"
-                >
-                  <i className="fa fa-info-circle flex-shrink-0 me-2"></i>
-                  <section>کد تخفیف خود را در این بخش وارد کنید.</section>
-                </section>
-
+    <section>
+      {cartLoading ? (<Loading />)
+        :
+        (!cart || cart.items.length === 0) ? (
+          <EmptyCart />)
+          :
+          (<main className="main-body">
+            <section className="mb-4">
+              <section className="container">
                 <section className="row">
-                  <section className="col-md-5">
-                    <section className="input-group input-group-sm">
-                      <input
-                        type="text"
-                        className="form-control border rounded mx-2"
-                        placeholder="کد تخفیف را وارد کنید"
-                        onChange={(e) => setDiscountCode(e.target.value)}
-                      />
-                      <button className="btn bg-gray-400 px-2 rounded" type="button" onClick={handleApplyDiscount}>
-                        اعمال کد
-                      </button>
+                  <Header />
+                  <section className="col">
+                    <section className="content-header">
+                      <h4 className="text-center border py-3 bg-blue-100">انتخاب نوع پرداخت</h4>
+                    </section>
+                    <section className="content-wrapper bg-white p-1 rounded-2 mb-2">
+                      {loading && loading}
+                      {error && <section className="alert text-red-500">{error}</section>}
+                      {discountError && (
+                        <section className="alert text-red-500">{discountError}</section>
+                      )}
 
+                      <section
+                        className="payment-alert alert alert-primary d-flex align-items-center p-2"
+                        role="alert"
+                      >
+                        <i className="fa fa-info-circle flex-shrink-0 me-2"></i>
+                        <section>کد تخفیف خود را در این بخش وارد کنید.</section>
+                      </section>
+
+                      <section className="row">
+                        <section className="col-md-5">
+                          <section className="input-group input-group-sm">
+                            <input
+                              type="text"
+                              className="form-control border rounded mx-2"
+                              placeholder="کد تخفیف را وارد کنید"
+                              onChange={(e) => setDiscountCode(e.target.value)}
+                            />
+                            <button className="btn bg-gray-400 px-2 rounded" type="button" onClick={handleApplyDiscount}>
+                              اعمال کد
+                            </button>
+
+                          </section>
+                        </section>
+                        {discountPrecent && (<section className="col-md-5">
+                          <section className=" text-green-500">
+                            <i className="fa fa-check-circle flex-shrink-0 me-2"></i>
+                            <section>تخفیف %{discountPrecent} برای شما اعمال شد</section>
+                          </section>
+                        </section>)}
+                      </section>
+                    </section>
+                    {cart.items.map((item) => {
+                      return (
+                        <section
+                          className="cart-item d-md-flex py-3 border-bottom"
+                          key={item.product._id}
+                        >
+                          <section className="align-self-start w-100">
+                            <p className="fw-bold">{item.product.name}</p>
+                            {item.product.discountPrice ? (
+                              <p className="fw-bold">
+                                {item.product.discountPrice?.toLocaleString()} تومان
+                              </p>
+                            ) : (
+                              <p className="text-green-500">رایگان</p>
+                            )}
+                          </section>
+                        </section>
+                      );
+                    })}
+                    <br />
+                    <section className="content-wrapper bg-white p-3 rounded-2 cart-total-price mt-5">
+                      <section className="d-flex justify-content-between align-items-center">
+                        <p className="text-muted">قیمت کالاها</p>
+                        <p className="text-muted">
+                          {totalPrice.toLocaleString()} تومان
+                        </p>
+                      </section>
+
+                      <section className="border-bottom mb-3"></section>
+
+                      <section className="d-flex justify-content-between align-items-center">
+                        <p className="text-muted">تخفیف اعمال شده</p>
+                        <p className="text-red-500">{appliedDsicount.toLocaleString()} تومان</p>
+                      </section>
+
+                      <section className="border-bottom mb-3"></section>
+
+                      <section className="d-flex justify-content-between align-items-center text-xl pb-5 mt-8">
+                        <p className="text-muted">مبلغ قابل پرداخت</p>
+                        <p className="fw-bold">{payableAmount.toLocaleString()} تومان</p>
+                      </section>
+                      <section className="border-bottom mb-3">
+                        {wallets.map((wal, indx) => (
+                          <span key={wal._id} className="bg-slate-200 rounded-xl mt-9"> موجودی فعلی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
+                        ))}
+                      </section>
+                      <br />
+                      {totalPrice > 0 ?
+                        (<section className="mt-5">
+
+                          <button
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
+                            onClick={handleWalletWithraw}
+                            disabled={loading}
+                          >
+                            {loading ? "درحال پردازش ..." : "پرداخت از کیف پول"}
+                          </button>
+                          <button
+                            className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded d-block me-5"
+                            onClick={handleOrderSubmit}
+                            disabled={loading}
+                          >
+                            {loading ? "درحال پردازش ..." : "درگاه پرداخت "}
+                          </button>
+                          <Link
+                            href="/cart"
+                            className="bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-3 me-5"
+                          >
+                            بازگشت به سبد خرید
+                          </Link>
+                          <Link
+                            href="/"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
+                          >
+                            بازگشت به فروشگاه
+                          </Link>
+                        </section>) : (
+                          <div>
+                            <button
+                              className="bg-green-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
+                              onClick={handleOrderSubmit}
+                              disabled={loading}
+                            >
+                              {loading ? "درحال پردازش ..." : " نهایی کردن سفارش رایگان "}
+                            </button>
+                            <Link
+                              href="/"
+                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
+                            >
+                              بازگشت به فروشگاه
+                            </Link>
+                          </div>
+                        )}
                     </section>
                   </section>
-                  {discountPrecent && (<section className="col-md-5">
-                    <section className=" text-green-500">
-                      <i className="fa fa-check-circle flex-shrink-0 me-2"></i>
-                      <section>تخفیف %{discountPrecent} برای شما اعمال شد</section>
-                    </section>
-                  </section>)}
                 </section>
-              </section>
-              {cart.items.map((item) => {
-                return (
-                  <section
-                    className="cart-item d-md-flex py-3 border-bottom"
-                    key={item.product._id}
-                  >
-                    <section className="align-self-start w-100">
-                      <p className="fw-bold">{item.product.name}</p>
-                      <p>تعداد : {item.quantity}</p>
-                      <p className="fw-bold">
-                        {(
-                          item.product.discountPrice * item.quantity
-                        ).toLocaleString()}{" "}
-                        تومان
-                      </p>
-                    </section>
-                  </section>
-                );
-              })}
-              <br />
-              <section className="content-wrapper bg-white p-3 rounded-2 cart-total-price mt-5">
-                <section className="d-flex justify-content-between align-items-center">
-                  <p className="text-muted">قیمت کالاها</p>
-                  <p className="text-muted">
-                    {totalPrice.toLocaleString()} تومان
-                  </p>
-                </section>
-
-                <section className="border-bottom mb-3"></section>
-
-                <section className="d-flex justify-content-between align-items-center">
-                  <p className="text-muted">تخفیف اعمال شده</p>
-                  <p className="text-red-500">{appliedDsicount.toLocaleString()} تومان</p>
-                </section>
-
-                <section className="border-bottom mb-3"></section>
-
-                <section className="d-flex justify-content-between align-items-center pb-5">
-                  <p className="text-muted">مبلغ قابل پرداخت</p>
-                  <p className="fw-bold">{payableAmount.toLocaleString()} تومان</p>
-                </section>
-                <section className="border-bottom mb-3">
-                  {wallets.map((wal, indx) => (
-                    <span key={wal._id} className="bg-slate-200 rounded-xl mt-9"> موجودی فعلی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
-                  ))}
-                </section>
-                <section className="mt-5">
-
-                  <button
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded d-block me-5"
-                    onClick={handleWalletWithraw}
-                    disabled={loading}
-                  >
-                    {loading ? "درحال پردازش ..." : "پرداخت از کیف پول"}
-                  </button>
-                  <button
-                    className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded d-block me-5"
-                    onClick={handleOrderSubmit}
-                    disabled={loading}
-                  >
-                    {loading ? "درحال پردازش ..." : "درگاه پرداخت "}
-                  </button>
-                  <Link
-                    href="/cart"
-                    className="bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-3 me-5"
-                  >
-                    بازگشت به سبد خرید
-                  </Link>
-                  <Link
-                    href="/"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
-                  >
-                    بازگشت به فروشگاه
-                  </Link>
-                </section>
-
               </section>
             </section>
-          </section>
-        </section>
-      </section>
-    </main>
+          </main>)}
+    </section>
   );
 }

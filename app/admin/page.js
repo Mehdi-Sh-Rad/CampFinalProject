@@ -161,7 +161,6 @@ const AdminDashboard = () => {
   };
   
 
-
   const barData = {
     labels: ["کاربران", "محصولات", "نظرات", "تیکت ها"],
 
@@ -273,8 +272,6 @@ const pieFreeProductsData = {
           </div>
           </div>
         </div>
-
-
 
       </div>
     </AuthWrapper>

@@ -38,16 +38,14 @@ export async function POST(req) {
       finalPrice,
     });
 
-// <<<<<<< Home
-//     // Update soldCount for each product
-//     for (const item of cart.items) {
-//       await Product.findByIdAndUpdate(item.product._id, {
-//         $inc: { soldCount: item.quantity },
-//       });
-//     }
-// =======
-// console.log(newOrder)
-// >>>>>>> main
+    
+    // Update soldCount for each product
+    for (const item of cart.items) {
+      await Product.findByIdAndUpdate(item.product._id, {
+        $inc: { soldCount: item.quantity },
+      });
+    }
+
 
     await Cart.deleteOne({ user: session.user.id });
 
@@ -65,14 +63,14 @@ export async function POST(req) {
   <h3>جزئیات سفارش:</h3>
   <ul>
     ${newOrder.items
-      .map(
-        (item) => `
+        .map(
+          (item) => `
       <li>
         ${item.product?.name || "نامشخص"} - تعداد: ${item.quantity} - قیمت واحد: ${item.product?.price?.toLocaleString() || "0"} تومان
       </li>
     `
-      )
-      .join("")}
+        )
+        .join("")}
   </ul>
   <p>از خرید شما متشکریم!</p>
 `;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import AddToCartButton from "./home/AddToCartButton";
 
 export default function ProductCard({ product, showCategory = false, showButton = true }) {
   return (
@@ -37,9 +38,8 @@ export default function ProductCard({ product, showCategory = false, showButton 
         )}
         <div className="flex justify-center items-center gap-2 mb-2">
           <p
-            className={`text-sm font-bold ${
-              product.discountPrice ? "line-through text-gray-500" : "text-dark"
-            }`}
+            className={`text-sm font-bold ${product.discountPrice ? "line-through text-gray-500" : "text-dark"
+              }`}
           >
             {product.price.toLocaleString()} تومان
           </p>
@@ -50,9 +50,7 @@ export default function ProductCard({ product, showCategory = false, showButton 
           )}
         </div>
         {showButton && (
-          <button className="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition-all mt-2">
-            افزودن به سبد خرید
-          </button>
+          <AddToCartButton productId={product._id} />
         )}
       </div>
     </div>
