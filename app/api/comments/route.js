@@ -11,6 +11,7 @@ export async function GET(request) {
   await connectToDatabase();
 
   const url = new URL(request.url);
+  const productId = url.searchParams.get("productId"); // Get the productId query parameter
   const isUserRequest = url.searchParams.get("user"); // Check if the "user" query parameter is present
 
   if (isUserRequest) {
@@ -21,23 +22,41 @@ export async function GET(request) {
       return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
     }
 
-    const userComments = await Comment.find({ user: session.user.id }).populate("user").populate("product")
+    const userComments = await Comment.find({ user: session.user.id })
+    .populate("user")
+    .populate("product")
     .sort({ createdAt: -1 });
 
     return new Response(JSON.stringify(userComments), { status: 200 });
   }
 
+  // Fetch comments for a specific product
+  let filter = {};
+  if (productId) {
+    filter = { product: productId };
+
+
+    const productComments = await Comment.find(filter)
+      .populate("user")
+      .populate("product")
+      .sort({ createdAt: -1 });
+
+    return new Response(JSON.stringify(productComments), { status: 200 });
+  };
+
   // Fetch all tickets (for admin panel)
   const comments = await Comment.find({}).populate("user").populate("product").sort({ createdAt: -1 });
   return new Response(JSON.stringify(comments), { status: 200 });
+
 };
+
 
 
 export async function POST(request) {
   await connectToDatabase();
   try {
     const body = await request.json();
-  
+
     const session = await getServerSession({ req: request, ...authOptions });
     if (!session || !session.user) {
       return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
@@ -68,7 +87,7 @@ export async function POST(request) {
         status: 400,
       });
     }
-  
+
     // Create comment
     const comment = await Comment.create(body);
     return new Response(JSON.stringify(comment), { status: 200 });

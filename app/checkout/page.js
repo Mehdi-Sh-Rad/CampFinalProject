@@ -259,7 +259,8 @@ export default function Checkout() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          orderCode
+          orderCode,
+          status: true,
         }),
       });
 

@@ -11,7 +11,6 @@ export default function Categories({ categories, totalCategories, id }) {
               className="bg-white border border-purple-200 shadow-sm flex flex-col items-center justify-center text-dark rounded-lg p-4 transition-all duration-500 hover:border-secondary hover:shadow-md hover:-translate-y-2 hover:scale-105"
             >
               <p className="text-sm">{category.name}</p>
-              <p className="text-xs text-gray-600">{category.description || "توضیحات دسته‌بندی"}</p>
             </div>
           </Link>
         ))}

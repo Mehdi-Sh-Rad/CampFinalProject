@@ -8,6 +8,17 @@ export function CartProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updatingItem, setUpdatingItem] = useState(null);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+
+  const showPopup = (message) => {
+    setPopupMessage(message);
+    setIsPopupVisible(true);
+    setTimeout(() => {
+      setIsPopupVisible(false);
+    }, 3000);
+  };
+
 
   useEffect(() => {
     async function fetchCart() {
@@ -124,6 +135,7 @@ export function CartProvider({ children }) {
         removeFromCart,
         clearCart,
         clearError,
+        showPopup,
       }}
     >
       {children}

@@ -14,6 +14,7 @@ export async function DELETE(request, { params }) {
     });
   }
 }
+
 export async function PUT(request, { params }) {
   await connectToDatabase();
   try {

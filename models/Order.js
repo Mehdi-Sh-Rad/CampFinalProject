@@ -19,17 +19,11 @@ const OrderSchema = new mongoose.Schema(
           ref: "Product",
           required: true,
         },
-        quantity: {
-          type: Number,
-          required: true,
-          default: 1,
-          min: 1,
-        },
       },
     ],
     discountPrice: { type: Number, default: 0 },
     totalPrice: { type: Number, required: true },
-    finalPrice: { type: Number, required: true },
+    payablePrice: { type: Number, required: true },
     status: {
       type: Boolean,
       required: true,    

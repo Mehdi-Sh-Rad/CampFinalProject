@@ -42,9 +42,9 @@ export async function POST(req) {
       return NextResponse.json({ error: "شما وارد نشده اید" }, { status: 401 });
     }
 
-    const { productId, quantity } = await req.json();
+    const { productId } = await req.json();
 
-    if (!productId || isNaN(quantity) || quantity === 0) {
+    if (!productId) {
       return NextResponse.json(
         { error: "اطلاعات ورودی ناقص است" },
         { status: 400 }
@@ -66,29 +66,14 @@ export async function POST(req) {
       cart = new Cart({ user: session.user.id, items: [] });
     }
 
+    // Check if the product already exists in the cart
     const existingItem = cart.items.find((item) => {
       return item.product.toString() === productId;
     });
 
-    if (existingItem) {
-      const newQuantity = existingItem.quantity + quantity;
-
-      if (newQuantity <= 0) {
-        cart.items = cart.items.filter((item) => {
-          return item.product.toString() !== productId;
-        });
-      } else {
-        existingItem.quantity = newQuantity;
-      }
-    } else {
-      if (quantity > 0) {
-        cart.items.push({ product: productId, quantity });
-      } else {
-        return NextResponse.json(
-          { error: "تعداد محصول باید بیشتر از 0 باشد" },
-          { status: 400 }
-        );
-      }
+    if (!existingItem) {
+      // Add the product to the cart if it doesn't already exist
+      cart.items.push({ product: productId });
     }
 
     await cart.save();
@@ -99,7 +84,8 @@ export async function POST(req) {
       { status: 500 }
     );
   }
-}
+};
+
 
 export async function DELETE(req) {
   try {

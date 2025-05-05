@@ -24,28 +24,28 @@ export async function POST(req) {
     }
     const body = await req.json();
     const orderCode = body.orderCode;
-    const totalPrice = cart.items.reduce((total, item) => total + (item.product.discountPrice * item.quantity || 0), 0);
+    const status = body.status;
+    const totalPrice = cart.items.reduce((total, item) => total + (item.product.finalPrice || 0), 0);
 
     const discountPrice = cart.discountPrice || 0;
-    const finalPrice = totalPrice - discountPrice;
+    const payablePrice = totalPrice - discountPrice;
 
     const newOrder = await Order.create({
       user: session.user.id,
       orderCode,
+      status,
       items: cart.items,
       totalPrice,
       discountPrice,
-      finalPrice,
+      payablePrice,
     });
-
     
     // Update soldCount for each product
     for (const item of cart.items) {
       await Product.findByIdAndUpdate(item.product._id, {
-        $inc: { soldCount: item.quantity },
+        $inc: { soldCount: 1 },
       });
     }
-
 
     await Cart.deleteOne({ user: session.user.id });
 
@@ -55,10 +55,10 @@ export async function POST(req) {
     //Create email body with html
     const emailContent = `
   <h2>سفارش شما با موفقیت ثبت شد</h2>
-  <p>شماره سفارش: <strong>${newOrder._id}</strong></p>
+  <p>شماره سفارش: <strong>${newOrder.orderCode}</strong></p>
   <p>مبلغ کل: ${totalPrice.toLocaleString()} تومان</p>
   <p>تخفیف: ${discountPrice.toLocaleString()} تومان</p>
-  <p><strong>مبلغ پرداختی: ${finalPrice.toLocaleString()} تومان</strong></p>
+  <p><strong>مبلغ پرداختی: ${payablePrice.toLocaleString()} تومان</strong></p>
   <hr/>
   <h3>جزئیات سفارش:</h3>
   <ul>
@@ -66,7 +66,7 @@ export async function POST(req) {
         .map(
           (item) => `
       <li>
-        ${item.product?.name || "نامشخص"} - تعداد: ${item.quantity} - قیمت واحد: ${item.product?.price?.toLocaleString() || "0"} تومان
+        ${item.product?.name || "نامشخص"} - قیمت : ${item.product?.finalPrice > 0 ? item.product?.finalPrice?.toLocaleString() : "رایگان" } 
       </li>
     `
         )
@@ -80,7 +80,7 @@ export async function POST(req) {
 
     return NextResponse.json({
       message: "سفارش شما با موفقیت ثبت شد",
-      orderId: newOrder._id,
+      orderId: newOrder.orderCode,
     });
   } catch (error) {
     console.error("Order Error:", error);

@@ -5,7 +5,6 @@ import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
 
 
-
 export async function GET(request) {
   await connectToDatabase();
 
@@ -79,8 +78,6 @@ export async function GET(request) {
 
   return new Response(JSON.stringify(products), { status: 200 });
 }
-
-
 
 
 export async function POST(request) {

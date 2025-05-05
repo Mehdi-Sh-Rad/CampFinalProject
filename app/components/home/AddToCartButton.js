@@ -3,7 +3,7 @@ import { useCart } from "@/app/context/CartContext";
 import React, { useEffect, useState } from "react";
 
 const AddToCartButton = ({ productId }) => {
-  const { addToCart, error , clearError } = useCart();
+  const { addToCart, error , showPopup } = useCart();
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState(null);
 
@@ -14,11 +14,11 @@ const AddToCartButton = ({ productId }) => {
     setLocalError(null);
 
     await addToCart(productId, 1);
+    showPopup("added to the cart")
 
     if (error) {
       setLocalError(error);
     }
-
     setLoading(false);
   };
 

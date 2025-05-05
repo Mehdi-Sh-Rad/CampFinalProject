@@ -38,9 +38,6 @@ export default async function CategoriesPage() {
                   <h2 className="text-lg font-semibold text-dark mb-2 hover:text-primary transition-colors">
                     {category.name}
                   </h2>
-                  <p className="text-sm text-gray-600">
-                    {category.description || "توضیحات دسته‌بندی"}
-                  </p>
                 </div>
               </Link>
             </div>

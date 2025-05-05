@@ -64,7 +64,7 @@ export default function ProductDetail() {
         const res = await fetch(`/api/comments?productId=${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن دیدگاه‌ها");
         const data = await res.json();
-        setComments(data);
+        setComments(data);       
       } catch (err) {
         setProductError(err.message);
       } finally {

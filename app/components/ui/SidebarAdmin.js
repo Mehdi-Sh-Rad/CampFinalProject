@@ -511,11 +511,11 @@ const Sidebar = () => {
                 className={`${pathName.startsWith("/homepage") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
                   } ${!isSidebarOpen && "hidden"}`}
               >
-                بازگشت به صفحه اصلی
+                بازگشت به فروشگاه
               </span>
               {!isSidebarOpen && (
                 <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                  بازگشت به صفحه اصلی
+                  بازگشت به فروشگاه
                 </span>
               )}
             </li>

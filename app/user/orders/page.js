@@ -152,7 +152,7 @@ const Orders = () => {
                                  {order.items.map((item) => item.product.name).join(" , ")}
                                 </td>
                                 <td className="whitespace-nowrap px-4 py-4">{order.status ? "تایید" : "در انتظار"}</td>
-                                <td className="whitespace-nowrap px-4 py-4">{order.finalPrice.toLocaleString("fa-IR")}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{order.payablePrice > 0 ? order.payablePrice?.toLocaleString("fa-IR") : "رایگان"}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(order.updatedAt)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">
                                   <div className="flex justify-center gap-x-2"></div>

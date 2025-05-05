@@ -20,6 +20,7 @@ import {
   FaAward,
   FaNewspaper,
 } from "react-icons/fa";
+import AddToCartButton from "./AddToCartButton";
 
 //icons for circle menu
 const categoryIcons = {
@@ -55,7 +56,7 @@ export default function Header() {
     slogan: "جهان کتاب، در دستان شما",
   });
   const [categories, setCategories] = useState([]);
-  const { cart } = useCart();
+  const { cart , showPopup } = useCart();
 
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
@@ -264,6 +265,7 @@ export default function Header() {
                   </span>
                 )}
               </div>
+
               <div className="relative group">
                 <Link
                   href="/user"
@@ -287,8 +289,8 @@ export default function Header() {
                     ادمین
                   </span>
                 </div>
-              ): ""}
-             
+              ) : ""}
+
               {status === "authenticated" ? (
                 <div className="relative group">
                   <button
