@@ -14,7 +14,7 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
   const [tempDiscountPrice, setTempDiscountPrice] = useState("");
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState(true);
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [types, setTypes] = useState(["pdf", "docx", "ppt", "png", "jpeg"]);

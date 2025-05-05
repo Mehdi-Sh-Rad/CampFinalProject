@@ -68,7 +68,7 @@ export default function Checkout() {
   }, []);
 
   const totalPrice = cart.items.reduce(
-    (total, item) => total + ((item.product.discountPrice ?? 0) * item.quantity),
+    (total, item) => total + ((item.product.finalPrice ?? 0) * item.quantity),
     0
   );
 
@@ -345,9 +345,9 @@ export default function Checkout() {
                         >
                           <section className="align-self-start w-100">
                             <p className="fw-bold">{item.product.name}</p>
-                            {item.product.discountPrice ? (
+                            {item.product.finalPrice ? (
                               <p className="fw-bold">
-                                {item.product.discountPrice?.toLocaleString()} تومان
+                                {item.product.finalPrice?.toLocaleString()} تومان
                               </p>
                             ) : (
                               <p className="text-green-500">رایگان</p>

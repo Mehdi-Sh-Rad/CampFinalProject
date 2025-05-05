@@ -57,7 +57,6 @@ export async function PUT(request, { params }) {
     const author = data.get("author");
     const description = data.get("description");
     let price = data.get("price");
-
     let discountPrice = data.get("discountPrice") ? parseFloat(data.get("discountPrice")) : undefined;
     const category = data.get("category");
     const types =
@@ -234,8 +233,12 @@ export async function PUT(request, { params }) {
 
     if (free) {
       product.discountPrice = undefined;
+      product.finalPrice = 0;
     } else if (discountPrice !== undefined) {
       product.discountPrice = discountPrice;
+      product.finalPrice = discountPrice;
+    } else {
+      product.finalPrice = price;
     }
 
     const saved = await product.save();

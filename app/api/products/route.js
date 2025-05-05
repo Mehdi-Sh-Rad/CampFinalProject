@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
 
+
+
 export async function GET(request) {
   await connectToDatabase();
 
@@ -29,13 +31,13 @@ export async function GET(request) {
 
   // Handle price filtering based on the 'free', 'minPrice', and 'maxPrice' parameters.
   if (free) {
-    query.price = 0;
+    query.finalPrice = 0;
   } else if (minPrice !== null && maxPrice !== null) {
-    query.price = { $gte: minPrice, $lte: maxPrice };
+    query.finalPrice = { $gte: minPrice, $lte: maxPrice };
   } else if (minPrice !== null) {
-    query.price = { $gte: minPrice };
+    query.finalPrice = { $gte: minPrice };
   } else if (maxPrice !== null) {
-    query.price = { $lte: maxPrice };
+    query.finalPrice = { $lte: maxPrice };
   }
 
   // If 'award' is true, add it to the query object
@@ -47,8 +49,8 @@ export async function GET(request) {
   let sortCondition = {};
 
   // Apply sorting based on the 'sort' parameter.
-  if (sort === "price-asc") sortCondition.price = 1;
-  else if (sort === "price-desc") sortCondition.price = -1;
+  if (sort === "price-asc") sortCondition.finalPrice = 1;
+  else if (sort === "price-desc") sortCondition.finalPrice = -1;
   else if (sort === "name-asc") sortCondition.name = 1;
   else if (sort === "name-desc") sortCondition.name = -1;
   else if (sort === "sold-desc") sortCondition.soldCount = -1;
@@ -77,6 +79,9 @@ export async function GET(request) {
 
   return new Response(JSON.stringify(products), { status: 200 });
 }
+
+
+
 
 export async function POST(request) {
   try {
@@ -117,6 +122,7 @@ export async function POST(request) {
         .map((tag) => tag.trim()) || [];
     const free = data.get("free") === "true";
     const award = data.get("award") === "true";
+    let finalPrice = 0;
 
     // Validate name, author, description, and price
     if (!name || name.trim() === "") {
@@ -208,6 +214,7 @@ export async function POST(request) {
       author,
       description,
       price,
+      finalPrice,
       category,
       types,
       tags,
@@ -216,10 +223,17 @@ export async function POST(request) {
       award,
       soldCount: 0,
     };
+
+    if (!free && discountPrice === undefined) {
+      productData.finalPrice = price;
+    };
+    
     if (!free && discountPrice !== undefined) {
       productData.discountPrice = discountPrice;
+      productData.finalPrice = discountPrice;
     };
-
+ 
+console.log(productData);
 
     const product = await Product.create(productData);
 

@@ -22,7 +22,7 @@ export default function Cart() {
   useEffect(() => {
     if (cart && cart.items) {
       const calculatedTotalPrice = cart.items.reduce(
-        (total, item) => total + (item.product.discountPrice || 0) * item.quantity,
+        (total, item) => total + (item.product.finalPrice || 0) * item.quantity,
         0
       );
       setTotalPrice(calculatedTotalPrice);
@@ -86,9 +86,9 @@ export default function Cart() {
                       </section>
                       <section className="align-self-end flex-shrink-1">
                         <section className="text-nowrap fw-bold">
-                          {item.product.discountPrice ? (
+                          {item.product.finalPrice ? (
                             <p className="fw-bold">
-                              {item.product.discountPrice?.toLocaleString()} تومان
+                              {item.product.finalPrice?.toLocaleString()} تومان
                             </p>
                           ) : (
                             <p className="text-green-500 text-xl ms-3">رایگان</p>
@@ -110,7 +110,7 @@ export default function Cart() {
                           {cart.items
                             .reduce(
                               (total, item) =>
-                                total + (item.product.discountPrice || 0) * item.quantity,
+                                total + (item.product.finalPrice || 0) * item.quantity,
                               0
                             )
                             .toLocaleString()}
