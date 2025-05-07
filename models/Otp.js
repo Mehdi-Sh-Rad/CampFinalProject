@@ -11,6 +11,16 @@ const OtpSchema = new mongoose.Schema(
       default: null,
       required: false,
     },
+    newEmail: {
+      type: String,
+      default: null,
+      required: false,
+    },
+    newPhone: {
+      type: String,
+      default: null,
+      required: false,
+    },
     code: {
       type: String,
       required: true,
@@ -23,7 +33,7 @@ const OtpSchema = new mongoose.Schema(
     },
     method: {
       type: String,
-      enum: ["phone", "email", "reset-password"],
+      enum: ["phone", "email", "reset-password", "change-email", "change-phone"],
       default: "phone",
     },
     expiresAt: {

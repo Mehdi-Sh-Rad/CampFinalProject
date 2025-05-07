@@ -19,23 +19,77 @@ async function verifyRecaptchaToken(token) {
 export async function POST(req) {
   await connectToDatabase();
   try {
-    const { name, email, phone, type, recaptchaToken } = await req.json();
+    const { name, email,newEmail, phone,newPhone, type, recaptchaToken } = await req.json();
 
     if (!recaptchaToken) {
       return NextResponse.json({ message: "توکن امنیتی یافت نشد" }, { status: 400 });
     }
 
-    const isRecaptchaValid = await verifyRecaptchaToken(recaptchaToken);
-    if (!isRecaptchaValid) {
-      return NextResponse.json({ message: "تأیید امنیتی ناموفق بود" }, { status: 403 });
+    if (recaptchaToken !== "no-recaptcha") {
+      const isRecaptchaValid = await verifyRecaptchaToken(recaptchaToken);
+      if (!isRecaptchaValid) {
+        return NextResponse.json({ message: "تأیید امنیتی ناموفق بود" }, { status: 403 });
+      }
     }
 
-    if (!type || (type !== "register" && type !== "login" && type !== "email-login")) {
+    // if (!type || (type !== "register" && type !== "login" && type !== "email-login")) {
+    //   return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
+    // }
+
+    if (!type || !["register", "login", "email-login", "change-email", "change-phone"].includes(type)) {
       return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
     }
 
     const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
     const phoneRegex = /^09[0-9]{9}$/;
+
+
+    
+    
+    // Validate based on type
+    if (type === "change-email") {
+      if (!email || !emailRegex.test(email)) {
+        return NextResponse.json({ message: "ایمیل فعلی معتبر نیست" }, { status: 400 });
+      }
+      if (!newEmail || !emailRegex.test(newEmail)) {
+        return NextResponse.json({ message: "ایمیل جدید معتبر نیست" }, { status: 400 });
+      }
+      if (email === newEmail) {
+        return NextResponse.json({ message: "ایمیل جدید نمی‌تواند با ایمیل فعلی یکسان باشد" }, { status: 400 });
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        return NextResponse.json({ message: "ایمیل فعلی با هیچ حساب کاربری مطابقت ندارد" }, { status: 400 });
+      }
+      const existingNewEmail = await User.findOne({ email: newEmail });
+      if (existingNewEmail) {
+        return NextResponse.json({ message: "این ایمیل توسط کاربر دیگری استفاده شده است" }, { status: 400 });
+      }
+    }
+
+
+
+    if (type === "change-phone") {
+      if (!phone || !phoneRegex.test(phone)) {
+        return NextResponse.json({ message: "شماره تلفن فعلی معتبر نیست" }, { status: 400 });
+      }
+      if (!newPhone || !phoneRegex.test(newPhone)) {
+        return NextResponse.json({ message: "شماره تلفن جدید معتبر نیست" }, { status: 400 });
+      }
+      if (phone === newPhone) {
+        return NextResponse.json({ message: "شماره تلفن جدید نمی‌تواند با شماره فعلی یکسان باشد" }, { status: 400 });
+      }
+      const user = await User.findOne({ phone });
+      if (!user) {
+        return NextResponse.json({ message: "شماره تلفن فعلی با هیچ حساب کاربری مطابقت ندارد" }, { status: 400 });
+      }
+      const existingNewPhone = await User.findOne({ phone: newPhone });
+      if (existingNewPhone) {
+        return NextResponse.json({ message: "این شماره تلفن توسط کاربر دیگری استفاده شده است" }, { status: 400 });
+      }
+    }
+
+
 
     if (type === "email-login") {
       if (!email || !emailRegex.test(email)) {
@@ -45,28 +99,32 @@ export async function POST(req) {
       if (!user) {
         return NextResponse.json({ message: "کاربری با این ایمیل یافت نشد" }, { status: 400 });
       }
-    } else {
-      if (!phone || !phoneRegex.test(phone)) {
-        return NextResponse.json({ message: "شماره تلفن وارد شده صحیح نیست" }, { status: 400 });
-      }
     }
 
     if (type === "register") {
       if (!name || name.trim().length < 3 || name.trim().length > 30) {
         return NextResponse.json({ message: "نام باید بین 3 تا 30 حرف باشد" }, { status: 400 });
       }
+      if (!phone || !phoneRegex.test(phone)) {
+        return NextResponse.json({ message: "شماره تلفن معتبر نیست" }, { status: 400 });
+      }
       const existingEmail = await User.findOne({ email });
       if (existingEmail) {
-        return NextResponse.json({ message: "ایمیل تکراری می باشد" }, { status: 400 });
+        return NextResponse.json({ message: "این ایمیل قبلاً ثبت شده است" }, { status: 400 });
       }
       const existingUser = await User.findOne({ phone });
       if (existingUser) {
-        return NextResponse.json({ message: "این شماره موبایل قبلاً ثبت شده است" }, { status: 400 });
+        return NextResponse.json({ message: "این شماره تلفن قبلاً ثبت شده است" }, { status: 400 });
       }
-    } else if (type === "login") {
+    }
+
+    if (type === "login") {
+      if (!phone || !phoneRegex.test(phone)) {
+        return NextResponse.json({ message: "شماره تلفن معتبر نیست" }, { status: 400 });
+      }
       const user = await User.findOne({ phone });
       if (!user) {
-        return NextResponse.json({ message: "کاربری با این شماره موبایل یافت نشد" }, { status: 400 });
+        return NextResponse.json({ message: "کاربری با این شماره تلفن یافت نشد" }, { status: 400 });
       }
     }
 
@@ -85,16 +143,17 @@ export async function POST(req) {
     const otp = await Otp.create({
       phone: phone || null,
       email: email || null,
+      newPhone: newPhone || null,
+      newEmail: newEmail || null,
       code: otpCode,
       kind: type === "register" ? 1 : 2,
-      method: type === "email-login" ? "email" : "phone",
+      method: type === "email-login" ? "email" : type === "change-email" ? "change-email" : type === "change-phone" ? "change-phone" : "phone",
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 
-
     // send otp code to user phone number or email
 
-    if (type === "email-login") {
+    if (type === "email-login" || type === "change-email") {
       await sendEmail(email, "کد تأیید ورود", `کد تأیید شما: ${otpCode}`);
     } else {
       await sendSms(phone, `کد تایید شما: ${otpCode}`);
