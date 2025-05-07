@@ -48,17 +48,16 @@ export async function PUT(request) {
         }
         const data = await request.formData();
         const name = data.get("name");
-        const phone = data.get("phone");
-        const email = data.get("email");
+        
         let image = data.get("image");
 
-        // Validate required fields
-        if (!name || !phone || !email) {
-            return NextResponse.json(
-                { error: "نام، شماره تلفن و ایمیل الزامی هستند" },
-                { status: 400 }
-            );
-        }
+         // Validate required fields
+    if (!name) {
+        return NextResponse.json(
+          { error: "نام الزامی است" },
+          { status: 400 }
+        );
+      }
 
 
         // Handle images
@@ -99,8 +98,7 @@ export async function PUT(request) {
             session.user.id,
             {
                 name,
-                phone,
-                email,
+               
                 image: image ? image : "/uploads/profile.png", // Use the new image URL if provided, otherwise keep the old one
             },
             { new: true, runValidators: true }
