@@ -41,10 +41,7 @@ export async function POST(req) {
       return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
     }
 
-    // // Validate required fields
-    // if (!phone || !name || !email || !password) {
-    //   return NextResponse.json({ message: "لطفا تمامی فیلد ها را پر کنید" }, { status: 400 });
-    // }
+ 
 
     // Validate OTP code
     if (!code || code.length !== 6 || !/^\d+$/.test(code)) {

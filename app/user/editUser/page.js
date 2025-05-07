@@ -56,25 +56,6 @@ const EditUserInfo = () => {
       return false;
     }
 
-    // if (phone.trim() === "") {
-    //   setFormError("شماره تلفن الزامی میباشد");
-    //   return false;
-    // } else if (phone.length < 11 || phone.length > 13) {
-    //   setFormError("شماره تلفن باید بین ۱۱ تا ۱۳ باشد");
-    //   return false;
-    // } else if (!/^\d+$/.test(phone)) {
-    //   setFormError("شماره تلفن باید فقط شامل اعداد باشد");
-    //   return false;
-    // }
-
-    // if (email.trim() === "") {
-    //   setFormError("ایمیل الزامی میباشد");
-    //   return false;
-    // } else if (!/\S+@\S+\.\S+/.test(email)) {
-    //   setFormError("ایمیل نامعتبر است");
-    //   return false;
-    // }
-
     setFormError("");
     return true;
   };
@@ -255,8 +236,6 @@ const EditUserInfo = () => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      //   formData.append("phone", phone);
-      //   formData.append("email", email);
 
       if (image) {
         formData.append("image", image); // Append the selected file
@@ -315,16 +294,6 @@ const EditUserInfo = () => {
                   disabled={loading}
                 />
 
-                {/* <input
-                  name="phone"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder={`${loading ? "در حال بارگذاری..." : ""}`}
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  disabled={loading}
-                /> */}
-
                 <div className="w-full">
                   <label className="block text-gray-700 dark:text-gray-200 mb-1">ایمیل فعلی</label>
                   <p className="text-gray-700 dark:text-gray-200">{email}</p>
@@ -360,16 +329,6 @@ const EditUserInfo = () => {
                     </div>
                   )}
                 </div>
-
-                {/* <input
-                  name="email"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder={`${loading ? "در حال بارگذاری..." : ""}`}
-                  type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
-                /> */}
 
                 <div className="w-full">
                   <label className="block text-gray-700 dark:text-gray-200 mb-1">شماره موبایل فعلی</label>

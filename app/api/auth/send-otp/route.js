@@ -32,10 +32,6 @@ export async function POST(req) {
       }
     }
 
-    // if (!type || (type !== "register" && type !== "login" && type !== "email-login")) {
-    //   return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
-    // }
-
     if (!type || !["register", "login", "email-login", "change-email", "change-phone"].includes(type)) {
       return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
     }
