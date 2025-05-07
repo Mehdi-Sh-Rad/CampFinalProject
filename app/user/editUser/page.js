@@ -245,12 +245,11 @@ const EditUserInfo = () => {
         body: formData,
       });
 
-      if (response.status === 400) {
-        let message = await response.json();
-        setFormError(message.message);
-      }
-      if (!response.ok) throw new Error("مشکلی در به‌روزرسانی اطلاعات کاربر پیش آمده است");
-      router.push("/user");
+      const data = await response.json();
+      if (!response.ok) {
+        setFormError(data.message || "مشکلی در به‌روزرسانی اطلاعات کاربر پیش آمده است");
+        return;
+      }      router.push("/user");
     } catch (error) {
       setError(error.message);
     }
