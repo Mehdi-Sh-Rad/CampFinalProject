@@ -51,7 +51,9 @@ const Sidebar = () => {
           <Link className="" href={"/user"}>
             <li
               className={`flex ${
-                pathName == "/user" ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] dark:hover:text-white transition-all group duration-300"
+                pathName == "/user"
+                  ? "bg-shop-red"
+                  : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] dark:hover:text-white transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className={pathName == "/user" ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
@@ -76,12 +78,17 @@ const Sidebar = () => {
                 }`}>
                 پیشخــــوان
               </span>
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  پیشخوان
+                </span>
+              )}
             </li>
           </Link>
           <Link className=" " href={"/user/editUser"}>
             <li
               className={`flex ${
-                pathName.startsWith("/user/editUser") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e]  transition-all group duration-300"
+                pathName.startsWith("/user/editUser") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e]  transition-all group relative duration-300"
               }  ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className={pathName.startsWith("/user/editUser") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
@@ -110,13 +117,18 @@ const Sidebar = () => {
                 } ${!isSidebarOpen && "hidden"}`}>
                 ویرایش اطلاعات کاربری
               </span>
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  ویرایش اطلاعات کاربری
+                </span>
+              )}
             </li>
           </Link>
 
           <Link className=" " href={"/user/orders"}>
             <li
               className={`flex ${
-                pathName.startsWith("/user/orders") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                pathName.startsWith("/user/orders") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className={pathName.startsWith("/user/orders") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
@@ -141,13 +153,19 @@ const Sidebar = () => {
                 } ${!isSidebarOpen && "hidden"}`}>
                 سفارشات من
               </span>
+
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  سفارشات من
+                </span>
+              )}
             </li>
           </Link>
 
           <Link className=" " href={"/user/comments"}>
             <li
               className={`flex ${
-                pathName.startsWith("/user/comments") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                pathName.startsWith("/user/comments") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className="w-6 h-6 text-gray-600 dark:text-white"
@@ -184,7 +202,9 @@ const Sidebar = () => {
           <Link className=" " href={"/user/productQuestions"}>
             <li
               className={`flex ${
-                pathName.startsWith("/user/productQuestions") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                pathName.startsWith("/user/productQuestions")
+                  ? "bg-shop-red"
+                  : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className={pathName.startsWith("/user/productQuestions") ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
@@ -204,13 +224,19 @@ const Sidebar = () => {
                 } ${!isSidebarOpen && "hidden"}`}>
                 سوالات من
               </span>
+
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  سوالات من
+                </span>
+              )}
             </li>
           </Link>
 
           <Link className=" " href={"/user/wallets"}>
             <li
               className={`flex ${
-                pathName.startsWith("/user/wallets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                pathName.startsWith("/user/wallets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className="w-6 h-6 text-gray-800 dark:text-white"
@@ -236,7 +262,7 @@ const Sidebar = () => {
               </span>
               {!isSidebarOpen && (
                 <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                  مدیریت کیف پول کاربران
+                  مدیریت کیف پول
                 </span>
               )}
             </li>
@@ -244,7 +270,7 @@ const Sidebar = () => {
           <Link className=" " href={"/user/tickets"}>
             <li
               className={`flex ${
-                pathName.startsWith("/user/tickets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                pathName.startsWith("/user/tickets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
                 className="w-6 h-6 text-gray-600 dark:text-white"
@@ -269,13 +295,21 @@ const Sidebar = () => {
                 } ${!isSidebarOpen && "hidden"}`}>
                 تیکت های من
               </span>
+
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  تیکت های من
+                </span>
+              )}
             </li>
           </Link>
 
           <Link className=" " href={"/user/changePassword"}>
             <li
               className={`flex ${
-                pathName.startsWith("/user/changePassword") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
+                pathName.startsWith("/user/changePassword")
+                  ? "bg-shop-red"
+                  : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg width="30" className="svg-icon" viewBox="0 0 20 20">
                 <path
@@ -293,6 +327,12 @@ const Sidebar = () => {
                 } ${!isSidebarOpen && "hidden"}`}>
                 تغییر کلمه عبور
               </span>
+
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  تغییر کلمه عبور
+                </span>
+              )}
             </li>
           </Link>
           <Link className=" " href={"/"}>
@@ -319,7 +359,7 @@ const Sidebar = () => {
             </li>
           </Link>
           <LogoutButton
-            className={`flex
+            className={`flex relative
                 hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300
                ${
                  !isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"
@@ -343,7 +383,13 @@ const Sidebar = () => {
               className={`text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red
                 } ${!isSidebarOpen && "hidden"}`}>
               خروج
-            </span>{" "}
+            </span>
+
+            {!isSidebarOpen && (
+              <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                خروج
+              </span>
+            )}
           </LogoutButton>
         </ul>
       </nav>
