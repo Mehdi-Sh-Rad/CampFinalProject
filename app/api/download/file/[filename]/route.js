@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
   // Check for authenticated session
   const session = await getServerSession(authOptions);
   if (!session) {
-    return NextResponse.json({ message: "نیاز به ورود دارید" }, { status: 401 });
+    return NextResponse.redirect(new URL("/unauthorize", request.url));
   }
 
   const userId = session.user.id;

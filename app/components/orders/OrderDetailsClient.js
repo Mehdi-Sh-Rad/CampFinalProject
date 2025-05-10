@@ -58,15 +58,15 @@ export default function OrderDetailsClient({ id }) {
         />
       </div>
       <div className="container py-4 px-10 -mt-10 z-50 relative">
-        <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
-          <div className="max-w-[400px] bg-white dark:bg-shop-dark">
+        <div className="bg-white py-10 px-10 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
+          <div className="bg-white dark:bg-shop-dark grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {order.items.map((item, index) => {
               const prod = item.product || {};
               const files = prod.fileUrls || [];
               return (
-                <div key={index} className="bg-white dark:bg-[#1f2430] rounded-lg overflow-hidden shadow-md">
-                  <div className="w-full h-48 relative">
-                    <Image src={prod.imageUrls[0] || "/placeholder.png"} alt={prod.name} fill className="object-cover" />
+                <div key={index} className="bg-white dark:bg-[#1f2430] rounded-lg overflow-hidden shadow-md transition-transform transform hover:scale-105">
+                  <div className="w-full h-56 relative">
+                    <Image src={prod.imageUrls[0] || "/placeholder.png"} alt={prod.name} fill className="object-fill" />
                   </div>
                   <div className="p-4">
                     <h2 className="text-lg font-semibold mb-1 dark:text-gray-200">{prod.name}</h2>
@@ -75,7 +75,7 @@ export default function OrderDetailsClient({ id }) {
                     {files.length > 0 && (
                       <div className="mt-3">
                         <h3 className="font-medium text-sm mb-1 dark:text-gray-200">فایل‌های محصول:</h3>
-                        <ul className="list-disc list-inside space-y-1">
+                        <ul className="list-disc list-inside dark:text-white space-y-1">
                           {files.map((fileUrl, index) => (
                             <li key={index}>
                               <a
