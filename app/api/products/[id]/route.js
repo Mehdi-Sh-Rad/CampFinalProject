@@ -153,6 +153,14 @@ export async function PUT(request, { params }) {
     let imageUrls = [];
     let fileUrls = [];
 
+    // Function to generate a unique file name based on the current timestamp
+    const generateUniqueFileName = (originalName) => {
+      const extname = originalName.slice(originalName.lastIndexOf(".")); 
+      const basename = originalName.slice(0, originalName.lastIndexOf("."));
+      const timestamp = Date.now(); 
+      return `${basename}-${timestamp}${extname}`; 
+    };
+
     // Handle images
     if (images && images.length > 0) {
       for (const image of images) {
@@ -162,10 +170,11 @@ export async function PUT(request, { params }) {
           const buffer = Buffer.from(bytes);
 
           const uploadDir = join(process.cwd(), "public/uploads/images");
-          const filePath = join(uploadDir, image.name);
+          const uniqueImageName = generateUniqueFileName(image.name);
+          const filePath = join(uploadDir, uniqueImageName);
 
           await writeFile(filePath, buffer);
-          imageUrls.push(`/uploads/images/${image.name}`);
+          imageUrls.push(`/uploads/images/${uniqueImageName}`);
         } else if (typeof image === "string") {
           // Keep existing image URLs
           imageUrls.push(image);
@@ -196,16 +205,16 @@ export async function PUT(request, { params }) {
           const buffer = Buffer.from(bytes);
 
           const uploadDir = join(process.cwd(), "uploads/private/files");
+          const uniqueFileName = generateUniqueFileName(file.name);
 
           if (!existsSync(uploadDir)) {
             mkdirSync(uploadDir, { recursive: true });
           }
 
-
-          const filePath = join(uploadDir, file.name);
+          const filePath = join(uploadDir, uniqueFileName);
 
           await writeFile(filePath, buffer);
-          fileUrls.push(`uploads/private/files/${file.name}`);
+          fileUrls.push(`uploads/private/files/${uniqueFileName}`);
         } else if (typeof file === "string") {
           fileUrls.push(file);
         } else {
@@ -248,7 +257,6 @@ export async function PUT(request, { params }) {
     } else {
       product.finalPrice = price;
     }
-
 
     const saved = await product.save();
 

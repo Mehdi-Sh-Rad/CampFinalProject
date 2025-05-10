@@ -193,20 +193,31 @@ export async function POST(request) {
     const fileUrls = [];
     const imageUrls = [];
 
+
+    // Function to generate a unique file name based on the current timestamp
+    const generateUniqueFileName = (originalName) => {
+      const extname = originalName.slice(originalName.lastIndexOf('.')); 
+      const basename = originalName.slice(0, originalName.lastIndexOf('.')); 
+      const timestamp = Date.now(); 
+      return `${basename}-${timestamp}${extname}`; 
+    };
+
     for (const file of files) {
       const bytesFile = await file.arrayBuffer();
       const bufferFile = Buffer.from(bytesFile);
-      const filePath = join(uploadDirFile, file.name);
+      const uniqueFileName = generateUniqueFileName(file.name);
+      const filePath = join(uploadDirFile, uniqueFileName);
       await writeFile(filePath, bufferFile);
-      fileUrls.push(`uploads/private/files/${file.name}`);
+      fileUrls.push(`uploads/private/files/${uniqueFileName}`);
     }
 
     for (const image of images) {
       const bytesImage = await image.arrayBuffer();
       const bufferImage = Buffer.from(bytesImage);
-      const imagePath = join(uploadDirImage, image.name);
+      const uniqueImageName = generateUniqueFileName(image.name);
+      const imagePath = join(uploadDirImage, uniqueImageName);
       await writeFile(imagePath, bufferImage);
-      imageUrls.push(`/uploads/images/${image.name}`);
+      imageUrls.push(`/uploads/images/${uniqueImageName}`);
     }
 
     // Save product to database
