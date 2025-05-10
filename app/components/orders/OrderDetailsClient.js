@@ -7,6 +7,12 @@ export default function OrderDetailsClient({ id }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // Extract filename from file URL
+  function extractFilename(url) {
+    return url.split("/").pop();
+  }
+
+  // Fetch order details on component mount
   useEffect(() => {
     async function fetchOrder() {
       try {
@@ -16,15 +22,14 @@ export default function OrderDetailsClient({ id }) {
         });
 
         if (!res.ok) {
-            const data = await res.json();
-            setError(data.message || "مشکل در دریافت سفارش");
-            return;
+          const data = await res.json();
+          setError(data.message || "مشکل در دریافت سفارش");
+          return;
         }
 
         const { order } = await res.json();
 
         setOrder(order);
-        console.log("ORDER SHAPE:", order);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -34,9 +39,11 @@ export default function OrderDetailsClient({ id }) {
     fetchOrder();
   }, [id]);
 
+  // Show error or loading state
   if (error) return <p className="text-red-500">{error}</p>;
   if (loading) return <p>در حال بارگیری سفارش...</p>;
 
+  // Render order details and download links
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
@@ -71,7 +78,11 @@ export default function OrderDetailsClient({ id }) {
                         <ul className="list-disc list-inside space-y-1">
                           {files.map((fileUrl, index) => (
                             <li key={index}>
-                              <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                              <a
+                                href={`/api/download/file/${extractFilename(fileUrl)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 hover:underline">
                                 {`دانلود فایل ${index + 1}`}
                               </a>
                             </li>

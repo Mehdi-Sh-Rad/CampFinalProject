@@ -4,16 +4,14 @@ import { NextResponse } from "next/server";
 import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
 import { isValidObjectId } from "mongoose";
+import { mkdirSync, existsSync } from "fs";
 
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
 
   if (!isValidObjectId(id)) {
-    return NextResponse.json(
-      { message: "آیدی محصول نامعتبر است" },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "آیدی محصول نامعتبر است" }, { status: 400 });
   }
   try {
     const product = await Product.findById(id);
@@ -28,6 +26,10 @@ export async function GET(request, { params }) {
       status: 500,
     });
   }
+}
+
+function extractFileName(url) {
+  return url.split("/").pop();
 }
 
 // PUT: Update an existing product by ID
@@ -193,11 +195,17 @@ export async function PUT(request, { params }) {
           const bytes = await file.arrayBuffer();
           const buffer = Buffer.from(bytes);
 
-          const uploadDir = join(process.cwd(), "public/uploads/files");
+          const uploadDir = join(process.cwd(), "uploads/private/files");
+
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+
+
           const filePath = join(uploadDir, file.name);
 
           await writeFile(filePath, buffer);
-          fileUrls.push(`/uploads/files/${file.name}`);
+          fileUrls.push(`uploads/private/files/${file.name}`);
         } else if (typeof file === "string") {
           fileUrls.push(file);
         } else {
@@ -209,7 +217,7 @@ export async function PUT(request, { params }) {
       if (product.fileUrls && product.fileUrls.length > 0) {
         for (const oldFile of product.fileUrls) {
           if (!fileUrls.includes(oldFile)) {
-            const oldFilePath = join(process.cwd(), "public", oldFile);
+            const oldFilePath = join(process.cwd(), "uploads/private/files", extractFileName(oldFile));
             await unlink(oldFilePath).catch(() => {
               console.log("خطا در حذف فایل قبلی");
             });
@@ -240,6 +248,7 @@ export async function PUT(request, { params }) {
     } else {
       product.finalPrice = price;
     }
+
 
     const saved = await product.save();
 

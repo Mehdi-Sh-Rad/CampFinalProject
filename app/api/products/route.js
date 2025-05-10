@@ -3,6 +3,7 @@ import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
+import { mkdirSync, existsSync } from "fs";
 
 
 export async function GET(request) {
@@ -178,7 +179,14 @@ export async function POST(request) {
     }
 
     // Ensure upload directories exist
-    const uploadDirFile = join(process.cwd(), "public/uploads/files");
+    const uploadDirFile = join(process.cwd(), "uploads/private/files");
+
+    if (!existsSync(uploadDirFile)) {
+                mkdirSync(uploadDirFile, { recursive: true });
+              }
+
+
+
     const uploadDirImage = join(process.cwd(), "public/uploads/images");
 
     // Save files and images to disk
@@ -190,7 +198,7 @@ export async function POST(request) {
       const bufferFile = Buffer.from(bytesFile);
       const filePath = join(uploadDirFile, file.name);
       await writeFile(filePath, bufferFile);
-      fileUrls.push(`/uploads/files/${file.name}`);
+      fileUrls.push(`uploads/private/files/${file.name}`);
     }
 
     for (const image of images) {
