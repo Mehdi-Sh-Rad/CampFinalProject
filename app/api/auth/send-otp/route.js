@@ -19,7 +19,7 @@ async function verifyRecaptchaToken(token) {
 export async function POST(req) {
   await connectToDatabase();
   try {
-    const { name, email,newEmail, phone,newPhone, type, recaptchaToken } = await req.json();
+    const { name, email, newEmail, phone, newPhone, type, recaptchaToken } = await req.json();
 
     if (!recaptchaToken) {
       return NextResponse.json({ message: "توکن امنیتی یافت نشد" }, { status: 400 });
@@ -36,12 +36,10 @@ export async function POST(req) {
       return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
     }
 
+    const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
     const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
     const phoneRegex = /^09[0-9]{9}$/;
 
-
-    
-    
     // Validate based on type
     if (type === "change-email") {
       if (!email || !emailRegex.test(email)) {
@@ -63,8 +61,6 @@ export async function POST(req) {
       }
     }
 
-
-
     if (type === "change-phone") {
       if (!phone || !phoneRegex.test(phone)) {
         return NextResponse.json({ message: "شماره تلفن فعلی معتبر نیست" }, { status: 400 });
@@ -85,8 +81,6 @@ export async function POST(req) {
       }
     }
 
-
-
     if (type === "email-login") {
       if (!email || !emailRegex.test(email)) {
         return NextResponse.json({ message: "ایمیل معتبر نیست" }, { status: 400 });
@@ -100,6 +94,9 @@ export async function POST(req) {
     if (type === "register") {
       if (!name || name.trim().length < 3 || name.trim().length > 30) {
         return NextResponse.json({ message: "نام باید بین 3 تا 30 حرف باشد" }, { status: 400 });
+      }
+      if (!nameRegex.test(name)) {
+        return NextResponse.json({ message: "نام میتواند شامل حروف ، اعداد و فاصله باشد" }, {status : 400});
       }
       if (!phone || !phoneRegex.test(phone)) {
         return NextResponse.json({ message: "شماره تلفن معتبر نیست" }, { status: 400 });

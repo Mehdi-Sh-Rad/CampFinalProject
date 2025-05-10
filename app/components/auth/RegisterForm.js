@@ -19,7 +19,7 @@ const RegisterForm = () => {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
 
-   // Get reCAPTCHA token using site key
+  // Get reCAPTCHA token using site key
   const getRecaptchaToken = async (action) => {
     return new Promise((resolve, reject) => {
       window.grecaptcha.ready(() => {
@@ -41,6 +41,10 @@ const RegisterForm = () => {
     if (!name || name.trim().length < 3 || name.trim().length > 30) {
       setError("نام باید بین 3 تا 30 کاراکتر باشد");
       return;
+    }
+    const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
+    if (!nameRegex.test(name)) {
+      setError("نام میتواند شامل حروف ، اعداد و فاصله باشد");
     }
     const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
     if (!email || !emailRegex.test(email)) {
@@ -128,7 +132,7 @@ const RegisterForm = () => {
 
   return (
     <>
-    {/* Load reCAPTCHA script */}
+      {/* Load reCAPTCHA script */}
       <Script src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`} strategy="afterInteractive" />
       <div className="dark:bg-[#1a0b24] bg-slate-50 py-10 min-h-[100vh] flex flex-col items-center justify-center">
         <div id="wrapper" className="flex justify-center items-center flex-col gap-y-4 ">

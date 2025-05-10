@@ -96,18 +96,38 @@ export async function PUT(request, { params }) {
       return new Response(JSON.stringify({ message: "نام محصول باید بین 3 تا 30 کاراکتر باشد" }), { status: 400 });
     }
 
+     const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
+        if (!nameRegex.test(name)) {
+          return NextResponse.json({message : "نام میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+        }
+
+
+
+
     if (!author || author.trim() === "") {
       return new Response(JSON.stringify({ message: "نام نویسنده الزامی است" }), { status: 400 });
     }
     if (author.length < 3 || author.length > 50) {
       return new Response(JSON.stringify({ message: "نام نویسنده باید بین 3 تا 50 کاراکتر باشد" }), { status: 400 });
     }
+
+    const authorRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,50}$/;
+        if (!authorRegex.test(author)) {
+          return NextResponse.json({message : "نام نویسنده میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+        }
+
+
     if (!description || description.trim() === "") {
       return new Response(JSON.stringify({ message: "توضیحات محصول الزامی است" }), { status: 400 });
     }
     if (description.length < 3 || description.length > 500) {
       return new Response(JSON.stringify({ message: "توضیحات محصول باید بین 3 تا 500 کاراکتر باشد" }), { status: 400 });
     }
+
+    const descriptionRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,500}$/;
+        if (!descriptionRegex.test(description)) {
+          return NextResponse.json({message : "توضیحات محصول میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+        }
 
     if (!category) {
       return new Response(JSON.stringify({ message: "انتخاب دسته‌بندی الزامی است" }), { status: 400 });

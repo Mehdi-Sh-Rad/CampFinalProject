@@ -41,8 +41,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });
     }
 
- 
-
     // Validate OTP code
     if (!code || code.length !== 6 || !/^\d+$/.test(code)) {
       return NextResponse.json({ message: "کد تأیید نامعتبر است" }, { status: 400 });
@@ -50,6 +48,7 @@ export async function POST(req) {
 
     // OTP query
     let otpQuery = { code, expiresAt: { $gt: new Date() } };
+    const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
     const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
     const phoneRegex = /^09[0-9]{9}$/;
 
@@ -88,6 +87,9 @@ export async function POST(req) {
     if (type === "register") {
       if (!name || name.trim().length < 3 || name.trim().length > 30) {
         return NextResponse.json({ message: "نام باید بین 3 تا 30 حرف باشد" }, { status: 400 });
+      }
+      if (!nameRegex.test(name)) {
+        return NextResponse.json({ message: "نام میتواند شامل حروف ، اعداد و فاصله باشد" } , {status : 400});
       }
       if (!email || !emailRegex.test(email)) {
         return NextResponse.json({ message: "ایمیل معتبر نیست" }, { status: 400 });
