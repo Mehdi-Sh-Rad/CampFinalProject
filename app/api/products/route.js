@@ -3,6 +3,7 @@ import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
+import { mkdirSync, existsSync } from "fs";
 
 
 export async function GET(request) {
@@ -125,6 +126,10 @@ export async function POST(request) {
     if (!name || name.trim() === "") {
       return new Response(JSON.stringify({ message: "نام محصول الزامی است" }), { status: 400 });
     }
+    const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
+    if (!nameRegex.test(name)) {
+      return NextResponse.json({message : "نام میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+    }
     if (name.length < 3 || name.length > 30) {
       return new Response(JSON.stringify({ message: "نام محصول باید بین 3 تا 30 کاراکتر باشد" }), { status: 400 });
     }
@@ -135,11 +140,23 @@ export async function POST(request) {
     if (author.length < 3 || author.length > 50) {
       return new Response(JSON.stringify({ message: "نام نویسنده باید بین 3 تا 50 کاراکتر باشد" }), { status: 400 });
     }
+
+    const authorRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,50}$/;
+    if (!authorRegex.test(author)) {
+      return NextResponse.json({message : "نام نویسنده میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+    }
+
+
     if (!description || description.trim() === "") {
       return new Response(JSON.stringify({ message: "توضیحات محصول الزامی است" }), { status: 400 });
     }
     if (description.length < 3 || description.length > 500) {
       return new Response(JSON.stringify({ message: "توضیحات محصول باید بین 3 تا 500 کاراکتر باشد" }), { status: 400 });
+    }
+
+    const descriptionRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,500}$/;
+    if (!descriptionRegex.test(description)) {
+      return NextResponse.json({message : "توضیحات محصول میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
     }
 
     if (!category) {
@@ -178,27 +195,45 @@ export async function POST(request) {
     }
 
     // Ensure upload directories exist
-    const uploadDirFile = join(process.cwd(), "public/uploads/files");
+    const uploadDirFile = join(process.cwd(), "uploads/private/files");
+
+    if (!existsSync(uploadDirFile)) {
+                mkdirSync(uploadDirFile, { recursive: true });
+              }
+
+
+
     const uploadDirImage = join(process.cwd(), "public/uploads/images");
 
     // Save files and images to disk
     const fileUrls = [];
     const imageUrls = [];
 
+
+    // Function to generate a unique file name based on the current timestamp
+    const generateUniqueFileName = (originalName) => {
+      const extname = originalName.slice(originalName.lastIndexOf('.')); 
+      const basename = originalName.slice(0, originalName.lastIndexOf('.')); 
+      const timestamp = Date.now(); 
+      return `${basename}-${timestamp}${extname}`; 
+    };
+
     for (const file of files) {
       const bytesFile = await file.arrayBuffer();
       const bufferFile = Buffer.from(bytesFile);
-      const filePath = join(uploadDirFile, file.name);
+      const uniqueFileName = generateUniqueFileName(file.name);
+      const filePath = join(uploadDirFile, uniqueFileName);
       await writeFile(filePath, bufferFile);
-      fileUrls.push(`/uploads/files/${file.name}`);
+      fileUrls.push(`uploads/private/files/${uniqueFileName}`);
     }
 
     for (const image of images) {
       const bytesImage = await image.arrayBuffer();
       const bufferImage = Buffer.from(bytesImage);
-      const imagePath = join(uploadDirImage, image.name);
+      const uniqueImageName = generateUniqueFileName(image.name);
+      const imagePath = join(uploadDirImage, uniqueImageName);
       await writeFile(imagePath, bufferImage);
-      imageUrls.push(`/uploads/images/${image.name}`);
+      imageUrls.push(`/uploads/images/${uniqueImageName}`);
     }
 
     // Save product to database

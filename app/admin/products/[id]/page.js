@@ -144,21 +144,37 @@ const UpdateProduct = () => {
       return false;
     }
 
+    const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
+    if (!nameRegex.test(name)) {
+      setError("نام میتواند شامل حروف ، اعداد و فاصله باشد");
+    }
+
     if (!author || author.trim() === "") {
       setFormError("نام نویسنده الزامی است");
       return false;
-    } else if (author.length < 3 || author.length > 30) {
-      setFormError("نام نویسنده باید بین ۳ تا ۳۰ کاراکتر باشد");
+    } else if (author.length < 3 || author.length > 50) {
+      setFormError("نام نویسنده باید بین ۳ تا 5۰ کاراکتر باشد");
       return false;
+    }
+
+    const authorRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,50}$/;
+    if (!authorRegex.test(author)) {
+      setError("نام نویسنده میتواند شامل حروف ، اعداد و فاصله باشد");
     }
 
     if (!description || description.trim() === "") {
       setFormError("توضیحات محصول الزامی میباشد");
       return false;
-    } else if (description.length < 3 || description.length > 200) {
-      setFormError("توضیحات محصول باید بین ۳ تا 200 باشد");
+    } else if (description.length < 3 || description.length > 500) {
+      setFormError("توضیحات محصول باید بین ۳ تا 500 باشد");
       return false;
     }
+
+    const descriptionRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,500}$/;
+    if (!descriptionRegex.test(description)) {
+      setError("توضیحات محصول میتواند شامل حروف ، اعداد و فاصله باشد");
+    }
+
     if (!category) {
       setFormError("دسته بندی محصول باید باشد");
       return false;
@@ -232,45 +248,30 @@ const UpdateProduct = () => {
     return <LoadingSpinner />;
   }
 
-
-
   if (error) {
-            return (
-              <div className="flex flex-col items-center justify-center min-h-[100vh] bg-shop-bg dark:bg-[#171a26]">
-                <div className="bg-white dark:bg-shop-dark rounded-lg p-6 shadow-xl shadow-[#112692]/5 flex flex-col items-center gap-y-4">
-                  <Image src="/logo-min.png" width={50} height={50} alt="logo" />
-                  <h3 className="text-shop-red dark:text-gray-200 flex gap-x-2 items-center border border-shop-red/30 rounded py-2 px-4">
-                    <svg
-                      className="dark:text-shop-red"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 10.5378C8 9.43327 8.89543 8.53784 10 8.53784H11.3333C12.4379 8.53784 13.3333 9.43327 13.3333 10.5378V19.8285C13.3333 20.9331 14.2288 21.8285 15.3333 21.8285H16C16 21.8285 12.7624 23.323 10.6667 22.9361C10.1372 22.8384 9.52234 22.5913 9.01654 22.3553C8.37357 22.0553 8 21.3927 8 20.6832V10.5378Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M13 3.5C13 2.11929 11.8807 1 10.5 1C9.11929 1 8 2.11929 8 3.5C8 4.88071 9.11929 6 10.5 6C11.8807 6 13 4.88071 13 3.5Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    {error}
-                  </h3>
-                  <button
-                    onClick={() => router.back()}
-                    className="bg-shop-red text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  >
-                    بازگشت
-                  </button>
-                </div>
-              </div>
-            );
-          }
-
-
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[100vh] bg-shop-bg dark:bg-[#171a26]">
+        <div className="bg-white dark:bg-shop-dark rounded-lg p-6 shadow-xl shadow-[#112692]/5 flex flex-col items-center gap-y-4">
+          <Image src="/logo-min.png" width={50} height={50} alt="logo" />
+          <h3 className="text-shop-red dark:text-gray-200 flex gap-x-2 items-center border border-shop-red/30 rounded py-2 px-4">
+            <svg className="dark:text-shop-red" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M8 10.5378C8 9.43327 8.89543 8.53784 10 8.53784H11.3333C12.4379 8.53784 13.3333 9.43327 13.3333 10.5378V19.8285C13.3333 20.9331 14.2288 21.8285 15.3333 21.8285H16C16 21.8285 12.7624 23.323 10.6667 22.9361C10.1372 22.8384 9.52234 22.5913 9.01654 22.3553C8.37357 22.0553 8 21.3927 8 20.6832V10.5378Z"
+                fill="currentColor"
+              />
+              <path d="M13 3.5C13 2.11929 11.8807 1 10.5 1C9.11929 1 8 2.11929 8 3.5C8 4.88071 9.11929 6 10.5 6C11.8807 6 13 4.88071 13 3.5Z" fill="currentColor" />
+            </svg>
+            {error}
+          </h3>
+          <button
+            onClick={() => router.back()}
+            className="bg-shop-red text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-shop-red transition-all duration-300">
+            بازگشت
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthWrapper>

@@ -4,16 +4,14 @@ import { NextResponse } from "next/server";
 import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
 import { isValidObjectId } from "mongoose";
+import { mkdirSync, existsSync } from "fs";
 
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
 
   if (!isValidObjectId(id)) {
-    return NextResponse.json(
-      { message: "آیدی محصول نامعتبر است" },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "آیدی محصول نامعتبر است" }, { status: 400 });
   }
   try {
     const product = await Product.findById(id);
@@ -28,6 +26,10 @@ export async function GET(request, { params }) {
       status: 500,
     });
   }
+}
+
+function extractFileName(url) {
+  return url.split("/").pop();
 }
 
 // PUT: Update an existing product by ID
@@ -94,18 +96,38 @@ export async function PUT(request, { params }) {
       return new Response(JSON.stringify({ message: "نام محصول باید بین 3 تا 30 کاراکتر باشد" }), { status: 400 });
     }
 
+     const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
+        if (!nameRegex.test(name)) {
+          return NextResponse.json({message : "نام میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+        }
+
+
+
+
     if (!author || author.trim() === "") {
       return new Response(JSON.stringify({ message: "نام نویسنده الزامی است" }), { status: 400 });
     }
     if (author.length < 3 || author.length > 50) {
       return new Response(JSON.stringify({ message: "نام نویسنده باید بین 3 تا 50 کاراکتر باشد" }), { status: 400 });
     }
+
+    const authorRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,50}$/;
+        if (!authorRegex.test(author)) {
+          return NextResponse.json({message : "نام نویسنده میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+        }
+
+
     if (!description || description.trim() === "") {
       return new Response(JSON.stringify({ message: "توضیحات محصول الزامی است" }), { status: 400 });
     }
     if (description.length < 3 || description.length > 500) {
       return new Response(JSON.stringify({ message: "توضیحات محصول باید بین 3 تا 500 کاراکتر باشد" }), { status: 400 });
     }
+
+    const descriptionRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,500}$/;
+        if (!descriptionRegex.test(description)) {
+          return NextResponse.json({message : "توضیحات محصول میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
+        }
 
     if (!category) {
       return new Response(JSON.stringify({ message: "انتخاب دسته‌بندی الزامی است" }), { status: 400 });
@@ -151,6 +173,14 @@ export async function PUT(request, { params }) {
     let imageUrls = [];
     let fileUrls = [];
 
+    // Function to generate a unique file name based on the current timestamp
+    const generateUniqueFileName = (originalName) => {
+      const extname = originalName.slice(originalName.lastIndexOf(".")); 
+      const basename = originalName.slice(0, originalName.lastIndexOf("."));
+      const timestamp = Date.now(); 
+      return `${basename}-${timestamp}${extname}`; 
+    };
+
     // Handle images
     if (images && images.length > 0) {
       for (const image of images) {
@@ -160,10 +190,11 @@ export async function PUT(request, { params }) {
           const buffer = Buffer.from(bytes);
 
           const uploadDir = join(process.cwd(), "public/uploads/images");
-          const filePath = join(uploadDir, image.name);
+          const uniqueImageName = generateUniqueFileName(image.name);
+          const filePath = join(uploadDir, uniqueImageName);
 
           await writeFile(filePath, buffer);
-          imageUrls.push(`/uploads/images/${image.name}`);
+          imageUrls.push(`/uploads/images/${uniqueImageName}`);
         } else if (typeof image === "string") {
           // Keep existing image URLs
           imageUrls.push(image);
@@ -193,11 +224,17 @@ export async function PUT(request, { params }) {
           const bytes = await file.arrayBuffer();
           const buffer = Buffer.from(bytes);
 
-          const uploadDir = join(process.cwd(), "public/uploads/files");
-          const filePath = join(uploadDir, file.name);
+          const uploadDir = join(process.cwd(), "uploads/private/files");
+          const uniqueFileName = generateUniqueFileName(file.name);
+
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+
+          const filePath = join(uploadDir, uniqueFileName);
 
           await writeFile(filePath, buffer);
-          fileUrls.push(`/uploads/files/${file.name}`);
+          fileUrls.push(`uploads/private/files/${uniqueFileName}`);
         } else if (typeof file === "string") {
           fileUrls.push(file);
         } else {
@@ -209,7 +246,7 @@ export async function PUT(request, { params }) {
       if (product.fileUrls && product.fileUrls.length > 0) {
         for (const oldFile of product.fileUrls) {
           if (!fileUrls.includes(oldFile)) {
-            const oldFilePath = join(process.cwd(), "public", oldFile);
+            const oldFilePath = join(process.cwd(), "uploads/private/files", extractFileName(oldFile));
             await unlink(oldFilePath).catch(() => {
               console.log("خطا در حذف فایل قبلی");
             });

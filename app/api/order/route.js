@@ -73,6 +73,11 @@ export async function POST(req) {
         .join("")}
   </ul>
   <p>از خرید شما متشکریم!</p>
+  <p>
+    <a href="${process.env.BASE_URL}/user/orders/${newOrder._id}" target="_blank" style="color: #1a73e8;">
+      مشاهده جزئیات سفارش
+    </a>
+  </p>
 `;
 
     // Send email to user

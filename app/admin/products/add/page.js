@@ -102,6 +102,8 @@ const AddProduct = () => {
       setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
       return false;
     }
+    
+    
     if (!name || name.trim() === "") {
       setFormError("نام محصول الزامی میباشد");
       return false;
@@ -110,21 +112,37 @@ const AddProduct = () => {
       return false;
     }
 
+    const nameRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,30}$/;
+    if (!nameRegex.test(name)) {
+      setError("نام میتواند شامل حروف ، اعداد و فاصله باشد");
+    }
+
     if (!author || author.trim() === "") {
       setFormError("نام نویسنده الزامی است");
       return false;
-    } else if (author.length < 3 || author.length > 30) {
-      setFormError("نام نویسنده باید بین ۳ تا ۳۰ کاراکتر باشد");
+    } else if (author.length < 5 || author.length > 30) {
+      setFormError("نام نویسنده باید بین ۳ تا 5۰ کاراکتر باشد");
       return false;
+    }
+
+    const authorRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,50}$/;
+    if (!authorRegex.test(author)) {
+      setError("نام نویسنده میتواند شامل حروف ، اعداد و فاصله باشد");
     }
 
     if (!description || description.trim() === "") {
       setFormError("توضیحات محصول الزامی میباشد");
       return false;
-    } else if (description.length < 3 || description.length > 200) {
-      setFormError("توضیحات محصول باید بین ۳ تا 200 باشد");
+    } else if (description.length < 3 || description.length > 500) {
+      setFormError("توضیحات محصول باید بین ۳ تا 500 باشد");
       return false;
     }
+
+    const descriptionRegex = /^[a-zA-Z0-9\s\u0600-\u06FF]{3,500}$/;
+    if (!descriptionRegex.test(description)) {
+      setError("نام میتواند شامل حروف ، اعداد و فاصله باشد");
+    }
+    
     if (!category) {
       setFormError("دسته بندی محصول باید باشد");
       return false;
