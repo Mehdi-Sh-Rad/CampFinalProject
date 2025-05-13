@@ -168,17 +168,15 @@ export default function ProductDetail() {
           <div className="md:w-1/3 w-full flex flex-col items-center">
             {selectedImage ? (
               <div className="flex items-center justify-center mb-4">
-                {/* دکمه فلش چپ کنار تصویر بزرگ */}
                 {product.imageUrls && product.imageUrls.length > 1 && (
                   <button
                     className="flex-shrink-0 text-[#7B61FF] hover:text-[#6A50E6] p-1 rounded-full transition-all mr-4 shadow-md hover:shadow-lg"
-                    onClick={handlePrevImage} // فلش چپ برای تصویر قبلی
+                    onClick={handlePrevImage} 
                   >
                     <FaArrowRight size={24} />
                   </button>
                 )}
 
-                {/* تصویر بزرگ */}
                 <div
                   className="relative w-[200px] h-[280px] sm:w-[250px] sm:h-[350px] cursor-pointer"
                   onClick={() => setIsLightboxOpen(true)}
@@ -191,11 +189,10 @@ export default function ProductDetail() {
                   />
                 </div>
 
-                {/* دکمه فلش راست کنار تصویر بزرگ */}
                 {product.imageUrls && product.imageUrls.length > 1 && (
                   <button
                     className="flex-shrink-0 text-[#7B61FF] hover:text-[#6A50E6] p-1 rounded-full transition-all ml-4 shadow-md hover:shadow-lg"
-                    onClick={handleNextImage} // فلش راست برای تصویر بعدی
+                    onClick={handleNextImage} 
                   >
                     <FaArrowLeft size={24} />
                   </button>
@@ -207,7 +204,6 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* گالری تصاویر کوچک */}
             {product.imageUrls && product.imageUrls.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2 w-full">
                 {product.imageUrls.map((imageUrl, index) => (
@@ -278,28 +274,25 @@ export default function ProductDetail() {
 
         {isLightboxOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1001]" // تغییر z-index به 1001
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1001]" 
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsLightboxOpen(false);
               }
             }}
           >
-            <div className="relative flex items-center justify-center w-full max-w-4xl h-[80vh] p-4">
-              {/* دکمه فلش چپ (کنار تصویر) */}
-              {product.imageUrls && product.imageUrls.length > 1 && (
+            <div className="relative flex items-center justify-center w-full max-w-4xl h-[80vh] p-4">              {product.imageUrls && product.imageUrls.length > 1 && (
                 <button
                   className="flex-shrink-0 text-white text-2xl bg-[#7B61FF] hover:bg-[#6A50E6] p-1 rounded-full transition-all mr-4"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handlePrevImage(); // فلش چپ برای تصویر قبلی
+                    handlePrevImage(); 
                   }}
                 >
                   <FaArrowRight />
                 </button>
               )}
 
-              {/* تصویر بزرگ */}
               <div className="relative w-full max-w-3xl h-full">
                 <Image
                   src={selectedImage}
@@ -307,7 +300,6 @@ export default function ProductDetail() {
                   fill
                   className="object-contain"
                 />
-                {/* شماره تصویر */}
                 {product.imageUrls && product.imageUrls.length > 1 && (
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#1B1F3B] text-white px-3 py-1 rounded-full text-sm">
                     {selectedImageIndex + 1} / {product.imageUrls.length}
@@ -315,20 +307,18 @@ export default function ProductDetail() {
                 )}
               </div>
 
-              {/* دکمه فلش راست (کنار تصویر) */}
               {product.imageUrls && product.imageUrls.length > 1 && (
                 <button
                   className="flex-shrink-0 text-white text-2xl bg-[#7B61FF] hover:bg-[#6A50E6] p-1 rounded-full transition-all ml-4"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleNextImage(); // فلش راست برای تصویر بعدی
+                    handleNextImage(); 
                   }}
                 >
                   <FaArrowLeft />
                 </button>
               )}
 
-              {/* دکمه بستن */}
               <button
                 className="absolute top-4 right-4 text-white text-3xl"
                 onClick={() => setIsLightboxOpen(false)}
