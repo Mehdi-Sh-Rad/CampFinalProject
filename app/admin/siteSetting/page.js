@@ -1,5 +1,4 @@
 "use client";
-
 import AuthWrapper from "@/app/components/auth/auth";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -11,6 +10,7 @@ const SiteSetting = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -21,9 +21,13 @@ const SiteSetting = () => {
         setLogoSettings(logoData);
 
         const siteSettingResponse = await fetch("/api/siteSetting");
-        if (!siteSettingResponse.ok) throw new Error("مشکل در دریافت تنظیمات سایت");
+        if (!siteSettingResponse.ok)
+          throw new Error("مشکل در دریافت تنظیمات سایت");
         const siteSettingData = await siteSettingResponse.json();
-        setSiteSetting({ title: siteSettingData.title, slogan: siteSettingData.slogan });
+        setSiteSetting({
+          title: siteSettingData.title,
+          slogan: siteSettingData.slogan,
+        });
 
         const bannersResponse = await fetch("/api/banners");
         if (!bannersResponse.ok) throw new Error("مشکل در دریافت بنرها");
@@ -91,7 +95,9 @@ const SiteSetting = () => {
 
   const handleBannerDelete = async (id) => {
     try {
-      const response = await fetch(`/api/banners?id=${id}`, { method: "DELETE" });
+      const response = await fetch(`/api/banners?id=${id}`, {
+        method: "DELETE",
+      });
       if (response.ok) {
         const updatedBanners = await response.json();
         setBanners(updatedBanners);
@@ -112,15 +118,28 @@ const SiteSetting = () => {
             مدیریت تنظیمات سایت
           </h1>
           <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">
-            تنظیمات سایت شامل لوگو، بنرها و سایر موارد را از این بخش مدیریت کنید.
+            تنظیمات سایت شامل لوگو، بنرها و سایر موارد را از این بخش مدیریت
+            کنید.
           </span>
           <Link
             href="/admin/siteSetting/add"
             className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg"
           >
             افزودن بنر
-            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            <svg
+              width="16"
+              height="16"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
           </Link>
           <Image
@@ -137,30 +156,46 @@ const SiteSetting = () => {
             {error && <div className="text-red-500 text-center">{error}</div>}
 
             <div className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4">مدیریت عنوان و شعار</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                مدیریت عنوان و شعار
+              </h2>
               {loading ? (
                 <div className="w-full h-24 bg-gray-300 animate-pulse"></div>
               ) : (
                 <form onSubmit={handleSiteSettingSubmit} className="space-y-4">
                   <div>
-                    <label className="block mb-2 text-sm font-medium">عنوان سایت:</label>
+                    <label className="block mb-2 text-sm font-medium">
+                      عنوان سایت:
+                    </label>
                     <input
                       type="text"
                       name="title"
                       value={siteSetting.title}
-                      onChange={(e) => setSiteSetting({ ...siteSetting, title: e.target.value })}
+                      onChange={(e) =>
+                        setSiteSetting({
+                          ...siteSetting,
+                          title: e.target.value,
+                        })
+                      }
                       className="w-full p-2 border rounded-md"
                       placeholder="عنوان سایت"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium">شعار سایت:</label>
+                    <label className="block mb-2 text-sm font-medium">
+                      شعار سایت:
+                    </label>
                     <input
                       type="text"
                       name="slogan"
                       value={siteSetting.slogan}
-                      onChange={(e) => setSiteSetting({ ...siteSetting, slogan: e.target.value })}
+                      onChange={(e) =>
+                        setSiteSetting({
+                          ...siteSetting,
+                          slogan: e.target.value,
+                        })
+                      }
                       className="w-full p-2 border rounded-md"
                       placeholder="شعار سایت"
                       required
@@ -184,8 +219,14 @@ const SiteSetting = () => {
                 <form onSubmit={handleLogoSubmit} encType="multipart/form-data">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block mb-2 text-sm font-medium">لوگوی هدر:</label>
-                      <input type="file" name="headerLogo" className="w-full p-2 border rounded-md" />
+                      <label className="block mb-2 text-sm font-medium">
+                        لوگوی هدر:
+                      </label>
+                      <input
+                        type="file"
+                        name="headerLogo"
+                        className="w-full p-2 border rounded-md"
+                      />
                       {logoSettings?.headerLogo && (
                         <Image
                           src={logoSettings.headerLogo}
@@ -217,28 +258,31 @@ const SiteSetting = () => {
                         <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                           <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                             <tr>
-                              <th scope="col" className="px-4 py-4">#</th>
-                              <th scope="col" className="px-4 py-4">تصویر</th>
-                              <th scope="col" className="px-4 py-4">عنوان</th>
-                              <th scope="col" className="px-4 py-4">زیرعنوان</th>
-                              <th scope="col" className="px-4 py-4">لینک</th>
-                              <th scope="col" className="px-4 py-4">عملیات</th>
+                              <th scope="col" className="px-4 py-4">
+                                #
+                              </th>
+                              <th scope="col" className="px-4 py-4">
+                                تصویر
+                              </th>
+                              <th scope="col" className="px-4 py-4">
+                                لینک
+                              </th>
+                              <th scope="col" className="px-4 py-4">
+                                عملیات
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
                             {[...Array(4)].map((_, index) => (
-                              <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
+                              <tr
+                                key={index}
+                                className="border-b border-neutral-200 dark:border-white/10"
+                              >
                                 <td className="whitespace-nowrap px-4 py-4 font-medium">
                                   <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                                 </td>
                                 <td className="whitespace-nowrap px-4 py-4">
                                   <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
-                                </td>
-                                <td className="whitespace-nowrap px-4 py-4">
-                                  <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
-                                </td>
-                                <td className="whitespace-nowrap px-4 py-4">
-                                  <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                                 </td>
                                 <td className="whitespace-nowrap px-4 py-4">
                                   <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
@@ -254,23 +298,36 @@ const SiteSetting = () => {
                         <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
                           <thead className="border-b border-neutral-200 bg-neutral-50 dark:bg-gray-600 dark:border-gray-800 font-medium dark:text-neutral-200">
                             <tr>
-                              <th scope="col" className="px-4 py-4">#</th>
-                              <th scope="col" className="px-4 py-4">تصویر</th>
-                              <th scope="col" className="px-4 py-4">عنوان</th>
-                              <th scope="col" className="px-4 py-4">زیرعنوان</th>
-                              <th scope="col" className="px-4 py-4">لینک</th>
-                              <th scope="col" className="px-4 py-4">عملیات</th>
+                              <th scope="col" className="px-4 py-4">
+                                #
+                              </th>
+                              <th scope="col" className="px-4 py-4">
+                                تصویر
+                              </th>
+                              <th scope="col" className="px-4 py-4">
+                                لینک
+                              </th>
+                              <th scope="col" className="px-4 py-4">
+                                عملیات
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
                             {banners.map((banner, index) => (
-                              <tr key={banner._id} className="border-b border-neutral-200 dark:border-white/10">
-                                <td className="whitespace-nowrap px-4 py-4 font-medium">{index + 1}</td>
+                              <tr
+                                key={banner._id}
+                                className="border-b border-neutral-200 dark:border-white/10"
+                              >
+                                <td className="whitespace-nowrap px-4 py-4 font-medium">
+                                  {index + 1}
+                                </td>
                                 <td className="whitespace-nowrap px-4 py-4">
                                   {banner.image ? (
                                     <Image
                                       src={banner.image}
-                                      alt={banner.title}
+                                      alt={`${banner.title || "بنر"} - ${
+                                        banner.subtitle || ""
+                                      }`}
                                       width={80}
                                       height={40}
                                       className="object-cover rounded mx-auto"
@@ -279,13 +336,22 @@ const SiteSetting = () => {
                                     <span>بدون تصویر</span>
                                   )}
                                 </td>
-                                <td className="whitespace-nowrap px-4 py-4">{banner.title}</td>
-                                <td className="whitespace-nowrap px-4 py-4">{banner.subtitle}</td>
-                                <td className="whitespace-nowrap px-4 py-4">{banner.link}</td>
+                                <td className="whitespace-nowrap px-4 py-4">
+                                  {banner.link}
+                                </td>
                                 <td className="whitespace-nowrap px-4 py-4">
                                   <div className="flex justify-center gap-x-2">
-                                    <Link href={`/admin/siteSetting/${banner._id}`}>
-                                      <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor">
+                                    <Link
+                                      href={`/admin/siteSetting/${banner._id}`}
+                                    >
+                                      <svg
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                      >
                                         <path
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
@@ -301,11 +367,28 @@ const SiteSetting = () => {
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
                                         />
-                                        <path d="M15.1655 4.60254L19.7315 9.16854" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path
+                                          d="M15.1655 4.60254L19.7315 9.16854"
+                                          stroke="currentColor"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
                                       </svg>
                                     </Link>
-                                    <button onClick={() => handleBannerDelete(banner._id)}>
-                                      <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor">
+                                    <button
+                                      onClick={() =>
+                                        handleBannerDelete(banner._id)
+                                      }
+                                    >
+                                      <svg
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                      >
                                         <path
                                           d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
                                           stroke="currentColor"
@@ -313,7 +396,13 @@ const SiteSetting = () => {
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
                                         />
-                                        <path d="M20.708 6.23975H3.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path
+                                          d="M20.708 6.23975H3.75"
+                                          stroke="currentColor"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
                                         <path
                                           d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
                                           stroke="currentColor"

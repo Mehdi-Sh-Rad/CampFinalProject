@@ -1,7 +1,7 @@
 import connectToDatabase from "@/app/lib/db";
 import Banner from "@/models/Banner";
 import { NextResponse } from "next/server";
-import { writeFile, unlink } from "fs/promises"; 
+import { writeFile, unlink } from "fs/promises";
 import { join, dirname } from "path";
 import { mkdir } from "fs/promises";
 
@@ -12,7 +12,9 @@ export async function GET() {
     const banners = await Banner.find();
     return new Response(JSON.stringify(banners), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ message: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
   }
 }
 
@@ -22,17 +24,20 @@ export async function POST(request) {
     const data = await request.formData();
 
     const bannerData = {
-      title: data.get("title"),
-      subtitle: data.get("subtitle"),
       link: data.get("link"),
+      description: data.get("description"),
     };
 
     const image = data.get("image");
     if (image && image.size > 0) {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const filePath = join(process.cwd(), "public/uploads/banners", image.name);
-      
+      const filePath = join(
+        process.cwd(),
+        "public/uploads/banners",
+        image.name
+      );
+
       const dir = dirname(filePath);
       await mkdir(dir, { recursive: true });
 
@@ -46,7 +51,9 @@ export async function POST(request) {
     return new Response(JSON.stringify(banner), { status: 200 });
   } catch (error) {
     console.error("Error in POST /api/banners:", error);
-    return new Response(JSON.stringify({ message: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
   }
 }
 
@@ -62,16 +69,19 @@ export async function PUT(request) {
     }
 
     const bannerData = {
-      title: data.get("title"),
-      subtitle: data.get("subtitle"),
       link: data.get("link"),
-      image: existingBanner.image, 
+      description: data.get("description"),
+      image: existingBanner.image,
     };
 
     const image = data.get("image");
     if (image && image.size > 0) {
       if (existingBanner.image) {
-        const oldImagePath = join(process.cwd(), "public", existingBanner.image);
+        const oldImagePath = join(
+          process.cwd(),
+          "public",
+          existingBanner.image
+        );
         try {
           await unlink(oldImagePath);
           console.log(`فایل تصویر قبلی حذف شد: ${oldImagePath}`);
@@ -82,8 +92,12 @@ export async function PUT(request) {
 
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const filePath = join(process.cwd(), "public/uploads/banners", image.name);
-      
+      const filePath = join(
+        process.cwd(),
+        "public/uploads/banners",
+        image.name
+      );
+
       const dir = dirname(filePath);
       await mkdir(dir, { recursive: true });
 
@@ -91,11 +105,15 @@ export async function PUT(request) {
       bannerData.image = `/uploads/banners/${image.name}`;
     }
 
-    const banner = await Banner.findByIdAndUpdate(id, bannerData, { new: true });
+    const banner = await Banner.findByIdAndUpdate(id, bannerData, {
+      new: true,
+    });
     return new Response(JSON.stringify(banner), { status: 200 });
   } catch (error) {
     console.error("Error in PUT /api/banners:", error);
-    return new Response(JSON.stringify({ message: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
   }
 }
 
@@ -121,6 +139,8 @@ export async function DELETE(request) {
     return new Response(JSON.stringify(banners), { status: 200 });
   } catch (error) {
     console.error("Error in DELETE /api/banners:", error);
-    return new Response(JSON.stringify({ message: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
   }
 }

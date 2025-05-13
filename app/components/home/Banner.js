@@ -4,6 +4,7 @@ import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import Image from "next/image";
 
 export default function Banner({ banners }) {
   return (
@@ -19,26 +20,20 @@ export default function Banner({ banners }) {
       >
         {banners.map((banner, index) => (
           <SwiperSlide key={index}>
-            <div
-              className="relative w-full"
-              style={{
-                backgroundImage: `url(${banner.image || "https://via.placeholder.com/1200x400?text=Placeholder+Image"})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                minHeight: "400px",
-              }}
+            <a
+              href={banner.link || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full"
             >
-              <div className="flex flex-col items-center justify-center h-full">
-                <div className="bg-background bg-opacity-80 p-4 md:p-6 rounded-md shadow-md">
-                  <h2 className="text-xl md:text-3xl font-bold mb-2 text-dark">{banner.title}</h2>
-                  <p className="text-base md:text-lg mb-2 text-gray-600">{banner.subtitle}</p>
-                  <p className="text-lg md:text-xl mb-4 text-red-500 font-handwritten">{banner.extra}</p>
-                  <button className="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">
-                    مشاهده تخفیف‌ها
-                  </button>
-                </div>
-              </div>
-            </div>
+              <Image
+                src={banner.image || "https://via.placeholder.com/1200x400?text=Placeholder+Image"}
+                alt={banner.description || "بنر"}
+                width={1200}
+                height={200} 
+                className="w-full object-cover banner-image" 
+              />
+            </a>
           </SwiperSlide>
         ))}
       </Swiper>
@@ -59,6 +54,11 @@ export default function Banner({ banners }) {
         .custom-swiper .swiper-button-next:hover,
         .custom-swiper .swiper-button-prev:hover {
           color: #4BC0D9 !important;
+        }
+        .banner-image {
+          min-height: 250px !important; 
+          height: 250px !important; 
+          object-fit: cover !important; 
         }
       `}</style>
     </section>

@@ -21,7 +21,7 @@ import {
   FaNewspaper,
 } from "react-icons/fa";
 
-//icons for circle menu
+// icons for circle menu
 const categoryIcons = {
   "زبان اصلی": <FaFlag size={20} />,
   دانشگاهی: <FaGraduationCap size={20} />,
@@ -54,8 +54,13 @@ export default function Header() {
     slogan: "جهان کتاب، در دستان شما",
   });
   const [categories, setCategories] = useState([]);
+<<<<<<< Updated upstream
   const { data: session, status } = useSession();
   const { cart } = useCart();
+=======
+  const { cart, showPopup } = useCart();
+  const [headerHeight, setHeaderHeight] = useState(0);
+>>>>>>> Stashed changes
 
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
@@ -97,6 +102,22 @@ export default function Header() {
     };
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const headerElement = document.querySelector("header");
+    if (headerElement) {
+      const height = headerElement.offsetHeight;
+      setHeaderHeight(height);
+    }
+
+    const handleResize = () => {
+      const newHeight = headerElement?.offsetHeight || 0;
+      setHeaderHeight(newHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isMenuOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -161,20 +182,166 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-background shadow-md">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex justify-between items-center border-b border-gray-200">
-          <Link href="/">
-            <Image
-              src={logoSettings?.headerLogo || "/PersianLogo.png"}
-              alt="لوگوی سایت"
-              width={200}
-              height={60}
-              className="object-contain"
-            />
-          </Link>
+    <>
+      <header className="fixed top-0 left-0 right-0 w-full z-[1000] bg-background shadow-md">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center border-b border-gray-200">
+            <Link href="/">
+              <Image
+                src={logoSettings?.headerLogo || "/PersianLogo.png"}
+                alt="لوگوی سایت"
+                width={200}
+                height={60}
+                className="object-contain"
+              />
+            </Link>
 
-          <div className="hidden md:flex md:flex-1 mx-4 relative max-w-lg">
+            <div className="hidden md:flex md:flex-1 mx-4 relative max-w-lg">
+              <input
+                type="text"
+                placeholder="جستجوی کتاب‌ها..."
+                className="w-full p-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:border-primary focus:ring-0 bg-white text-dark shadow-sm transition-all duration-300"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <FaSearch
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-dark"
+                size={20}
+              />
+              {searchQuery.trim() && (
+                <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
+                  {isLoading ? (
+                    <div className="p-4 text-center text-dark">
+                      در حال جستجو...
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    searchResults.map((product) => (
+                      <Link
+                        key={product._id}
+                        href={`/products/${product._id}`}
+                        className="flex items-center gap-4 p-3 hover:bg-gray-100 transition"
+                      >
+                        {product.imageUrls?.[0] && (
+                          <Image
+                            src={product.imageUrls[0]}
+                            alt={product.name}
+                            width={40}
+                            height={60}
+                            className="object-cover rounded"
+                          />
+                        )}
+                        <div>
+                          <h3 className="text-sm font-medium text-dark">
+                            {product.name}
+                          </h3>
+                          <p className="text-xs text-gray-500">
+                            {product.author}
+                          </p>
+                          <p className="text-xs text-dark">
+                            {product.free ? (
+                              "رایگان"
+                            ) : product.discountPrice ? (
+                              <>
+                                <span className="line-through text-gray-400 mr-2">
+                                  {product.price} تومان
+                                </span>
+                                <span className="text-green-600">
+                                  {product.discountPrice} تومان
+                                </span>
+                              </>
+                            ) : (
+                              `${product.price} تومان`
+                            )}
+                          </p>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-dark">
+                      هیچ نتیجه‌ای یافت نشد
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-4">
+                <div className="relative group">
+                  <Link
+                    href="/cart"
+                    className="btn btn-link position-relative text-dark header-cart-link"
+                  >
+                    <FaShoppingCart size={22} className="text-dark" />
+                  </Link>
+                  <span className="absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                    سبد
+                  </span>
+                  {totalItems > 0 && (
+                    <span
+                      style={{ top: "80%" }}
+                      className="bg-red-400 text-white rounded-full w-5 h-5 flex items-center justify-center absolute -right-2 -top-2 text-xs font-bold"
+                    >
+                      {totalItems}
+                    </span>
+                  )}
+                </div>
+
+                <div className="relative group">
+                  <Link
+                    href="/user"
+                    className="text-dark hover:text-secondary flex items-center gap-2"
+                  >
+                    <FaUser size={22} className="text-dark" />
+                  </Link>
+                  <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                    کاربر
+                  </span>
+                </div>
+                {session?.user?.isAdmin ? (
+                  <div className="relative group">
+                    <button
+                      onClick={handleAdminClick}
+                      className="text-dark hover:text-secondary flex items-center gap-2"
+                    >
+                      <FaUserCog size={28} className="text-dark" />
+                    </button>
+                    <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                      ادمین
+                    </span>
+                  </div>
+                ) : (
+                  ""
+                )}
+
+                {status === "authenticated" ? (
+                  <div className="relative group">
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="text-dark hover:text-secondary flex items-center gap-2"
+                    >
+                      <FaSignOutAlt size={24} className="text-red-500" />
+                    </button>
+                    <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                      خروج
+                    </span>
+                  </div>
+                ) : (
+                  <Link
+                    href="/auth/login"
+                    className="bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary"
+                  >
+                    ورود/ثبت‌نام
+                  </Link>
+                )}
+              </div>
+              <button className="md:hidden text-dark" onClick={toggleMenu}>
+                {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="md:hidden w-full mt-2 relative">
             <input
               type="text"
               placeholder="جستجوی کتاب‌ها..."
@@ -190,7 +357,11 @@ export default function Header() {
               <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
                 {isLoading ? (
                   <div className="p-4 text-center text-dark">
+<<<<<<< Updated upstream
                     در حال بارگذاریYOU...
+=======
+                    در حال بارگذاری...
+>>>>>>> Stashed changes
                   </div>
                 ) : searchResults.length > 0 ? (
                   searchResults.map((product) => (
@@ -243,6 +414,7 @@ export default function Header() {
             )}
           </div>
 
+<<<<<<< Updated upstream
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-4">
               <div className="relative group">
@@ -310,160 +482,95 @@ export default function Header() {
             <button className="md:hidden text-dark" onClick={toggleMenu}>
               {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
+=======
+          <div className="text-center py-2">
+            <h1 className="text-lg md:text-xl font-bold text-primary">
+              {siteSetting.title}
+            </h1>
+            <p className="text-base md:text-lg font-medium text-primary mt-1 opacity-80">
+              {siteSetting.slogan}
+            </p>
+>>>>>>> Stashed changes
           </div>
         </div>
 
-        <div className="md:hidden w-full mt-2 relative">
-          <input
-            type="text"
-            placeholder="جستجوی کتاب‌ها..."
-            className="w-full p-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:border-primary focus:ring-0 bg-white text-dark shadow-sm transition-all duration-300"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <FaSearch
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-dark"
-            size={20}
-          />
-          {searchQuery.trim() && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
-              {isLoading ? (
-                <div className="p-4 text-center text-dark">
-                  در حال بارگذاری...
-                </div>
-              ) : searchResults.length > 0 ? (
-                searchResults.map((product) => (
+        <nav className="py-4 bg-white hidden md:block">
+          <div className="container mx-auto px-4">
+            <ul className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              {circleMenuItems.map((item, index) => (
+                <li key={index} className="flex flex-col items-center">
                   <Link
-                    key={product._id}
-                    href={`/products/${product._id}`}
-                    className="flex items-center gap-4 p-3 hover:bg-gray-100 transition"
+                    href={item.href}
+                    className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-primary hover:text-white hover:shadow-md transition"
                   >
-                    {product.imageUrls?.[0] && (
-                      <Image
-                        src={product.imageUrls[0]}
-                        alt={product.name}
-                        width={40}
-                        height={60}
-                        className="object-cover rounded"
-                      />
-                    )}
-                    <div>
-                      <h3 className="text-sm font-medium text-dark">
-                        {product.name}
-                      </h3>
-                      <p className="text-xs text-gray-500">{product.author}</p>
-                      <p className="text-xs text-dark">
-                        {product.free ? (
-                          "رایگان"
-                        ) : product.discountPrice ? (
-                          <>
-                            <span className="line-through text-gray-400 mr-2">
-                              {product.price} تومان
-                            </span>
-                            <span className="text-green-600">
-                              {product.discountPrice} تومان
-                            </span>
-                          </>
-                        ) : (
-                          `${product.price} تومان`
-                        )}
-                      </p>
-                    </div>
+                    {item.icon}
                   </Link>
-                ))
+                  <span className="mt-2 text-sm text-dark">{item.name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+
+        {isMenuOpen && (
+          <nav className="md:hidden bg-white shadow-md">
+            <ul className="flex flex-col gap-4 p-4 text-dark">
+              {status === "authenticated" ? (
+                <li>
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="w-full bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary flex items-center gap-2 justify-center"
+                  >
+                    <FaSignOutAlt size={20} className="text-red-500" /> خروج
+                  </button>
+                  <hr className="border-t border-gray-200" />
+                </li>
               ) : (
-                <div className="p-4 text-center text-dark">
-                  هیچ نتیجه‌ای یافت نشد
-                </div>
+                <li>
+                  <Link
+                    href="/auth/login"
+                    className="flex items-center gap-2 hover:text-secondary py-2"
+                  >
+                    <FaUser /> ورود / ثبت نام
+                  </Link>
+                  <hr className="border-t border-gray-200" />
+                </li>
               )}
-            </div>
-          )}
-        </div>
-
-        <div className="text-center py-2">
-          <h1 className="text-lg md:text-xl font-bold text-primary">
-            {siteSetting.title}
-          </h1>
-          <p className="text-base md:text-lg font-medium text-primary mt-1 opacity-80">
-            {siteSetting.slogan}
-          </p>
-        </div>
-      </div>
-
-      <nav className="py-4 bg-white hidden md:block">
-        <div className="container mx-auto px-4">
-          <ul className="flex flex-wrap justify-center gap-4 sm:gap-6">
-            {circleMenuItems.map((item, index) => (
-              <li key={index} className="flex flex-col items-center">
+              <li>
                 <Link
-                  href={item.href}
-                  className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-primary hover:text-white hover:shadow-md transition"
+                  href="/cart"
+                  className="flex items-center gap-2 hover:text-secondary py-2"
                 >
-                  {item.icon}
+                  <FaShoppingCart /> سبد خرید
                 </Link>
-                <span className="mt-2 text-sm text-dark">{item.name}</span>
+                <hr className="border-t border-gray-200" />
               </li>
-            ))}
-          </ul>
-        </div>
-      </nav>
-
-      {isMenuOpen && (
-        <nav className="md:hidden bg-white shadow-md">
-          <ul className="flex flex-col gap-4 p-4 text-dark">
-            {status === "authenticated" ? (
               <li>
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary flex items-center gap-2 justify-center"
+                  onClick={handleAdminClick}
+                  className="block hover:text-secondary py-2"
                 >
-                  <FaSignOutAlt size={20} className="text-red-500" /> خروج
+                  پنل ادمین
                 </button>
                 <hr className="border-t border-gray-200" />
               </li>
-            ) : (
-              <li>
-                <Link
-                  href="/auth/login"
-                  className="flex items-center gap-2 hover:text-secondary py-2"
-                >
-                  <FaUser /> ورود / ثبت نام
-                </Link>
-                <hr className="border-t border-gray-200" />
-              </li>
-            )}
-            <li>
-              <Link
-                href="/cart"
-                className="flex items-center gap-2 hover:text-secondary py-2"
-              >
-                <FaShoppingCart /> سبد خرید
-              </Link>
-              <hr className="border-t border-gray-200" />
-            </li>
-            <li>
-              <button
-                onClick={handleAdminClick}
-                className="block hover:text-secondary py-2"
-              >
-                پنل ادمین
-              </button>
-              <hr className="border-t border-gray-200" />
-            </li>
-            {hamburgerMenuItems.map((item, index) => (
-              <li key={index}>
-                <Link
-                  href={item.href}
-                  className="block hover:text-secondary py-2"
-                >
-                  {item.name}
-                </Link>
-                <hr className="border-t border-gray-200" />
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
-    </header>
+              {hamburgerMenuItems.map((item, index) => (
+                <li key={index}>
+                  <Link
+                    href={item.href}
+                    className="block hover:text-secondary py-2"
+                  >
+                    {item.name}
+                  </Link>
+                  <hr className="border-t border-gray-200" />
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </header>
+
+      <div style={{ height: `${headerHeight}px` }} />
+    </>
   );
 }

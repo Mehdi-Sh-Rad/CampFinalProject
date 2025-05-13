@@ -9,6 +9,10 @@ import Categories from "./components/home/Categories";
 import Benefits from "./components/home/Benefits";
 import AwardsSection from "./components/home/AwardsSection";
 import Footer from "./components/home/Footer";
+<<<<<<< Updated upstream
+=======
+import Loading from "./loading";
+>>>>>>> Stashed changes
 
 export default function Home() {
   const [banners, setBanners] = useState([]);
@@ -187,10 +191,26 @@ export default function Home() {
     <div className="bg-background min-h-screen">
       <Header />
       <Banner banners={banners} />
-      <NewArrivals products={newArrivals.slice(0, 4)} totalProducts={newArrivals.length} id="new-arrivals" />
-      <NewBlogs blogPosts={newBlogs.slice(0, 3)} totalPosts={newBlogs.length} id="new-blogs" />
-      <Categories categories={categories.slice(0, 3)} totalCategories={categories.length} id="categories" />
-      <AwardsSection awards={awards.slice(0, 4)} totalAwards={awards.length} id="awards-section" />
+      <NewArrivals
+        products={newArrivals.slice(0, 4)}
+        totalProducts={newArrivals.length}
+        id="new-arrivals"
+      />
+      <NewBlogs
+        blogPosts={newBlogs.slice(0, 3)}
+        totalPosts={newBlogs.length}
+        id="new-blogs"
+      />
+      <Categories
+        categories={categories.slice(0, 3)}
+        totalCategories={categories.length}
+        id="categories"
+      />
+      <AwardsSection
+        awards={awards.slice(0, 4)}
+        totalAwards={awards.length}
+        id="awards-section"
+      />
       <Benefits id="benefits" />
       <Footer />
 

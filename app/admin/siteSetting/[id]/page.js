@@ -115,7 +115,7 @@ const EditBanner = () => {
                 {banner.image && (
                   <Image
                     src={banner.image}
-                    alt={banner.title}
+                    alt="بنر"
                     width={80}
                     height={40}
                     className="mt-2 object-cover rounded"
@@ -123,25 +123,15 @@ const EditBanner = () => {
                 )}
               </div>
               <div>
-                <label className="block mb-2 text-sm font-medium">عنوان:</label>
-                <input
-                  type="text"
-                  name="title"
-                  defaultValue={banner.title}
-                  className="w-full p-2 border rounded-md"
-                  placeholder="عنوان بنر"
-                />
-              </div>
-              <div>
                 <label className="block mb-2 text-sm font-medium">
-                  زیرعنوان:
+                  توضیحات:
                 </label>
                 <input
                   type="text"
-                  name="subtitle"
-                  defaultValue={banner.subtitle}
+                  name="description"
+                  defaultValue={banner.description || ""}
                   className="w-full p-2 border rounded-md"
-                  placeholder="زیرعنوان بنر"
+                  placeholder="توضیحات"
                 />
               </div>
               <div>
