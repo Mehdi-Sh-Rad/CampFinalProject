@@ -54,13 +54,9 @@ export default function Header() {
     slogan: "جهان کتاب، در دستان شما",
   });
   const [categories, setCategories] = useState([]);
-<<<<<<< Updated upstream
   const { data: session, status } = useSession();
-  const { cart } = useCart();
-=======
   const { cart, showPopup } = useCart();
   const [headerHeight, setHeaderHeight] = useState(0);
->>>>>>> Stashed changes
 
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
@@ -212,7 +208,7 @@ export default function Header() {
                 <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
                   {isLoading ? (
                     <div className="p-4 text-center text-dark">
-                      در حال جستجو...
+                      در حال بارگذاری...
                     </div>
                   ) : searchResults.length > 0 ? (
                     searchResults.map((product) => (
@@ -357,11 +353,7 @@ export default function Header() {
               <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
                 {isLoading ? (
                   <div className="p-4 text-center text-dark">
-<<<<<<< Updated upstream
-                    در حال بارگذاریYOU...
-=======
                     در حال بارگذاری...
->>>>>>> Stashed changes
                   </div>
                 ) : searchResults.length > 0 ? (
                   searchResults.map((product) => (
@@ -414,75 +406,6 @@ export default function Header() {
             )}
           </div>
 
-<<<<<<< Updated upstream
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-4">
-              <div className="relative group">
-                <Link
-                  href="/cart"
-                  className="btn btn-link position-relative text-dark header-cart-link"
-                >
-                  <FaShoppingCart size={22} className="text-dark" />
-                </Link>
-                <span className="absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
-                  سبد
-                </span>
-                {totalItems > 0 && (
-                  <span
-                    style={{ top: "80%" }}
-                    className="bg-red-400 text-white rounded-full w-5 h-5 flex items-center justify-center absolute -right-2 -top-2 text-xs font-bold"
-                  >
-                    {totalItems}
-                  </span>
-                )}
-              </div>
-              <div className="relative group">
-                <Link
-                  href="/user"
-                  className="text-dark hover:text-secondary flex items-center gap-2"
-                >
-                  <FaUser size={22} className="text-dark" />
-                </Link>
-                <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
-                  کاربر
-                </span>
-              </div>
-              <div className="relative group">
-                <button
-                  onClick={handleAdminClick}
-                  className="text-dark hover:text-secondary flex items-center gap-2"
-                >
-                  <FaUserCog size={28} className="text-dark" />
-                </button>
-                <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
-                  ادمین
-                </span>
-              </div>
-              {status === "authenticated" ? (
-                <div className="relative group">
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="text-dark hover:text-secondary flex items-center gap-2"
-                  >
-                    <FaSignOutAlt size={24} className="text-red-500" />
-                  </button>
-                  <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
-                    خروج
-                  </span>
-                </div>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary"
-                >
-                  ورود/ثبت‌نام
-                </Link>
-              )}
-            </div>
-            <button className="md:hidden text-dark" onClick={toggleMenu}>
-              {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-            </button>
-=======
           <div className="text-center py-2">
             <h1 className="text-lg md:text-xl font-bold text-primary">
               {siteSetting.title}
@@ -490,7 +413,6 @@ export default function Header() {
             <p className="text-base md:text-lg font-medium text-primary mt-1 opacity-80">
               {siteSetting.slogan}
             </p>
->>>>>>> Stashed changes
           </div>
         </div>
 

@@ -9,10 +9,7 @@ import Categories from "./components/home/Categories";
 import Benefits from "./components/home/Benefits";
 import AwardsSection from "./components/home/AwardsSection";
 import Footer from "./components/home/Footer";
-<<<<<<< Updated upstream
-=======
 import Loading from "./loading";
->>>>>>> Stashed changes
 
 export default function Home() {
   const [banners, setBanners] = useState([]);
@@ -166,10 +163,6 @@ export default function Home() {
   const isLoading = Object.values(loading).some((value) => value);
   const hasError = Object.values(errors).find((value) => value !== null);
 
-  if (isLoading) {
-    return <div className="text-center p-4">در حال بارگذاری...</div>;
-  }
-
   if (hasError) {
     return (
       <div className="text-center p-4 text-red-500">
@@ -189,8 +182,9 @@ export default function Home() {
 
   return (
     <div className="bg-background min-h-screen">
+      {isLoading && <Loading />}
       <Header />
-      <Banner banners={banners} />
+      <Banner banners={banners} style={{ height: "200px" }} />
       <NewArrivals
         products={newArrivals.slice(0, 4)}
         totalProducts={newArrivals.length}

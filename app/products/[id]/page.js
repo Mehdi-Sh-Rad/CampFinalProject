@@ -10,12 +10,8 @@ import { useSession } from "next-auth/react";
 import ProductCard from "@/app/components/ProductCard";
 import { useCart } from "@/app/context/CartContext";
 import AddToCartButton from "@/app/components/home/AddToCartButton";
-<<<<<<< Updated upstream
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner"; 
-=======
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
->>>>>>> Stashed changes
 
 export default function ProductDetail() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } =
@@ -28,7 +24,7 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
   const params = useParams();
   const productId = params?.id;
@@ -36,7 +32,7 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true); 
+        setLoading(true);
         const res = await fetch(`/api/products/${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن محصول");
         const fetchedProduct = await res.json();
@@ -50,13 +46,13 @@ export default function ProductDetail() {
           `/api/products?category=${fetchedProduct.category}&exclude=${productId}`
         );
         if (!relatedRes.ok) throw new Error("خطا در گرفتن محصولات پیشنهادی");
-        const fetchedRelatedProducts = await relatedRes.json();
+        const fetchedRelatedProducts = await res.json();
         setRelatedProducts(fetchedRelatedProducts);
       } catch (err) {
         setProductError(err.message);
-        setProduct(null); 
+        setProduct(null);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -68,7 +64,7 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        setLoading(true); 
+        setLoading(true);
         const res = await fetch(`/api/comments?productId=${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن دیدگاه‌ها");
         const data = await res.json();
@@ -76,7 +72,7 @@ export default function ProductDetail() {
       } catch (err) {
         setProductError(err.message);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -84,6 +80,24 @@ export default function ProductDetail() {
       fetchComments();
     }
   }, [productId]);
+
+  useEffect(() => {
+    if (!product) return;
+
+    const key = `viewed_${product._id}`;
+    const last = localStorage.getItem(key);
+    const now = Date.now();
+
+    if (!last || now - parseInt(last, 10) > 1000 * 60 * 60 * 24) {
+      fetch("/api/products/view", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product._id }),
+      }).catch(console.error);
+
+      localStorage.setItem(key, now.toString());
+    }
+  }, [product]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -122,36 +136,6 @@ export default function ProductDetail() {
     }
   };
 
-<<<<<<< Updated upstream
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <LoadingSpinner />
-        <Benefits />
-        <Footer />
-      </div>
-    );
-  }
-=======
-  useEffect(() => {
-    if (!product) return;
-
-    const key = `viewed_${product._id}`;
-    const last = localStorage.getItem(key);
-    const now = Date.now();
-
-    if (!last || now - parseInt(last, 10) > 1000 * 60 * 60 * 24) {
-      fetch("/api/products/view", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product._id }),
-      }).catch(console.error);
-
-      localStorage.setItem(key, now.toString());
-    }
-  }, [product]);
-
   const handlePrevImage = () => {
     if (!product || !product.imageUrls || product.imageUrls.length <= 1) return;
     const newIndex =
@@ -167,7 +151,17 @@ export default function ProductDetail() {
     setSelectedImageIndex(newIndex);
     setSelectedImage(product.imageUrls[newIndex]);
   };
->>>>>>> Stashed changes
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <LoadingSpinner />
+        <Benefits />
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -233,16 +227,11 @@ export default function ProductDetail() {
                       selectedImage === imageUrl
                         ? "border-primary"
                         : "border-gray-300"
-<<<<<<< Updated upstream
-                    }`}
-                    onClick={() => setSelectedImage(imageUrl)}
-=======
                     } flex-shrink-0`}
                     onClick={() => {
                       setSelectedImage(imageUrl);
                       setSelectedImageIndex(index);
                     }}
->>>>>>> Stashed changes
                   >
                     <Image
                       src={imageUrl}
@@ -288,17 +277,6 @@ export default function ProductDetail() {
                 </span>
               </p>
             </div>
-<<<<<<< Updated upstream
-            <p className="text-xl line-through font-semibold text-gray-500 mb-2">
-              {product.price.toLocaleString()} تومان
-            </p>
-            {product.discountPrice && (
-              <p className="text-sm text-red-500 mb-10">
-                قیمت با تخفیف: {product.discountPrice.toLocaleString()} تومان
-              </p>
-            )}
-
-=======
             {product.discountPrice ? (
               <section>
                 <p className="text-xl line-through font-semibold text-gray-500 mb-2">
@@ -313,7 +291,6 @@ export default function ProductDetail() {
                 {product.price.toLocaleString()} تومان
               </p>
             )}
->>>>>>> Stashed changes
             <AddToCartButton productId={product._id} />
           </div>
         </div>
@@ -390,17 +367,6 @@ export default function ProductDetail() {
           {productError && <p className="text-red-500 mb-4">{productError}</p>}
           {comments.length > 0 ? (
             <div className="space-y-4 mb-4">
-<<<<<<< Updated upstream
-              {comments.map((comment) => (
-                <div key={comment._id} className="border-b border-gray-200 pb-4">
-                  <p className="text-gray-600">{comment.text}</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    توسط: {comment.user?.email || "کاربر ناشناس"} -{" "}
-                    {new Date(comment.createdAt).toLocaleDateString("fa-IR")}
-                  </p>
-                </div>
-              ))}
-=======
               {comments.map(
                 (comment) =>
                   comment.status && (
@@ -418,7 +384,6 @@ export default function ProductDetail() {
                     </div>
                   )
               )}
->>>>>>> Stashed changes
             </div>
           ) : (
             <p className="text-gray-600 mb-4">
