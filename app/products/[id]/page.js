@@ -278,7 +278,7 @@ export default function ProductDetail() {
 
         {isLightboxOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1001]" // تغییر z-index به 1001
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsLightboxOpen(false);
