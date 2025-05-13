@@ -11,6 +11,7 @@ import ProductCard from "@/app/components/ProductCard";
 import { useCart } from "@/app/context/CartContext";
 import AddToCartButton from "@/app/components/home/AddToCartButton";
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 export default function ProductDetail() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } = useCart();
@@ -20,6 +21,7 @@ export default function ProductDetail() {
   const [newComment, setNewComment] = useState("");
   const [productError, setProductError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
@@ -36,6 +38,7 @@ export default function ProductDetail() {
         setProduct(fetchedProduct);
         if (fetchedProduct.imageUrls && fetchedProduct.imageUrls.length > 0) {
           setSelectedImage(fetchedProduct.imageUrls[0]);
+          setSelectedImageIndex(0);
         }
 
         const relatedRes = await fetch(
@@ -64,7 +67,7 @@ export default function ProductDetail() {
         const res = await fetch(`/api/comments?productId=${productId}`);
         if (!res.ok) throw new Error("خطا در گرفتن دیدگاه‌ها");
         const data = await res.json();
-        setComments(data);       
+        setComments(data);
       } catch (err) {
         setProductError(err.message);
       } finally {
@@ -115,7 +118,6 @@ export default function ProductDetail() {
   };
 
   useEffect(() => {
-
     if (!product) return;
 
     const key = `viewed_${product._id}`;
@@ -131,9 +133,21 @@ export default function ProductDetail() {
 
       localStorage.setItem(key, now.toString());
     }
+  }, [product]);
 
-  }, [product])
+  const handlePrevImage = () => {
+    if (!product || !product.imageUrls || product.imageUrls.length <= 1) return;
+    const newIndex = (selectedImageIndex - 1 + product.imageUrls.length) % product.imageUrls.length;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(product.imageUrls[newIndex]);
+  };
 
+  const handleNextImage = () => {
+    if (!product || !product.imageUrls || product.imageUrls.length <= 1) return;
+    const newIndex = (selectedImageIndex + 1) % product.imageUrls.length;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(product.imageUrls[newIndex]);
+  };
 
   if (!product) {
     return (
@@ -153,16 +167,39 @@ export default function ProductDetail() {
         <div className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-lg shadow-xl mb-8 border border-gray-100">
           <div className="md:w-1/3 w-full flex flex-col items-center">
             {selectedImage ? (
-              <div
-                className="relative w-[200px] h-[280px] sm:w-[250px] sm:h-[350px] mb-4 cursor-pointer"
-                onClick={() => setIsLightboxOpen(true)}
-              >
-                <Image
-                  src={selectedImage}
-                  alt={product.name}
-                  fill
-                  className="object-contain rounded-md shadow-md"
-                />
+              <div className="flex items-center justify-center mb-4">
+                {/* دکمه فلش چپ کنار تصویر بزرگ */}
+                {product.imageUrls && product.imageUrls.length > 1 && (
+                  <button
+                    className="flex-shrink-0 text-[#7B61FF] hover:text-[#6A50E6] p-1 rounded-full transition-all mr-4 shadow-md hover:shadow-lg"
+                    onClick={handlePrevImage} // فلش چپ برای تصویر قبلی
+                  >
+                    <FaArrowRight size={24} />
+                  </button>
+                )}
+
+                {/* تصویر بزرگ */}
+                <div
+                  className="relative w-[200px] h-[280px] sm:w-[250px] sm:h-[350px] cursor-pointer"
+                  onClick={() => setIsLightboxOpen(true)}
+                >
+                  <Image
+                    src={selectedImage}
+                    alt={product.name}
+                    fill
+                    className="object-contain rounded-md shadow-md"
+                  />
+                </div>
+
+                {/* دکمه فلش راست کنار تصویر بزرگ */}
+                {product.imageUrls && product.imageUrls.length > 1 && (
+                  <button
+                    className="flex-shrink-0 text-[#7B61FF] hover:text-[#6A50E6] p-1 rounded-full transition-all ml-4 shadow-md hover:shadow-lg"
+                    onClick={handleNextImage} // فلش راست برای تصویر بعدی
+                  >
+                    <FaArrowLeft size={24} />
+                  </button>
+                )}
               </div>
             ) : (
               <div className="w-[200px] h-[280px] sm:w-[250px] sm:h-[350px] bg-gray-200 flex items-center justify-center rounded-md mb-4">
@@ -170,16 +207,19 @@ export default function ProductDetail() {
               </div>
             )}
 
+            {/* گالری تصاویر کوچک */}
             {product.imageUrls && product.imageUrls.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex gap-2 overflow-x-auto pb-2 w-full">
                 {product.imageUrls.map((imageUrl, index) => (
                   <div
                     key={index}
-                    className={`relative w-12 h-12 sm:w-16 sm:h-16 cursor-pointer rounded-md border-2 ${selectedImage === imageUrl
-                        ? "border-primary"
-                        : "border-gray-300"
-                      }`}
-                    onClick={() => setSelectedImage(imageUrl)}
+                    className={`relative w-12 h-12 sm:w-16 sm:h-16 cursor-pointer rounded-md border-2 ${
+                      selectedImage === imageUrl ? "border-primary" : "border-gray-300"
+                    } flex-shrink-0`}
+                    onClick={() => {
+                      setSelectedImage(imageUrl);
+                      setSelectedImageIndex(index);
+                    }}
                   >
                     <Image
                       src={imageUrl}
@@ -226,12 +266,12 @@ export default function ProductDetail() {
                 <p className="text-sm text-red-500 mb-10">
                   قیمت با تخفیف: {product.discountPrice.toLocaleString()} تومان
                 </p>
-              </section>)
-              :
-              (<p className="text-xl font-semibold text-dark mb-6">
+              </section>
+            ) : (
+              <p className="text-xl font-semibold text-dark mb-6">
                 {product.price.toLocaleString()} تومان
-              </p>)          
-              }
+              </p>
+            )}
             <AddToCartButton productId={product._id} />
           </div>
         </div>
@@ -239,15 +279,56 @@ export default function ProductDetail() {
         {isLightboxOpen && (
           <div
             className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-            onClick={() => setIsLightboxOpen(false)}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setIsLightboxOpen(false);
+              }
+            }}
           >
-            <div className="relative max-w-3xl w-full h-[80vh] p-4">
-              <Image
-                src={selectedImage}
-                alt={product.name}
-                fill
-                className="object-contain"
-              />
+            <div className="relative flex items-center justify-center w-full max-w-4xl h-[80vh] p-4">
+              {/* دکمه فلش چپ (کنار تصویر) */}
+              {product.imageUrls && product.imageUrls.length > 1 && (
+                <button
+                  className="flex-shrink-0 text-white text-2xl bg-[#7B61FF] hover:bg-[#6A50E6] p-1 rounded-full transition-all mr-4"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrevImage(); // فلش چپ برای تصویر قبلی
+                  }}
+                >
+                  <FaArrowRight />
+                </button>
+              )}
+
+              {/* تصویر بزرگ */}
+              <div className="relative w-full max-w-3xl h-full">
+                <Image
+                  src={selectedImage}
+                  alt={product.name}
+                  fill
+                  className="object-contain"
+                />
+                {/* شماره تصویر */}
+                {product.imageUrls && product.imageUrls.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#1B1F3B] text-white px-3 py-1 rounded-full text-sm">
+                    {selectedImageIndex + 1} / {product.imageUrls.length}
+                  </div>
+                )}
+              </div>
+
+              {/* دکمه فلش راست (کنار تصویر) */}
+              {product.imageUrls && product.imageUrls.length > 1 && (
+                <button
+                  className="flex-shrink-0 text-white text-2xl bg-[#7B61FF] hover:bg-[#6A50E6] p-1 rounded-full transition-all ml-4"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNextImage(); // فلش راست برای تصویر بعدی
+                  }}
+                >
+                  <FaArrowLeft />
+                </button>
+              )}
+
+              {/* دکمه بستن */}
               <button
                 className="absolute top-4 right-4 text-white text-3xl"
                 onClick={() => setIsLightboxOpen(false)}
@@ -269,15 +350,17 @@ export default function ProductDetail() {
           {productError && <p className="text-red-500 mb-4">{productError}</p>}
           {comments.length > 0 ? (
             <div className="space-y-4 mb-4">
-              {comments.map((comment) => (
-                comment.status && <div key={comment._id} className="border-b border-gray-200 pb-4">
-                  <p className="text-gray-600">{comment.text}</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    توسط: {comment.user?.name || "کاربر ناشناس"} - {" "}
-                    {new Date(comment.createdAt).toLocaleDateString("fa-IR")}
-                  </p>
-                </div>
-              ))}
+              {comments.map((comment) =>
+                comment.status && (
+                  <div key={comment._id} className="border-b border-gray-200 pb-4">
+                    <p className="text-gray-600">{comment.text}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      توسط: {comment.user?.name || "کاربر ناشناس"} -{" "}
+                      {new Date(comment.createdAt).toLocaleDateString("fa-IR")}
+                    </p>
+                  </div>
+                )
+              )}
             </div>
           ) : (
             <p className="text-gray-600 mb-4">هنوز دیدگاهی برای این کتاب ثبت نشده است.</p>

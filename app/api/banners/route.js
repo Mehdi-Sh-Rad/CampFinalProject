@@ -1,7 +1,7 @@
 import connectToDatabase from "@/app/lib/db";
 import Banner from "@/models/Banner";
 import { NextResponse } from "next/server";
-import { writeFile, unlink } from "fs/promises"; 
+import { writeFile, unlink } from "fs/promises";
 import { join, dirname } from "path";
 import { mkdir } from "fs/promises";
 
@@ -22,9 +22,8 @@ export async function POST(request) {
     const data = await request.formData();
 
     const bannerData = {
-      title: data.get("title"),
-      subtitle: data.get("subtitle"),
       link: data.get("link"),
+      description: data.get("description"),
     };
 
     const image = data.get("image");
@@ -32,7 +31,7 @@ export async function POST(request) {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const filePath = join(process.cwd(), "public/uploads/banners", image.name);
-      
+
       const dir = dirname(filePath);
       await mkdir(dir, { recursive: true });
 
@@ -62,10 +61,9 @@ export async function PUT(request) {
     }
 
     const bannerData = {
-      title: data.get("title"),
-      subtitle: data.get("subtitle"),
       link: data.get("link"),
-      image: existingBanner.image, 
+      description: data.get("description"),
+      image: existingBanner.image,
     };
 
     const image = data.get("image");
@@ -83,7 +81,7 @@ export async function PUT(request) {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const filePath = join(process.cwd(), "public/uploads/banners", image.name);
-      
+
       const dir = dirname(filePath);
       await mkdir(dir, { recursive: true });
 
