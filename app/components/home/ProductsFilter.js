@@ -1,27 +1,50 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const ProductsFilter = ({ onFilterChange }) => {
-  // State for filter values
-  const [filters, setFilters] = useState({
-    minPrice: null,
-    maxPrice: null,
-    award: false,
-    free: false,
-    active: false,
-  });
+const ProductsFilter = ({ onFilterChange, filters, onResetFilters }) => {
+  // State for filter values, initialized from props
+  const [minPrice, setMinPrice] = useState(filters.minPrice || "");
+  const [maxPrice, setMaxPrice] = useState(filters.maxPrice || "");
+  const [award, setAward] = useState(filters.award || false);
+  const [free, setFree] = useState(filters.free || false);
+  const [active, setActive] = useState(filters.active || false);
+  const [discountPrice, setDiscountPrice] = useState(filters.discountPrice || false);
+
+  // Update state when filters prop changes
+  useEffect(() => {
+    setMinPrice(filters.minPrice || "");
+    setMaxPrice(filters.maxPrice || "");
+    setAward(filters.award || false);
+    setFree(filters.free || false);
+    setActive(filters.active || false);
+    setDiscountPrice(filters.discountPrice || false);
+  }, [filters]);
 
   // Handle input changes
   const handleChange = (key, value) => {
+    const updatedFilters = {
+      minPrice,
+      maxPrice,
+      award,
+      free,
+      active,
+      discountPrice,
+      [key]: value,
+    };
+
     // Update the filter state
-    const updatedFilters = { ...filters, [key]: value };
-    setFilters(updatedFilters);
+    if (key === "minPrice") setMinPrice(value);
+    if (key === "maxPrice") setMaxPrice(value);
+    if (key === "award") setAward(value);
+    if (key === "free") setFree(value);
+    if (key === "active") setActive(value);
+    if (key === "discountPrice") setDiscountPrice(value);
 
     // Remove null/undefined filters before sending to parent
     const cleanFilters = {};
-    for (const key in updatedFilters) {
-      if (updatedFilters[key] !== null && updatedFilters[key] !== undefined) {
-        cleanFilters[key] = updatedFilters[key];
+    for (const filterKey in updatedFilters) {
+      if (updatedFilters[filterKey] !== null && updatedFilters[filterKey] !== undefined) {
+        cleanFilters[filterKey] = updatedFilters[filterKey];
       }
     }
     // Notify parent component of filter changes
@@ -36,8 +59,8 @@ const ProductsFilter = ({ onFilterChange }) => {
           type="number"
           min="0"
           max="1000000000"
-          value={filters.minPrice || ""}
-          onChange={(e) => handleChange("minPrice", e.target.value ? parseInt(e.target.value) : null)}
+          value={minPrice}
+          onChange={(e) => handleChange("minPrice", e.target.value ? parseInt(e.target.value) : "")}
           placeholder="تومان"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
         />
@@ -49,8 +72,8 @@ const ProductsFilter = ({ onFilterChange }) => {
           type="number"
           min="0"
           max="1000000000"
-          value={filters.maxPrice || ""}
-          onChange={(e) => handleChange("maxPrice", e.target.value ? parseInt(e.target.value) : null)}
+          value={maxPrice}
+          onChange={(e) => handleChange("maxPrice", e.target.value ? parseInt(e.target.value) : "")}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           placeholder="تومان"
         />
@@ -58,24 +81,49 @@ const ProductsFilter = ({ onFilterChange }) => {
 
       <div className="flex items-center gap-x-2">
         <input
-        id="award"
+          id="award"
           type="checkbox"
           className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary"
-          checked={filters.award}
+          checked={award}
           onChange={(e) => handleChange("award", e.target.checked)}
         />
         <label htmlFor="award" className="text-sm text-gray-700">محصولات دارای جایزه</label>
       </div>
 
       <div className="flex items-center gap-x-2">
-        <input id="active" type="checkbox" className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary" checked={filters.active} onChange={(e) => handleChange("active", e.target.checked)} />
+        <input
+          id="active"
+          type="checkbox"
+          className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary"
+          checked={active}
+          onChange={(e) => handleChange("active", e.target.checked)}
+        />
         <label htmlFor="active" className="text-sm text-gray-700">فقط محصولات موجود</label>
       </div>
 
       <div className="flex items-center gap-x-2">
-        <input type="checkbox" className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary" checked={filters.free} onChange={(e) => handleChange("free", e.target.checked)} />
+        <input
+          id="free"
+          type="checkbox"
+          className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary"
+          checked={free}
+          onChange={(e) => handleChange("free", e.target.checked)}
+        />
         <label htmlFor="free" className="text-sm text-gray-700">محصولات رایگان</label>
       </div>
+
+      <div className="flex items-center gap-x-2">
+        <input
+          id="discountPrice"
+          type="checkbox"
+          className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary"
+          checked={discountPrice}
+          onChange={(e) => handleChange("discountPrice", e.target.checked)}
+        />
+        <label htmlFor="discountPrice" className="text-sm text-gray-700">محصولات دارای تخفیف</label>
+      </div>
+
+      
     </div>
   );
 };

@@ -10,8 +10,8 @@ import { useSession } from "next-auth/react";
 import ProductCard from "@/app/components/ProductCard";
 import { useCart } from "@/app/context/CartContext";
 import AddToCartButton from "@/app/components/home/AddToCartButton";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import Loading from "@/app/loading"; 
+import { FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 
 export default function ProductDetail() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } = useCart();
@@ -149,11 +149,36 @@ export default function ProductDetail() {
     setSelectedImage(product.imageUrls[newIndex]);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <Loading /> 
+        <Benefits />
+        <Footer />
+      </div>
+    );
+  }
+
   if (!product) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <div className="text-center p-4 text-red-500">محصول یافت نشد</div>
+        <div className="flex-grow flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-md max-w-md mx-auto">
+            <FaSearch className="text-gray-400 text-5xl mb-4" />
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">محصول یافت نشد</h2>
+            <p className="text-gray-500 text-center mb-6">
+              متأسفانه محصولی با این مشخصات پیدا نشد. می‌توانید به صفحه محصولات برگردید.
+            </p>
+            <Link
+              href="/products"
+              className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition"
+            >
+              بازگشت به محصولات
+            </Link>
+          </div>
+        </div>
         <Benefits />
         <Footer />
       </div>
@@ -281,7 +306,8 @@ export default function ProductDetail() {
               }
             }}
           >
-            <div className="relative flex items-center justify-center w-full max-w-4xl h-[80vh] p-4">              {product.imageUrls && product.imageUrls.length > 1 && (
+            <div className="relative flex items-center justify-center w-full max-w-4xl h-[80vh] p-4">
+              {product.imageUrls && product.imageUrls.length > 1 && (
                 <button
                   className="flex-shrink-0 text-white text-2xl bg-[#7B61FF] hover:bg-[#6A50E6] p-1 rounded-full transition-all mr-4"
                   onClick={(e) => {
