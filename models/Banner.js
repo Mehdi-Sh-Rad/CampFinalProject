@@ -7,17 +7,12 @@ const BannerSchema = new mongoose.Schema(
       required: [true, "Banner image is required"],
       trim: true,
     },
-    title: {
-      type: String,
-      required: false,
-      trim: true,
-    },
-    subtitle: {
-      type: String,
-      required: false,
-      trim: true,
-    },
     link: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    description: {
       type: String,
       required: false,
       trim: true,

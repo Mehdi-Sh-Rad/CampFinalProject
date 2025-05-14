@@ -9,7 +9,7 @@ import Categories from "./components/home/Categories";
 import Benefits from "./components/home/Benefits";
 import AwardsSection from "./components/home/AwardsSection";
 import Footer from "./components/home/Footer";
-import Loading from "./loading"
+import Loading from "./loading";
 
 export default function Home() {
   const [banners, setBanners] = useState([]);
@@ -181,7 +181,6 @@ export default function Home() {
   }
 
   return (
-    
     <div className="bg-background min-h-screen">
       {isLoading && <Loading />}
       <Header />

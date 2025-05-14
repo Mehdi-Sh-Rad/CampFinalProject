@@ -94,23 +94,14 @@ const AddBanner = () => {
                 />
               </div>
               <div>
-                <label className="block mb-2 text-sm font-medium">عنوان:</label>
-                <input
-                  type="text"
-                  name="title"
-                  className="w-full p-2 border rounded-md"
-                  placeholder="عنوان بنر"
-                />
-              </div>
-              <div>
                 <label className="block mb-2 text-sm font-medium">
-                  زیرعنوان:
+                  توضیحات:
                 </label>
                 <input
                   type="text"
-                  name="subtitle"
+                  name="description"
                   className="w-full p-2 border rounded-md"
-                  placeholder="زیرعنوان بنر"
+                  placeholder="توضیحات تصویر (برای سئو)"
                 />
               </div>
               <div>
