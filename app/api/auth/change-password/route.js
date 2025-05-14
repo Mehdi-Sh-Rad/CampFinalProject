@@ -28,9 +28,8 @@ export async function POST(req) {
       return NextResponse.json({ message: "رمز عبور باید حداقل 8 کاراکتر باشد" }, { status: 400 });
     }
 
-   
-
     const user = await User.findOne({ email: session.user.email });
+
     if (!user) {
       return NextResponse.json({ message: "کاربر یافت نشد" }, { status: 400 });
     }

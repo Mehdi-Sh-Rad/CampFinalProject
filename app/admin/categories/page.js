@@ -1,5 +1,6 @@
 "use client";
 
+import { getCategories, deleteCategory } from "@/app/lib/fetch/Categories";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -14,10 +15,10 @@ const Categories = () => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/categories");
-
-        if (!response.ok) throw new Error("مشکل در دریافت دسته بندی ها");
-        const data = await response.json();
+        const data = await getCategories();
+        if (!data) {
+          throw new Error("دسته بندی های محصول یافت نشد")
+        }
         setCategories(data);
       } catch (error) {
         setError(error.message);
@@ -30,13 +31,17 @@ const Categories = () => {
 
   // Delete category by ID
   const handleDelete = async (id) => {
+
     try {
-      await fetch(`/api/categories/${id}`, { method: "DELETE" });
+      await deleteCategory(id);
+
+      // Update the categories state to remove the deleted category
       setCategories(categories.filter((category) => category._id !== id));
     } catch (error) {
       setError("مشکلی در حذف پیش آمد");
     }
   };
+
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
@@ -123,7 +128,7 @@ const Categories = () => {
                                 <td className="whitespace-nowrap  px-6 py-4">{category.name}</td>
                                 <td className="whitespace-nowrap  px-6 py-4">
                                   <div className="flex justify-center gap-x-2">
-                                    <Link href={`/admin/categories/${category._id}`}>
+                                    <Link href={`/admin/categories/${category._id}`} className="relative group">
                                       <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                                         <path
                                           d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
@@ -143,8 +148,11 @@ const Categories = () => {
                                         />
                                         <path d="M15.1655 4.60254L19.7315 9.16854" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
+                                      <span className="absolute left-full me-2 top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                                        ویرایش
+                                      </span>
                                     </Link>
-                                    <button onClick={() => handleDelete(category._id)}>
+                                    <button onClick={() => handleDelete(category._id)} className="relative group">
                                       <svg fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                                         <path
                                           d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
@@ -162,7 +170,12 @@ const Categories = () => {
                                           strokeLinejoin="round"
                                         />
                                       </svg>
+                                      <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                                        حذف
+                                      </span>
+
                                     </button>
+
                                   </div>
                                 </td>
                               </tr>

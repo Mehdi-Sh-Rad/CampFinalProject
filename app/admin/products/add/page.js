@@ -102,8 +102,7 @@ const AddProduct = () => {
       setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
       return false;
     }
-    
-    
+
     if (!name || name.trim() === "") {
       setFormError("نام محصول الزامی میباشد");
       return false;
@@ -142,7 +141,7 @@ const AddProduct = () => {
     if (!descriptionRegex.test(description)) {
       setError("نام میتواند شامل حروف ، اعداد و فاصله باشد");
     }
-    
+
     if (!category) {
       setFormError("دسته بندی محصول باید باشد");
       return false;
@@ -421,9 +420,8 @@ const AddProduct = () => {
                       <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                          active ? "transform translate-x-5" : ""
-                        }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${active ? "transform translate-x-5" : ""
+                          }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
                   </label>
@@ -434,9 +432,8 @@ const AddProduct = () => {
                       <input id="award-switch" type="checkbox" className="sr-only" checked={award} onChange={(e) => setAward(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${award ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                          award ? "transform translate-x-5" : ""
-                        }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${award ? "transform translate-x-5" : ""
+                          }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{award ? "جایزه دار" : "غیر جایزه دار"}</span>
                   </label>
@@ -447,9 +444,8 @@ const AddProduct = () => {
                       <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={handleFreeToggle} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                          free ? "transform translate-x-5" : ""
-                        }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${free ? "transform translate-x-5" : ""
+                          }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{free ? "رایگان" : "غیررایگان"}</span>
                   </label>
