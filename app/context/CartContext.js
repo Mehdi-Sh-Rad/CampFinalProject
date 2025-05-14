@@ -8,7 +8,7 @@ export function CartProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [popupMessage, setPopupMessage] = useState("");
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [isCartPopupVisible, setIsCartPopupVisible] = useState(false); // state برای پاپ‌آپ سبد خرید
+  const [isCartPopupVisible, setIsCartPopupVisible] = useState(false); 
   const [updatingItem, setUpdatingItem] = useState(null);
 
   const showPopup = (message) => {
@@ -23,15 +23,14 @@ export function CartProvider({ children }) {
     setIsCartPopupVisible((prev) => !prev);
   };
 
-  // بسته شدن خودکار پاپ‌آپ سبد خرید بعد از 5 ثانیه
   useEffect(() => {
     let timer;
     if (isCartPopupVisible) {
       timer = setTimeout(() => {
         setIsCartPopupVisible(false);
-      }, 5000); // 5 ثانیه
+      }, 5000); 
     }
-    return () => clearTimeout(timer); // پاک کردن تایمر وقتی پاپ‌آپ بسته می‌شه یا دوباره باز می‌شه
+    return () => clearTimeout(timer); 
   }, [isCartPopupVisible]);
 
   useEffect(() => {
@@ -70,7 +69,6 @@ export function CartProvider({ children }) {
 
   async function addToCart(productId, quantity = 1) {
     try {
-      // Check if the product already exists in the cart
       const existingItem = cart.items.find((item) => item.product._id === productId);
       if (existingItem) {
         return { success: false, message: "این محصول به سبد خرید شما اضافه شده است" };
@@ -91,7 +89,7 @@ export function CartProvider({ children }) {
 
       await updateCart();
       showPopup("محصول با موفقیت به سبد خرید اضافه شد!");
-      setIsCartPopupVisible(true); // نمایش پاپ‌آپ سبد خرید بعد از افزودن
+      setIsCartPopupVisible(true); 
       return { success: true };
     } catch (error) {
       return { success: false, message: "مشکلی در اضافه کردن به سبد خرید پیش آمده است" };

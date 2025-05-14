@@ -23,7 +23,6 @@ const AddToCartButton = ({ productId }) => {
     }
   };
 
-  // پاک کردن خطا بعد از 3 ثانیه
   useEffect(() => {
     if (localError) {
       const timer = setTimeout(() => {

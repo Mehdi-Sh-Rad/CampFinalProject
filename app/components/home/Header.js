@@ -43,8 +43,8 @@ const staticMenuItems = [
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // برای منوی همبرگری موبایل
-  const [isMenuVisible, setIsMenuVisible] = useState(false); // برای نمایش منوی دایره‌ای با کلیک
+  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const [isMenuVisible, setIsMenuVisible] = useState(false); 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,9 +57,9 @@ export default function Header() {
   const [headerHeight, setHeaderHeight] = useState(0);
   const [circleMenuHeight, setCircleMenuHeight] = useState(0);
   const [hamburgerMenuHeight, setHamburgerMenuHeight] = useState(0);
-  const headerRef = useRef(null); // برای دسترسی به المنت هدر
-  const circleMenuRef = useRef(null); // برای دسترسی به منوی دایره‌ای
-  const hamburgerMenuRef = useRef(null); // برای دسترسی به منوی همبرگری
+  const headerRef = useRef(null); 
+  const circleMenuRef = useRef(null); 
+  const hamburgerMenuRef = useRef(null); 
 
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
@@ -98,7 +98,6 @@ export default function Header() {
     fetchCategories();
   }, []);
 
-  // محاسبه ارتفاع هدر با ResizeObserver
   useEffect(() => {
     const headerElement = headerRef.current;
     if (!headerElement) return;
@@ -120,7 +119,6 @@ export default function Header() {
     };
   }, [isMenuOpen, isMenuVisible]);
 
-  // محاسبه ارتفاع منوی دایره‌ای
   useEffect(() => {
     const circleMenuElement = circleMenuRef.current;
     if (!circleMenuElement || !isMenuVisible) {
@@ -145,7 +143,6 @@ export default function Header() {
     };
   }, [isMenuVisible]);
 
-  // محاسبه ارتفاع منوی همبرگری
   useEffect(() => {
     const hamburgerMenuElement = hamburgerMenuRef.current;
     if (!hamburgerMenuElement || !isMenuOpen) {
@@ -170,7 +167,6 @@ export default function Header() {
     };
   }, [isMenuOpen]);
 
-  // مجموع ارتفاع هدر و منوها برای تنظیم placeholder
   const totalHeight = headerHeight + (isMenuVisible ? circleMenuHeight : 0) + (isMenuOpen ? hamburgerMenuHeight : 0);
 
   const toggleMenu = () => {
@@ -255,7 +251,6 @@ export default function Header() {
       >
         <div className="container mx-auto px-4 py-2">
           <div className="flex justify-between items-center">
-            {/* آیکون منو به عنوان اولین المان از سمت راست */}
             <div className="flex items-center gap-3">
               <div className="relative group hidden md:block">
                 <button
@@ -273,7 +268,6 @@ export default function Header() {
                 </span>
               </div>
 
-              {/* لوگو و شعار */}
               <Link href="/">
                 <Image
                   src={logoSettings?.headerLogo || "/PersianLogo.png"}
@@ -290,7 +284,6 @@ export default function Header() {
               </div>
             </div>
 
-            {/* سرچ‌بار در وسط */}
             <div className="hidden md:flex md:flex-1 mx-4 relative max-w-lg">
               <input
                 type="text"
@@ -360,7 +353,6 @@ export default function Header() {
               )}
             </div>
 
-            {/* آیکون‌های سبد خرید، کاربر، و ورود/خروج در سمت چپ */}
             <div className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-3">
                 <div
@@ -373,7 +365,7 @@ export default function Header() {
                     className="text-dark hover:text-secondary flex items-center gap-1"
                     onClick={(e) => {
                       if (isCartPopupVisible) {
-                        e.preventDefault(); // جلوگیری از رفتن به صفحه سبد خرید وقتی پاپ‌آپ بازه
+                        e.preventDefault(); 
                       }
                       toggleCartPopup();
                     }}
@@ -512,7 +504,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* منوی دایره‌ای که با کلیک نمایش داده می‌شه */}
           {isMenuVisible && (
             <nav
               ref={circleMenuRef}
@@ -614,7 +605,6 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Placeholder برای نگه داشتن فضای هدر و منوها */}
       <div style={{ height: `${totalHeight}px` }} />
     </>
   );
