@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { getCategories } from "@/app/lib/fetch/Categories";
+import { createProduct } from "@/app/lib/fetch/Products";
 
 const AddProduct = () => {
   const [files, setFiles] = useState([]);
@@ -28,10 +30,19 @@ const AddProduct = () => {
 
   // Fetch categories on component mount
   useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
+    const fetchCategories = async () => {
+
+      try {
+        const data = await getCategories();
+        if (!data) {
+          throw new Error("دسته بندی های محصول یافت نشد")
+        }
+        setCategories(data);
+      } catch (error) {
+        setError(error.message);
+      } 
+    };
+    fetchCategories();
   }, []);
 
   // Automatically set free to true if price is 0
@@ -94,12 +105,14 @@ const AddProduct = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    if (!files || files.length === 0 || files.every((file) => !file)) {
-      setFormError("انتخاب حداقل یک فایل محصول الزامی است");
-      return false;
-    }
+
     if (!images || images.length === 0 || images.every((image) => !image)) {
       setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
+      return false;
+    }
+
+    if (!files || files.length === 0 || files.every((file) => !file)) {
+      setFormError("انتخاب حداقل یک فایل محصول الزامی است");
       return false;
     }
 
@@ -196,21 +209,19 @@ const AddProduct = () => {
         if (image) formData.append("images", image);
       });
 
-      const response = await fetch("/api/products", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await createProduct(formData);
 
       if (response.status === 400) {
         let message = await response.json();
         setFormError(message.message);
       }
-      if (!response.ok) throw new Error("مشکلی در ساخت محصول پیش آمده است");
+      if (!response) throw new Error("مشکلی در ساخت محصول پیش آمده است");
       router.push("/admin/products");
     } catch (error) {
       setError(error.message);
     }
   };
+
   return (
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
@@ -241,7 +252,7 @@ const AddProduct = () => {
                   {error}
                 </h3>
               )}
-              {formError && <h3>{formError}</h3>}
+              {formError && <h3 className="text-red-500">{formError}</h3>}
               <form className="py-4" onSubmit={handleSubmit}>
                 <div className="flex flex-col items-start gap-y-4 w-full">
                   {/* Name */}

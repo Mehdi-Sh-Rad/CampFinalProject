@@ -1,25 +1,36 @@
+
+"use client";
 import connectToDatabase from "@/app/lib/db";
 import Product from "@/models/Product";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/home/Header";
 import Benefits from "../../components/home/Benefits";
 import Footer from "../../components/home/Footer";
 import ProductCard from "@/app/components/ProductCard";
 
-export default async function AwardsProductsPage() {
-  await connectToDatabase();
+const AwardsProductsPage = () => {
+  const [awardProducts, setWardProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const productsRaw = await Product.find({ tags: "awards" });
+    useEffect(() => {
+      const fetchOrders = async () => {
+        setLoading(true);
+        try {
+          const response = await fetch("/api/products?award=true");
+          if (!response.ok) throw new Error("مشکل در دریافت کدهای تخفیف");
+          const data = await response.json();
+          setWardProducts(data);
+        } catch (error) {
+          setError(error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchOrders();
+    }, []);
 
-  const products = productsRaw.map(product => ({
-    _id: product._id,
-    imageUrls: product.imageUrls,
-    name: product.name,
-    author: product.author,
-    price: product.price,
-    discountPrice: product.discountPrice,
-  }));
-
-  if (!products || products.length === 0) {
+  if (!awardProducts || awardProducts.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -48,3 +59,5 @@ export default async function AwardsProductsPage() {
     </div>
   );
 }
+
+export default AwardsProductsPage;

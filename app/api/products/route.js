@@ -49,7 +49,8 @@ export async function GET(request) {
   let sortCondition = {};
 
   // Apply sorting based on the 'sort' parameter.
-  if (sort === "price-asc") sortCondition.finalPrice = 1;
+  if (sort === "latest") sortCondition.createdAt = -1;
+  else if (sort === "price-asc") sortCondition.finalPrice = 1;
   else if (sort === "price-desc") sortCondition.finalPrice = -1;
   else if (sort === "name-asc") sortCondition.name = 1;
   else if (sort === "name-desc") sortCondition.name = -1;
@@ -81,9 +82,12 @@ export async function GET(request) {
 }
 
 
+
+
 export async function POST(request) {
   try {
     const data = await request.formData();
+    console.log("data:", data)
     if (!data) {
       return NextResponse.json({
         success: false,

@@ -180,7 +180,7 @@ export default function Header() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 w-full z-[1000] bg-background shadow-md">
-        <div className="container mx-auto px-4 py-3">
+        <div className="container mx-auto px-4 py-1">
           <div className="flex justify-between items-center border-b border-gray-200">
             <Link href="/">
               <Image
@@ -401,7 +401,7 @@ export default function Header() {
             )}
           </div>
 
-          <div className="text-center py-2">
+          <div className="text-center">
             <h1 className="text-lg md:text-xl font-bold text-primary">
               {siteSetting.title}
             </h1>
@@ -486,8 +486,7 @@ export default function Header() {
           </nav>
         )}
       </header>
-
-      {/* Placeholder برای نگه داشتن فضای هدر */}
+      {/* Spacer to prevent content from being hidden behind the header */}
       <div style={{ height: `${headerHeight}px` }} />
     </>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import AuthWrapper from "@/app/components/auth/auth";
+import { deleteProduct, getProducts } from "@/app/lib/fetch/Products";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -15,10 +16,10 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/products");
+        const data = await getProducts();
 
-        if (!response.ok) throw new Error("مشکل در دریافت محصولات ");
-        const data = await response.json();
+        if (!data) throw new Error("مشکل در دریافت محصولات ");
+    
         setProducts(data);
       } catch (error) {
         setError(error.message);
@@ -32,7 +33,7 @@ const Products = () => {
   // Delete product by ID
   const handleDelete = async (id) => {
     try {
-      await fetch(`/api/products/${id}`, { method: "DELETE" });
+      await deleteProduct(id);
       setProducts(products.filter((product) => product._id !== id));
     } catch (error) {
       setError("مشکلی در حذف پیش آمد");

@@ -5,7 +5,7 @@ export default function AwardsSection({ awards, totalAwards, id }) {
   return (
     <section id={id} className="p-4 md:p-8 bg-background my-12">
       <h3 className="text-lg md:text-xl font-semibold mb-4 text-dark">
-        جوایز و پرفروش‌ها
+        کتاب های جایزه دار 
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {awards.map((product) => (
@@ -13,7 +13,7 @@ export default function AwardsSection({ awards, totalAwards, id }) {
         ))}
       </div>
       <Link
-        href="/products/awards"
+        href="products?award=true&sort=sold-desc"
         className="block mt-4 text-primary hover:text-secondary text-center text-sm"
       >
         مشاهده همه ({totalAwards} کتاب)
