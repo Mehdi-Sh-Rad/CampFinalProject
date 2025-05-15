@@ -22,7 +22,7 @@ const TicketSchema = new mongoose.Schema({
       },
    ],
 },
-   { timeseries: true }
+   { timestamps: true }
 );
 
 export default mongoose.models.Ticket || mongoose.model("Ticket", TicketSchema);

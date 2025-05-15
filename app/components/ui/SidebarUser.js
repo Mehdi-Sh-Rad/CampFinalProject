@@ -91,7 +91,7 @@ const Sidebar = () => {
                 pathName.startsWith("/user/editUser") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e]  transition-all group relative duration-300"
               }  ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
-                className={pathName.startsWith("/user/editUser") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/user/editUser") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -131,7 +131,7 @@ const Sidebar = () => {
                 pathName.startsWith("/user/orders") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
               <svg
-                className={pathName.startsWith("/user/orders") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/user/orders") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -194,40 +194,6 @@ const Sidebar = () => {
               {!isSidebarOpen && (
                 <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
                   نظرات من
-                </span>
-              )}
-            </li>
-          </Link>
-
-          <Link className=" " href={"/user/productQuestions"}>
-            <li
-              className={`flex ${
-                pathName.startsWith("/user/productQuestions")
-                  ? "bg-shop-red"
-                  : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
-              } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
-              <svg
-                className={pathName.startsWith("/user/productQuestions") ? "text-white" : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"}
-                width="30"
-                viewBox="0 0 21 21">
-                <path
-                  d="M17.659,3.681H8.468c-0.211,0-0.383,0.172-0.383,0.383v2.681H2.341c-0.21,0-0.383,0.172-0.383,0.383v6.126c0,0.211,0.172,0.383,0.383,0.383h1.532v2.298c0,0.566,0.554,
-              0.368,0.653,0.27l2.569-2.567h4.437c0.21,0,0.383-0.172,0.383-0.383v-2.681h1.013l2.546,2.567c0.242,0.249,0.652,0.065,0.652-0.27v-2.298h1.533c0.211,0,0.383-0.172,0.383-0.382V4.063C18.042,
-              3.853,17.87,3.681,17.659,3.681 M11.148,12.87H6.937c-0.102,0-0.199,0.04-0.27,0.113l-2.028,2.025v-1.756c0-0.211-0.172-0.383-0.383-0.383H2.724V7.51h5.361v2.68c0,0.21,0.172,0.382,0.383,
-              0.382h2.68V12.87z M17.276,9.807h-1.533c-0.211,0-0.383,0.172-0.383,0.383v1.755L13.356,9.92c-0.07-0.073-0.169-0.113-0.27-0.113H8.851v-5.36h8.425V9.807z"></path>
-              </svg>
-              <span
-                className={`${
-                  pathName.startsWith("/user/productQuestions")
-                    ? "text-white font-bold"
-                    : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
-                } ${!isSidebarOpen && "hidden"}`}>
-                سوالات من
-              </span>
-
-              {!isSidebarOpen && (
-                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                  سوالات من
                 </span>
               )}
             </li>
@@ -311,7 +277,7 @@ const Sidebar = () => {
                   ? "bg-shop-red"
                   : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
-              <svg width="30" className="svg-icon" viewBox="0 0 20 20">
+              <svg width="30" className="svg-icon text-gray-500 dark:text-white" viewBox="0 0 20 20">
                 <path
                   d="M17.657,2.982H2.342c-0.234,0-0.425,0.191-0.425,0.426v10.21c0,0.234,0.191,0.426,0.425,0.426h3.404v2.553c0,0.397,0.48,0.547,0.725,0.302l2.889-2.854h8.298c0.234,0,
                 0.426-0.191,0.426-0.426V3.408C18.083,3.174,17.892,2.982,17.657,2.982M17.232,13.192H9.185c-0.113,0-0.219,0.045-0.3,0.124l-2.289,2.262v-1.96c0-0.233-0.191-0.426-0.425-0.426H2.767V3.833h14.465V13.192z M10,
@@ -327,7 +293,6 @@ const Sidebar = () => {
                 } ${!isSidebarOpen && "hidden"}`}>
                 تغییر کلمه عبور
               </span>
-
               {!isSidebarOpen && (
                 <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
                   تغییر کلمه عبور
@@ -340,7 +305,7 @@ const Sidebar = () => {
               className={`flex ${
                 pathName.startsWith("/homepage") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
               } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}>
-              <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg className="text-gray-500 dark:text-white" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M9.14373 20.7821V17.7152C9.14372 16.9381 9.77567 16.3067 10.5584 16.3018H13.4326C14.2189 16.3018 14.8563 16.9346 14.8563 17.7152V20.7732C14.8562 21.4473 15.404 21.9951 16.0829 22H18.0438C18.9596 22.0023 19.8388 21.6428 20.4872 21.0007C21.1356 20.3586 21.5 19.4868 21.5 18.5775V9.86585C21.5 9.13139 21.1721 8.43471 20.6046 7.9635L13.943 2.67427C12.7785 1.74912 11.1154 1.77901 9.98539 2.74538L3.46701 7.9635C2.87274 8.42082 2.51755 9.11956 2.5 9.86585V18.5686C2.5 20.4637 4.04738 22 5.95617 22H7.87229C8.19917 22.0023 8.51349 21.8751 8.74547 21.6464C8.97746 21.4178 9.10793 21.1067 9.10792 20.7821H9.14373Z"
                   fill="currentColor"></path>
@@ -365,7 +330,7 @@ const Sidebar = () => {
                  !isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"
                } items-center rounded text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red`}>
             <svg
-              className="text-gray-600 transition-all duration-300 group-hover:text-shop-red"
+              className="text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"
               width="24"
               viewBox="0 0 24 24"
               fill="none"

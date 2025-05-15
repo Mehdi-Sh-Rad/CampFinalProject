@@ -2,6 +2,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import io from "socket.io-client";
+import DateObject from "react-date-object";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 import Link from "next/link"
 
 const ChatTicket = () => {
@@ -11,8 +14,8 @@ const ChatTicket = () => {
   const [socket, setSocket] = useState(null); // WebSocket connection
   const [error, setError] = useState(null);
 
+   // Establish WebSocket connection
   useEffect(() => {
-    // Establish WebSocket connection
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
       path: "/api/socket",
       transports: ["websocket"],
@@ -36,7 +39,6 @@ const ChatTicket = () => {
         setError(err.message);
       }
     };
-
     fetchMessages();
 
     // Cleanup on component unmount
@@ -45,6 +47,7 @@ const ChatTicket = () => {
     };
   }, [id]);
 
+  // Handle sending a new message
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
 
@@ -54,7 +57,6 @@ const ChatTicket = () => {
       // Emit the message to the WebSocket server
       socket.emit("sendMessage", message);
 
-      // Save the message in the database
       const response = await fetch(`/api/tickets/${id}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -63,13 +65,25 @@ const ChatTicket = () => {
 
       if (!response.ok) throw new Error("Failed to save message");
 
-      // Optimistically update the UI
+      // Update the page
       setMessages((prev) => [...prev, { ...message, timestamp: new Date() }]);
-      setNewMessage(""); // Clear the input field
+      setNewMessage(""); 
     } catch (error) {
       console.error("Error saving message:", error.message);
     }
   };
+
+ // Format date to Persian calendar
+ const formatToPersianDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const persianDate = new DateObject({
+    date: date,
+    calendar: persian,
+    locale: persian_fa,
+  });
+  return persianDate.format("HH:mm - YYYY/MM/DD");
+};
 
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh] flex flex-col">
@@ -87,6 +101,7 @@ const ChatTicket = () => {
               >
                 <p className="text-sm">{msg.sender === "Admin" ? "پشتیبانی" : "مشتری"}:</p>
                 <p>{msg.text}</p>
+                <p className="text-sm mt-2">{msg.timestamp && formatToPersianDate(msg.timestamp)}</p>
               </div>
             ))}
           </div>

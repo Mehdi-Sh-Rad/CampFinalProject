@@ -3,11 +3,12 @@ import Tickets from "@/models/Ticket";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
+// View all tickets or tickets for a specific user
 export async function GET(request) {
   await connectToDatabase();
 
   const url = new URL(request.url);
-  const isUserRequest = url.searchParams.get("user"); // Check if the "user" query parameter is present
+  const isUserRequest = url.searchParams.get("user"); 
 
   if (isUserRequest) {
     // Fetch tickets for the logged-in user
@@ -17,15 +18,17 @@ export async function GET(request) {
       return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
     }
 
-    const userTickets = await Tickets.find({ userId: session.user.id });
+    const userTickets = await Tickets.find({ userId: session.user.id }).sort({ createdAt: -1 });
     return new Response(JSON.stringify(userTickets), { status: 200 });
   }
 
   // Fetch all tickets (for admin panel)
-  const tickets = await Tickets.find({});
+  const tickets = await Tickets.find({}).populate("userId").sort({ createdAt: -1 });
   return new Response(JSON.stringify(tickets), { status: 200 });
 };
 
+
+// Create a new ticket
 export async function POST(request) {
   await connectToDatabase();
   try {

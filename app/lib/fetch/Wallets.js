@@ -1,3 +1,4 @@
+//View all wallets
 export async function getWallets () {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wallets`, {
         method: 'GET',
@@ -13,6 +14,7 @@ export async function getWallets () {
     return res.json()
 };
 
+//View user Wallet
 export async function getWallet () {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wallets`, {
         method: 'GET',
@@ -28,7 +30,7 @@ export async function getWallet () {
     return res.json()
 }
 
-
+//Charge Wallet 
 export async function createWallet (amount, type) {
     const data = {
         amount,

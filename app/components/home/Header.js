@@ -91,29 +91,30 @@ export default function Header() {
     };
   }, [isMenuOpen, isMenuVisible]);
 
-  // useEffect(() => {
-  //   const circleMenuElement = circleMenuRef.current;
-  //   if (!circleMenuElement || !isMenuVisible) {
-  //     setCircleMenuHeight(0);
-  //     return;
-  //   }
+  //Adjust the height when menu is open
+  useEffect(() => {
+    const circleMenuElement = circleMenuRef.current;
+    if (!circleMenuElement || !isMenuVisible) {
+      setCircleMenuHeight(0);
+      return;
+    }
 
-  //   const updateCircleMenuHeight = () => {
-  //     const height = circleMenuElement.offsetHeight;
-  //     setCircleMenuHeight(height);
-  //   };
+    const updateCircleMenuHeight = () => {
+      const height = circleMenuElement.offsetHeight;
+      setCircleMenuHeight(height);
+    };
 
-  //   const observer = new ResizeObserver(() => {
-  //     updateCircleMenuHeight();
-  //   });
+    const observer = new ResizeObserver(() => {
+      updateCircleMenuHeight();
+    });
 
-  //   observer.observe(circleMenuElement);
-  //   updateCircleMenuHeight();
+    observer.observe(circleMenuElement);
+    updateCircleMenuHeight();
 
-  //   return () => {
-  //     observer.disconnect();
-  //   };
-  // }, [isMenuVisible]);
+    return () => {
+      observer.disconnect();
+    };
+  }, [isMenuVisible]);
 
   // Calculate the height of the hamburger menu
   useEffect(() => {
@@ -383,9 +384,9 @@ export default function Header() {
                 ) : (
                   <Link
                     href="/auth/login"
-                    className="bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary text-sm"
+                    className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-secondary text-sm"
                   >
-                    ورود/ثبت‌نام
+                    ورود / ثبت‌نام
                   </Link>
                 )}
               </div>

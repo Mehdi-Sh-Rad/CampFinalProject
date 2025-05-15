@@ -1,8 +1,6 @@
 import connectToDatabase from "@/app/lib/db";
 import Ticket from "@/models/Ticket";
 
-
-
 // GET: Fetch a ticket and its messages
 export async function GET(request, { params }) {
   await connectToDatabase();

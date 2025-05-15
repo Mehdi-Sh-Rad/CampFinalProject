@@ -42,15 +42,6 @@ const Tickets = () => {
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
         <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">مدیریت تیکت ها</h1>
         <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت تیکت های مشتریان را مدیریت کنید</span>
-        <Link
-          href={"/admin/tickets/add"}
-          as={"/admin/tickets/add"}
-          className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg">
-          افزودن تیکت جدید - موقت
-          <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-        </Link>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
           src={"/uploads/top-header.png"}
@@ -73,6 +64,9 @@ const Tickets = () => {
                         <tr>
                           <th scope="col" className=" px-1 py-1">
                             #
+                          </th>
+                          <th scope="col" className=" px-1 py-1">
+                            کاربر
                           </th>
                           <th scope="col" className=" px-1 py-1">
                             موضوع
@@ -122,6 +116,9 @@ const Tickets = () => {
                             #
                           </th>
                           <th scope="col" className=" px-1 py-1">
+                            کاربر
+                          </th>
+                          <th scope="col" className=" px-1 py-1">
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
@@ -141,6 +138,7 @@ const Tickets = () => {
                             return (
                               <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap  px-1 py-1 font-medium">{index + 1}</td>
+                                <td className="whitespace-nowrap  px-1 py-1">{ticket.userId?.name}</td>
                                 <td className="whitespace-nowrap  px-1 py-1">{ticket.topic}</td>
                                 <td className="whitespace-nowrap  px-1 py-1">{ticket.order}</td>
                                 <td

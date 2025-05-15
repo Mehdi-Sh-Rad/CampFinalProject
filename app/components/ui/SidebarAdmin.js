@@ -58,7 +58,7 @@ const Sidebar = () => {
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName == "/admin" ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName == "/admin" ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -96,7 +96,7 @@ const Sidebar = () => {
                 }  ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName.startsWith("/admin/categories") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/categories") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -141,7 +141,7 @@ const Sidebar = () => {
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName.startsWith("/admin/products") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/products") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -182,7 +182,7 @@ const Sidebar = () => {
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName.startsWith("/admin/discounts") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/discounts") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -228,51 +228,28 @@ const Sidebar = () => {
               )}
             </li>
           </Link>
-
-          <Link className=" " href={"/admin/productQuestions"}>
-            <li
-              className={`flex ${pathName.startsWith("/admin/productQuestions")
-                ? "bg-shop-red"
-                : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
-                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
-            >
-              <svg
-                className={
-                  pathName.startsWith("/user/productQuestions")
-                    ? "text-white"
-                    : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"
-                }
-                width="30"
-                viewBox="0 0 21 21"
-              >
-                <path d="M17.659,3.681H8.468c-0.211,0-0.383,0.172-0.383,0.383v2.681H2.341c-0.21,0-0.383,0.172-0.383,0.383v6.126c0,0.211,0.172,0.383,0.383,0.383h1.532v2.298c0,0.566,0.554,
-              0.368,0.653,0.27l2.569-2.567h4.437c0.21,0,0.383-0.172,0.383-0.383v-2.681h1.013l2.546,2.567c0.242,0.249,0.652,0.065,0.652-0.27v-2.298h1.533c0.211,0,0.383-0.172,0.383-0.382V4.063C18.042,
-              3.853,17.87,3.681,17.659,3.681 M11.148,12.87H6.937c-0.102,0-0.199,0.04-0.27,0.113l-2.028,2.025v-1.756c0-0.211-0.172-0.383-0.383-0.383H2.724V7.51h5.361v2.68c0,0.21,0.172,0.382,0.383,
-              0.382h2.68V12.87z M17.276,9.807h-1.533c-0.211,0-0.383,0.172-0.383,0.383v1.755L13.356,9.92c-0.07-0.073-0.169-0.113-0.27-0.113H8.851v-5.36h8.425V9.807z">
-                </path>
-              </svg>
-              <span
-                className={`${pathName.startsWith("/admin/productQuestions")
-                  ? "text-white font-bold"
-                  : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
-                  } ${!isSidebarOpen && "hidden"}`}
-              >
-                سوالات محصول
-              </span>
-              {!isSidebarOpen && (
-                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                  سوالات محصول
-                </span>
-              )}
-            </li>
-          </Link>
+          
           <Link className=" " href={"/admin/tickets"}>
             <li
               className={`flex ${pathName.startsWith("/admin/tickets") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
-            >
-              <svg className="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+            >            
+              <svg
+                className="w-6 h-6 text-gray-600 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24">
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M14.079 6.839a3 3 0 0 0-4.255.1M13 20h1.083A3.916 3.916 0 0 0 18 16.083V9A6
+                6 0 1 0 6 9v7m7 4v-1a1 1 0 0 0-1-1h-1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1Zm-7-4v-6H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1Zm12-6h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1v-6Z"
+                />
               </svg>
               <span
                 className={`${pathName.startsWith("/admin/tickets") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
@@ -287,6 +264,7 @@ const Sidebar = () => {
               )}
             </li>
           </Link>
+
           <Link className=" " href={"/admin/blogs"}>
             <li
               className={`flex ${pathName.startsWith("/admin/blogs") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
@@ -296,7 +274,7 @@ const Sidebar = () => {
                 className={
                   pathName.startsWith("/admin/blogs")
                     ? "text-white"
-                    : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"
+                    : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"
                 }
                 width="20"
                 viewBox="0 0 24 24"
@@ -335,7 +313,7 @@ const Sidebar = () => {
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName.startsWith("/admin/users") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/users") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -388,7 +366,7 @@ const Sidebar = () => {
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName.startsWith("/admin/orders") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/orders") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -463,11 +441,11 @@ const Sidebar = () => {
             <li
               className={`flex ${pathName.startsWith("/admin/frequentQuestions")
                 ? "bg-shop-red"
-                : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
+                : "hover:bg-shop-red-light/40  dark:hover:bg-[#0c112e] transition-all group relative duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName.startsWith("/admin/frequentQuestions") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/frequentQuestions") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -506,7 +484,7 @@ const Sidebar = () => {
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
-                className={pathName.startsWith("/admin/siteSetting") ? "text-white" : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"}
+                className={pathName.startsWith("/admin/siteSetting") ? "text-white" : "text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"}
                 width="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -542,7 +520,7 @@ const Sidebar = () => {
               className={`flex ${pathName.startsWith("/homepage") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
                 } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
-              <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg  className="dark:text-white" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M9.14373 20.7821V17.7152C9.14372 16.9381 9.77567 16.3067 10.5584 16.3018H13.4326C14.2189 16.3018 14.8563 16.9346 14.8563 17.7152V20.7732C14.8562 21.4473 15.404 21.9951 16.0829 22H18.0438C18.9596 22.0023 19.8388 21.6428 20.4872 21.0007C21.1356 20.3586 21.5 19.4868 21.5 18.5775V9.86585C21.5 9.13139 21.1721 8.43471 20.6046 7.9635L13.943 2.67427C12.7785 1.74912 11.1154 1.77901 9.98539 2.74538L3.46701 7.9635C2.87274 8.42082 2.51755 9.11956 2.5 9.86585V18.5686C2.5 20.4637 4.04738 22 5.95617 22H7.87229C8.19917 22.0023 8.51349 21.8751 8.74547 21.6464C8.97746 21.4178 9.10793 21.1067 9.10792 20.7821H9.14373Z"
                   fill="currentColor"
@@ -568,7 +546,7 @@ const Sidebar = () => {
                ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red`}
           >
             <svg
-              className="text-gray-600 transition-all duration-300 group-hover:text-shop-red"
+              className="text-gray-600 dark:text-white transition-all duration-300 group-hover:text-shop-red"
               width="24"
               viewBox="0 0 24 24"
               fill="none"
