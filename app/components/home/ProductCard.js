@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import AddToCartButton from "./home/AddToCartButton";
+import AddToCartButton from "./AddToCartButton";
 
 export default function ProductCard({ product, showCategory = false, showButton = true }) {
   return (

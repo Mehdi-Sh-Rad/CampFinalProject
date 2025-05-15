@@ -8,7 +8,7 @@ export default function CartPopup() {
   const { cart, removeFromCart, updatingItem, toggleCartPopup } = useCart();
 
   return (
-    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-20 w-[400px] min-w-[400px] max-w-full max-h-96 overflow-y-auto overflow-x-hidden">
+    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-20 w-[400px] min-w-[400px] max-w-full max-h-96 overflow-y-auto overflow-x-hidden ml-20">
       {cart.items.length === 0 ? (
         <div className="p-6 text-center text-gray-600 text-base">
           سبد خرید شما خالی است

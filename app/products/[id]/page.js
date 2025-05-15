@@ -7,7 +7,7 @@ import Footer from "../../components/home/Footer";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/app/components/home/ProductCard";
 import { useCart } from "@/app/context/CartContext";
 import AddToCartButton from "@/app/components/home/AddToCartButton";
 import Loading from "@/app/loading"; 

@@ -1,9 +1,13 @@
-import UserContent from "../components/UserContent";
+import UserContent from "../components/ui/UserContent";
 import { SidebarProvider } from "../context/SidebarContext";
 
 export const metadata = {
-  title: "پنل ادمین",
-  description: "پنل ادمین فروشگاه",
+  title: "پنل کاربری",
+  icons: {
+    icon: "/logo-min-white.png",
+    shortcut: "/logo-min-white.png",
+    apple: "/logo-min-white.png",
+  },
 };
 
 export default function AdminLayout({ children }) {

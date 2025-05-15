@@ -2,7 +2,7 @@
 import Header from "../components/home/Header";
 import Benefits from "../components/home/Benefits";
 import Footer from "../components/home/Footer";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/app/components/home/ProductCard";
 import ProductsSortSelect from "../components/home/ProductsSortSelect";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";

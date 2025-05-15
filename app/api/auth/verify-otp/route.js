@@ -35,7 +35,7 @@ export async function POST(req) {
         return NextResponse.json({ message: "تأیید امنیتی ناموفق بود" }, { status: 403 });
       }
     }
-
+    console.log(type , email)
     // Validate type
     if (!type || !["register", "login", "email-login", "change-email", "change-phone"].includes(type)) {
       return NextResponse.json({ message: "نوع درخواست معتبر نیست" }, { status: 400 });

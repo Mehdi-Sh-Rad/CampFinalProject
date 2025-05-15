@@ -89,7 +89,7 @@ export default function Cart() {
                       </span>
                     )}
                   </div>
-                  <div className="ml-4 flex-1">
+                  <div className="mr-4 flex-1">
                     <p className="text-base sm:text-lg font-semibold text-[#1B1F3B]">
                       {item.product?.name || "محصول نامشخص"}
                     </p>
@@ -108,7 +108,7 @@ export default function Cart() {
                   </p>
                   <button
                     onClick={() => removeFromCart(item.product?._id)}
-                    className="ml-4 text-red-500 hover:text-red-700"
+                    className="mr-4 text-red-500 hover:text-red-700"
                   >
                     <FaTrashAlt className="text-lg" />
                   </button>

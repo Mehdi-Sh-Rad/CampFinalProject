@@ -4,21 +4,7 @@ import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/app/context/CartContext";
-import {
-  FaSearch,
-  FaShoppingCart,
-  FaBars,
-  FaTimes,
-  FaSignOutAlt,
-  FaUserCog,
-  FaUser,
-  FaBook,
-  FaNewspaper,
-  FaGift,
-  FaMoneyBill,
-  FaEye,
-  FaShoppingBag,
-} from "react-icons/fa";
+import {FaSearch,  FaShoppingCart,  FaBars,  FaTimes,  FaSignOutAlt,  FaUserCog,  FaUser,  FaBook,  FaNewspaper,  FaGift,  FaMoneyBill,  FaEye,  FaShoppingBag,} from "react-icons/fa";
 import CartPopup from "@/app/components/carts/CartPopup";
 
 // icons for circle menu
@@ -49,10 +35,7 @@ export default function Header() {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [logoSettings, setLogoSettings] = useState(null);
-  const [siteSetting, setSiteSetting] = useState({
-    slogan: "جهان کتاب، در دستان شما",
-  });
-  const [categories, setCategories] = useState([]);
+  const [siteSetting, setSiteSetting] = useState("");
   const { cart, isCartPopupVisible, setIsCartPopupVisible, toggleCartPopup } = useCart();
   const [headerHeight, setHeaderHeight] = useState(0);
   const [circleMenuHeight, setCircleMenuHeight] = useState(0);
@@ -61,9 +44,11 @@ export default function Header() {
   const circleMenuRef = useRef(null); 
   const hamburgerMenuRef = useRef(null); 
 
+  //calculate totalItems
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
+    //fetch logo and siteSetting
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -84,20 +69,7 @@ export default function Header() {
     fetchSettings();
   }, []);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories");
-        const data = await response.json();
-        setCategories(data || []);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setCategories([]);
-      }
-    };
-    fetchCategories();
-  }, []);
-
+//Dynamic height calculation
   useEffect(() => {
     const headerElement = headerRef.current;
     if (!headerElement) return;
@@ -119,30 +91,31 @@ export default function Header() {
     };
   }, [isMenuOpen, isMenuVisible]);
 
-  useEffect(() => {
-    const circleMenuElement = circleMenuRef.current;
-    if (!circleMenuElement || !isMenuVisible) {
-      setCircleMenuHeight(0);
-      return;
-    }
+  // useEffect(() => {
+  //   const circleMenuElement = circleMenuRef.current;
+  //   if (!circleMenuElement || !isMenuVisible) {
+  //     setCircleMenuHeight(0);
+  //     return;
+  //   }
 
-    const updateCircleMenuHeight = () => {
-      const height = circleMenuElement.offsetHeight;
-      setCircleMenuHeight(height);
-    };
+  //   const updateCircleMenuHeight = () => {
+  //     const height = circleMenuElement.offsetHeight;
+  //     setCircleMenuHeight(height);
+  //   };
 
-    const observer = new ResizeObserver(() => {
-      updateCircleMenuHeight();
-    });
+  //   const observer = new ResizeObserver(() => {
+  //     updateCircleMenuHeight();
+  //   });
 
-    observer.observe(circleMenuElement);
-    updateCircleMenuHeight();
+  //   observer.observe(circleMenuElement);
+  //   updateCircleMenuHeight();
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [isMenuVisible]);
+  //   return () => {
+  //     observer.disconnect();
+  //   };
+  // }, [isMenuVisible]);
 
+  // Calculate the height of the hamburger menu
   useEffect(() => {
     const hamburgerMenuElement = hamburgerMenuRef.current;
     if (!hamburgerMenuElement || !isMenuOpen) {
@@ -177,6 +150,7 @@ export default function Header() {
     setIsMenuVisible(!isMenuVisible);
   };
 
+  // Admin panel redirection
   const handleAdminClick = () => {
     if (status === "authenticated") {
       window.location.href = "/admin";
@@ -185,6 +159,7 @@ export default function Header() {
     }
   };
 
+  // Fetch search results
   const fetchSearchResults = async (query) => {
     if (!query.trim()) {
       setSearchResults([]);
@@ -205,6 +180,7 @@ export default function Header() {
     }
   };
 
+  // Fetch search results when the search query changes
   useEffect(() => {
     fetchSearchResults(searchQuery);
   }, [searchQuery]);
@@ -225,27 +201,7 @@ export default function Header() {
   ];
 
   return (
-    <>
-
-      <style>
-        {`
-          @keyframes slideDown {
-            from {
-              transform: translateY(-100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateY(0);
-              opacity: 1;
-            }
-          }
-
-          .animate-slide-down {
-            animation: slideDown 0.3s ease-out forwards;
-          }
-        `}
-      </style>
-
+    <>  
       <header
         ref={headerRef}
         className="fixed top-0 left-0 right-0 w-full z-[1000] bg-background shadow-md"
@@ -384,6 +340,7 @@ export default function Header() {
                   {isCartPopupVisible && <CartPopup />}
                 </div>
 
+               {session?.user ? (
                 <div className="relative group">
                   <Link
                     href="/user"
@@ -394,7 +351,9 @@ export default function Header() {
                   <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
                     کاربر
                   </span>
-                </div>
+                </div>) : ""
+                
+                }
                 {session?.user?.isAdmin ? (
                   <div className="relative group">
                     <button
@@ -605,8 +564,6 @@ export default function Header() {
           )}
         </div>
       </header>
-
-
       <div style={{ height: `${totalHeight}px` }} />
 
     </>

@@ -1,13 +1,11 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
-import GeneralError from "@/app/components/ui/GeneralError";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { getWallets } from "@/app/lib/fetch/Wallets";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState([]);
@@ -18,9 +16,8 @@ const Wallets = () => {
     const fetchWallets = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/walletsView");
-        if (!response.ok) throw new Error("مشکل در دریافت کیف پول");
-        const data = await response.json();
+        const data = await getWallets();
+        if (!data) throw new Error("مشکل در دریافت کیف پول");
         setWallets(Array.isArray(data) ? data : [data]);
       } catch (error) {
         setError(error.message);

@@ -5,7 +5,7 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import Wallet from "@/models/Wallet";
 import User from "@/models/User";
 
-
+//Show Wallet
 export async function GET(req) {
   try {
     await connectToDatabase();
@@ -16,7 +16,9 @@ export async function GET(req) {
       return NextResponse.json({ error: "شما وارد نشده اید" }, { status: 401 });
     }
 
-    let wallet = await Wallet.findOne({ user: session.user.id }).populate("user");
+    let wallet = await Wallet.findOne({ user: session.user.id })
+    .populate("user")
+    .sort({ createdAt: -1 });
 
     if (!wallet) {
       wallet = new Wallet({ user: session.user.id, balance: 0 });
@@ -32,6 +34,7 @@ export async function GET(req) {
   }
 };
 
+//Create Wallet
 export async function POST(req) {
 
   try {
@@ -97,6 +100,7 @@ export async function POST(req) {
 }
 
 
+//Charge Wallet
 export async function PUT(req) {
   try {
     await connectToDatabase();
@@ -143,7 +147,7 @@ export async function PUT(req) {
   }
 }
 
-
+//Withdraw from Wallet
 export async function DELETE(req) {
   try {
     await connectToDatabase();

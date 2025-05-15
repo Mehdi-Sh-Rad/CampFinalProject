@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import LoadingSpinner from "./components/ui/LoadingSpinner";
 
 const Loading = () => {
   return (

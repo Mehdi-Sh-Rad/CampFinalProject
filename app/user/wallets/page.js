@@ -1,28 +1,32 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
-import GeneralError from "@/app/components/ui/GeneralError";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { getWallet } from "@/app/lib/fetch/Wallets";
+import Loading from "@/app/loading";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
+// Fetch the wallet data
   useEffect(() => {
     const fetchWallets = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/wallets");
-        if (!response.ok) throw new Error("مشکل در دریافت اطلاعات کیف پول");
-        const data = await response.json();
-        setWallets(Array.isArray(data) ? data : [data]);
+        const data = await getWallet();
+        if (!data) throw new Error("مشکل در دریافت اطلاعات کیف پول");
+  
+        // Sort the transactionHistory array by date in descending order
+        if (data.transactionHistory && Array.isArray(data.transactionHistory)) {
+          data.transactionHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }  
+        setWallets([data]); 
       } catch (error) {
         setError(error.message);
       } finally {
@@ -32,6 +36,7 @@ const Wallets = () => {
     fetchWallets();
   }, []);
 
+  // Check if there is any wallets
   useEffect(() => {
     if (wallets.length === 0) {
       setError("کیف پولی وجود ندارد");
@@ -40,6 +45,7 @@ const Wallets = () => {
     }
   }, [wallets]);
 
+  // Format the date to Persian date
   const formatToPersianDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -54,6 +60,7 @@ const Wallets = () => {
   return (
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
+        {loading && <Loading />}
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
           <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> مشاهده کیف پول </h1>
           <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">در این قسمت می توانید مانده و گردش های کیف پول خود را مشاهده نمایید</span>
@@ -75,9 +82,9 @@ const Wallets = () => {
           />
         </div>
         <div className="container py-4 px-10 -mt-10 z-30 relative">
-        {wallets.map((wal, indx) => (
-          <span key={wal._id + 1} className="bg-slate-200 rounded-xl p-4 mx-3 m-1"> موجودی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
-        ))}
+          {wallets.map((wal, indx) => (
+            <span key={wal._id + 1} className="bg-slate-200 rounded-xl p-4 mx-3 m-1"> موجودی کیف پول شما: {wal.balance.toLocaleString("fa-IR")} تومان </span>
+          ))}
           <div className="bg-white py-4 px-4 rounded-lg shadow-xl shadow-[#112692]/5 dark:bg-shop-dark">
             {error && <div className="text-red-500 text-center">{error}</div>}
             <div className="flex flex-col">
@@ -164,7 +171,7 @@ const Wallets = () => {
             </div>
           </div>
         </div>
-        
+
       </div>
 
     </AuthWrapper>

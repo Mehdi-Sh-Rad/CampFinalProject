@@ -1,7 +1,7 @@
 "use client";
-import { useSidebar } from "../context/SidebarContext";
-import Sidebar from "./ui/SidebarAdmin";
-import Header from "./ui/Header";
+import { useSidebar } from "../../context/SidebarContext";
+import Sidebar from "./SidebarAdmin";
+import Header from "./Header";
 
 export default function AdminContent({ children }) {
   const { isSidebarOpen } = useSidebar();

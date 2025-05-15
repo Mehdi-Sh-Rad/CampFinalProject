@@ -1,7 +1,7 @@
 "use client";
-import { useSidebar } from "../context/SidebarContext";
-import Sidebar from "./ui/SidebarUser";
-import Header from "./ui/Header";
+import { useSidebar } from "../../context/SidebarContext";
+import Sidebar from "./SidebarUser";
+import Header from "./Header";
 
 export default function UserContent({ children }) {
   const { isSidebarOpen } = useSidebar();

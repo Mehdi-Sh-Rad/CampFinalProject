@@ -7,15 +7,17 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { createWallet } from "@/app/lib/fetch/Wallets";
+import Loading from "@/app/loading";
 
 const DepositWallets = () => {
   const [amount, setAmount] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(true);
   const [formError, setFormError] = useState(true);
   const router = useRouter();
 
-
+  // Handle charging the wallet
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (amount == "") {
@@ -35,15 +37,10 @@ const DepositWallets = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("/api/wallets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount,
-          type: "credit",
-        }),
-      });
-      if (!response.ok) {
+      setFormError("");
+      const response = await createWallet(amount, "credit");
+
+      if (!response) {
         if (response.status === 400) {
           const message = await response.json();
           setFormError(message.message);
@@ -63,6 +60,7 @@ const DepositWallets = () => {
   return (
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
+        {loading && <Loading />}
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
           <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">
             افزودن رکورد پرداخت جدید
@@ -113,6 +111,7 @@ const DepositWallets = () => {
       </div>
     </AuthWrapper>
   );
-};
+}; 
+
 
 export default DepositWallets;

@@ -1,13 +1,19 @@
 "use client";
 import { useCart } from "@/app/context/CartContext";
 import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 const AddToCartButton = ({ productId }) => {
   const { addToCart } = useCart();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState(null);
 
+  // Check if the user is logged in
   const handleAddToCart = async () => {
+    if (!session) {
+      return setLocalError("برای افزودن به سبد خرید ثبت نام کنید و یا وارد حساب کاربری خود شوید");
+    }
     try {
       setLoading(true);
       setLocalError(null);
@@ -23,6 +29,7 @@ const AddToCartButton = ({ productId }) => {
     }
   };
 
+  // Set timer for local Error
   useEffect(() => {
     if (localError) {
       const timer = setTimeout(() => {

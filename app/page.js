@@ -14,6 +14,7 @@ import { getCategories } from "./lib/fetch/Categories";
 import { getProducts } from "./lib/fetch/Products";
 import { getBanners } from "./lib/fetch/Banners";
 import { getBlogs } from "./lib/fetch/Blogs";
+import { set } from "mongoose";
 
 export default function Home() {
   const [banners, setBanners] = useState([]);
@@ -40,6 +41,7 @@ export default function Home() {
   // Fetch banners
   useEffect(() => {
     const fetchBanners = async () => {
+      setLoading((prev) => ({ ...prev, banners: true }));
       try {
         const data = await getBanners();
         if (!data) {
@@ -60,6 +62,7 @@ export default function Home() {
 
   // Fetch products
   useEffect(() => {
+    setLoading((prev) => ({ ...prev, Product: true }));
     const fetchProducts = async () => {
       setLoading(true);
       try {
@@ -71,7 +74,7 @@ export default function Home() {
       } catch (error) {
         setErrors(error.message);
       } finally {
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, Product: false }));
       }
     };
     fetchProducts();
@@ -80,6 +83,7 @@ export default function Home() {
   // Fetch blogs
   useEffect(() => {
     const fetchNewBlogs = async () => {
+      setLoading((prev) => ({ ...prev, newBlogs: true }));
       try {
         const data = await getBlogs();
 
@@ -87,10 +91,8 @@ export default function Home() {
           const errorData = await res.text();
           throw new Error(errorData);
         }
-
         setNewBlogs(data);
       } catch (error) {
-        console.error("Error fetching new blogs:", error);
         setErrors((prev) => ({ ...prev, newBlogs: error.message }));
       } finally {
         setLoading((prev) => ({ ...prev, newBlogs: false }));
@@ -101,6 +103,7 @@ export default function Home() {
 
   // Fetch categories
   useEffect(() => {
+    setLoading((prev) => ({ ...prev, categories: true }));
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
@@ -121,9 +124,10 @@ export default function Home() {
     fetchCategories();
   }, []);
 
-  // filter award products
+    // filter award products
   useEffect(() => {
     const fetchAwards = async () => {
+      setLoading((prev) => ({ ...prev, awards: true }));
       try {
         const res = await fetch("/api/products?award=true", {
           credentials: "omit",

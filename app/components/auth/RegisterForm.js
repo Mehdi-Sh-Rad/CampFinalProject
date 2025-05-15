@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation"
+import { set } from "mongoose";
 
 const RegisterForm = () => {
   // State for form inputs and UI control
@@ -18,6 +20,7 @@ const RegisterForm = () => {
   const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
+  const router = useRouter();
 
   // Get reCAPTCHA token using site key
   const getRecaptchaToken = async (action) => {
@@ -106,7 +109,6 @@ const RegisterForm = () => {
       setError("کد تایید باید 6 رقمی باشد");
       return;
     }
-
     setLoading(true);
     try {
       const recaptchaToken = await getRecaptchaToken("verify_otp");
@@ -115,13 +117,16 @@ const RegisterForm = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone, code: otp, name, email, password, recaptchaToken }),
+        body: JSON.stringify({ phone, code: otp, name, email, password, recaptchaToken, type: "register" }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.message || "خطایی سمت سرور رخ داده است");
       } else {
         setSuccess("شما با موفقیت ثبت نام شدید");
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 5000); 
       }
     } catch (error) {
       setError("خطایی رخ داده است");

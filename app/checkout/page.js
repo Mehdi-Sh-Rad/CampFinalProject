@@ -27,6 +27,7 @@ export default function Checkout() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showOrderSuccess, setShowOrderSuccess] = useState(false);
 
+  // Calculate total price and apply discount
   const totalPrice =
     cart?.items?.reduce(
       (total, item) => total + (item.product.finalPrice ?? 0) * item.quantity,
@@ -41,6 +42,7 @@ export default function Checkout() {
     }
   }, [totalPrice, appliedDiscount]);
 
+  // Fetch discounts
   useEffect(() => {
     const fetchDiscount = async () => {
       setLoading(true);
@@ -58,6 +60,7 @@ export default function Checkout() {
     fetchDiscount();
   }, []);
 
+  // Fetch wallets
   useEffect(() => {
     const fetchWallets = async () => {
       setLoading(true);
@@ -79,6 +82,7 @@ export default function Checkout() {
     generateOrderCode();
   }, []);
 
+  //Generate discount code
   const generateOrderCode = () => {
     const characters = "0123456789";
     let result = "P-";
@@ -90,6 +94,7 @@ export default function Checkout() {
     setOrderCode(result);
   };
 
+  //Handle discount process
   const handleApplyDiscount = async () => {
     setLoading(true);
     setDiscountError("");
@@ -120,6 +125,7 @@ export default function Checkout() {
     }
   };
 
+  //Handle remove discount
   const handleRemoveDiscount = async (id) => {
     setLoading(true);
     setDiscountError("");
@@ -139,6 +145,7 @@ export default function Checkout() {
     }
   };
 
+  //Handle payment process
   const handlePayment = async () => {
     if (payableAmount <= 0) {
       setError("مبلغ خرید نامعتبر است");
@@ -173,6 +180,7 @@ export default function Checkout() {
     }
   };
 
+  //Handle wallet withdraw process
   const handleWalletWithdraw = async (e) => {
     e.preventDefault();
     if (payableAmount <= 0) {
@@ -210,6 +218,7 @@ export default function Checkout() {
     }
   };
 
+  //Handle order submit process
   const handleOrderSubmit = async () => {
     try {
       setLoading(true);
@@ -243,6 +252,7 @@ export default function Checkout() {
     }
   };
 
+  //Handle scroll to top button
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
@@ -255,10 +265,12 @@ export default function Checkout() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  //Show order success page
   if (showOrderSuccess) {
-    return <OrderSuccess />;
+    return <OrderSuccess orderCode />;
   }
 
+  //Handle loading state
   if (loading) {
     return (
       <div className="bg-[#F0EBFF] min-h-screen">
@@ -269,6 +281,7 @@ export default function Checkout() {
     );
   }
 
+  //Show empty cart page
   if (!cart || cart.items.length === 0) {
     return <EmptyCart />;
   }

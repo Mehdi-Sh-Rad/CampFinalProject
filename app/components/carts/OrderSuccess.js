@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export default function OrderSuccess() {
+export default function OrderSuccess(orderCode) {
   return (
     <>
       <style jsx>{`
@@ -40,7 +40,7 @@ export default function OrderSuccess() {
 
         <div className="flex flex-col sm:flex-row gap-4 items-center animate-fadeIn">
           <Link
-            href="/user"
+            href="/user/orders"
             className="bg-[#7B61FF] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#6A50E6] hover:shadow-lg transition-all duration-300 text-base sm:text-lg"
           >
             مشاهده جزئیات سفارش

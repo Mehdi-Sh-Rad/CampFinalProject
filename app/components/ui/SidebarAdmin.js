@@ -287,20 +287,16 @@ const Sidebar = () => {
               )}
             </li>
           </Link>
-          
-          <Link className="" href={"/admin/blogs"}>
+          <Link className=" " href={"/admin/blogs"}>
             <li
-              className={`flex ${
-                pathName.startsWith("/admin/blogs")
-                  ? "bg-shop-red"
-                  : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group duration-300"
-              } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2 px-4 py-2"} items-center rounded`}
+              className={`flex ${pathName.startsWith("/admin/blogs") ? "bg-shop-red" : "hover:bg-shop-red-light/40 dark:hover:bg-[#0c112e] transition-all group relative duration-300"
+                } ${!isSidebarOpen ? "justify-center py-2 " : "gap-x-2  px-4 py-2"} items-center rounded`}
             >
               <svg
                 className={
                   pathName.startsWith("/admin/blogs")
                     ? "text-white"
-                    : "text-shop-gray transition-all duration-300 group-hover:text-shop-red"
+                    : "text-gray-600 transition-all duration-300 group-hover:text-shop-red"
                 }
                 width="20"
                 viewBox="0 0 24 24"
@@ -321,14 +317,16 @@ const Sidebar = () => {
                 />
               </svg>
               <span
-                className={`${
-                  pathName.startsWith("/admin/blogs")
-                    ? "text-white font-bold"
-                    : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
-                } ${!isSidebarOpen && "hidden"}`}
+                className={`${pathName.startsWith("/admin/blogs") ? "text-white font-bold" : "text-shop-gray font-bold transition-all duration-300 group-hover:text-shop-red"
+                  } ${!isSidebarOpen && "hidden"}`}
               >
                 مدیریت مقالات
               </span>
+              {!isSidebarOpen && (
+                <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  مدیریت مقالات
+                </span>
+              )}
             </li>
           </Link>
           <Link className=" " href={"/admin/users"}>
@@ -534,7 +532,7 @@ const Sidebar = () => {
               </span>
               {!isSidebarOpen && (
                 <span className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap px-2 py-1 rounded bg-gray-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                مدیریت تنظیمات سایت
+                  مدیریت تنظیمات سایت
                 </span>
               )}
             </li>

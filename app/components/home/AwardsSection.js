@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/app/components/home/ProductCard";
 
 export default function AwardsSection({ awards, totalAwards, id }) {
   return (
