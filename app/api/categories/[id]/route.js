@@ -66,8 +66,9 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   await connectToDatabase();
+  const { id } = await params;
   try {
-    await Category.findByIdAndDelete(params.id);
+    await Category.findByIdAndDelete(id);
     return new Response(null, { status: 204 });
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), {

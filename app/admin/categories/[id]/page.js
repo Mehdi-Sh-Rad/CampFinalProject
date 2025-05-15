@@ -1,5 +1,6 @@
 "use client";
 
+import { getCategory, updateCategory } from "@/app/lib/fetch/Categories";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import React, { use, useEffect, useState } from "react";
@@ -17,19 +18,14 @@ const UpdateCategory = () => {
   useEffect(() => {
     async function fetchCategory() {
       try {
-        const res = await fetch(`/api/categories/${id}`);
-        const data = await res.json();
-        if (res.status === 404) {
-          setError(data.message || "دسته بندی پیدا نشد");
-          setLoading(false);
-          return;
-        }
-        if (!res.ok) {
+        setLoading(true);
+        const data = await getCategory(id);
+        if (!data) {
           setError(data.message || "خطا در دریافت داده");
           setLoading(false);
           return;
         }
-        
+
         setName(data.name || "");
         setLoading(false);
       } catch (err) {
@@ -61,23 +57,14 @@ const UpdateCategory = () => {
     }
 
     try {
-      const response = await fetch(`/api/categories/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
-      });
-
-      if (response.status === 400) {
-        let message = await response.json();
-        setFormError(message.message);
-      }
-      if (!response.ok) throw new Error("مشکلی در ساخت دسته بندی پیش آمده است");
+      const response = updateCategory(id, { name });
+      if (!response) throw new Error("مشکلی در ویرایش دسته بندی پیش آمده است");
       router.push("/admin/categories");
+
     } catch (error) {
       setError(error.message);
     }
   };
-
 
   if (error) {
     return (
@@ -114,9 +101,6 @@ const UpdateCategory = () => {
       </div>
     );
   }
-
-
-
 
 
   return (

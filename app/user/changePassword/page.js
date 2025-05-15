@@ -17,8 +17,6 @@ const changePassword = () => {
   const router = useRouter();
 
 
-
-
   // Validate form input
   const validateForm = () => {
     if (currentPassword.trim() === "") {

@@ -8,6 +8,7 @@ import Image from "next/image";
 import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { getOrders, updateOrder } from "@/app/lib/fetch/Orders";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -19,9 +20,9 @@ const Orders = () => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/orders");
-        if (!response.ok) throw new Error("مشکل در دریافت کدهای تخفیف");
-        const data = await response.json();
+        const data = await getOrders();
+        if (!data) throw new Error("خطا در دریافت سفارشات");
+
         setOrders(Array.isArray(data) ? data : [data]);
       } catch (error) {
         setError(error.message);
@@ -30,6 +31,7 @@ const Orders = () => {
       }
     };
     fetchOrders();
+    console.log("orders:", orders)
   }, []);
 
   // Toggle comment status
@@ -37,17 +39,10 @@ const Orders = () => {
     const newStatus = !Boolean(preStatus);
     setStatus(newStatus);
     try {
-      const response = await fetch(`/api/orders/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
 
-      if (response.status === 400) {
-        let message = await response.json();
-        setError(message.message);
-      }
-      if (!response.ok) throw new Error("مشکلی در تغییر وضعیت آمده است");
+      const response = await updateOrder(id, newStatus);
+
+      if (!response) throw new Error("مشکلی در تغییر وضعیت آمده است");
     } catch (error) {
       setError(error.message);
     }
@@ -191,7 +186,7 @@ const Orders = () => {
                                     textOverflow: "ellipsis",
                                     maxWidth: "150px",
                                   }}>
-                                  {order.items.map((item) => item.product.name).join(" , ")}
+                                  {order.items.map((item) => item.product?.name).join(" , ")}
                                 </td>
                                 <td className="whitespace-nowrap px-4 py-4">{order.status ? "تایید" : "در انتظار"}</td>
 

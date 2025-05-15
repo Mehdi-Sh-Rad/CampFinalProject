@@ -226,6 +226,7 @@ export default function Header() {
 
   return (
     <>
+
       <style>
         {`
           @keyframes slideDown {
@@ -605,7 +606,9 @@ export default function Header() {
         </div>
       </header>
 
+
       <div style={{ height: `${totalHeight}px` }} />
+
     </>
   );
 }

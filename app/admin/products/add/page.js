@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { getCategories } from "@/app/lib/fetch/Categories";
+import { createProduct } from "@/app/lib/fetch/Products";
 
 const AddProduct = () => {
   const [files, setFiles] = useState([]);
@@ -28,10 +30,19 @@ const AddProduct = () => {
 
   // Fetch categories on component mount
   useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch(() => setError("مشکلی در دریافت دسته بندی ها رخ داده است"));
+    const fetchCategories = async () => {
+
+      try {
+        const data = await getCategories();
+        if (!data) {
+          throw new Error("دسته بندی های محصول یافت نشد")
+        }
+        setCategories(data);
+      } catch (error) {
+        setError(error.message);
+      } 
+    };
+    fetchCategories();
   }, []);
 
   // Automatically set free to true if price is 0
@@ -94,16 +105,17 @@ const AddProduct = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    if (!files || files.length === 0 || files.every((file) => !file)) {
-      setFormError("انتخاب حداقل یک فایل محصول الزامی است");
-      return false;
-    }
+
     if (!images || images.length === 0 || images.every((image) => !image)) {
       setFormError("انتخاب حداقل یک تصویر محصول الزامی است");
       return false;
     }
-    
-    
+
+    if (!files || files.length === 0 || files.every((file) => !file)) {
+      setFormError("انتخاب حداقل یک فایل محصول الزامی است");
+      return false;
+    }
+
     if (!name || name.trim() === "") {
       setFormError("نام محصول الزامی میباشد");
       return false;
@@ -142,7 +154,7 @@ const AddProduct = () => {
     if (!descriptionRegex.test(description)) {
       setError("نام میتواند شامل حروف ، اعداد و فاصله باشد");
     }
-    
+
     if (!category) {
       setFormError("دسته بندی محصول باید باشد");
       return false;
@@ -197,21 +209,19 @@ const AddProduct = () => {
         if (image) formData.append("images", image);
       });
 
-      const response = await fetch("/api/products", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await createProduct(formData);
 
       if (response.status === 400) {
         let message = await response.json();
         setFormError(message.message);
       }
-      if (!response.ok) throw new Error("مشکلی در ساخت محصول پیش آمده است");
+      if (!response) throw new Error("مشکلی در ساخت محصول پیش آمده است");
       router.push("/admin/products");
     } catch (error) {
       setError(error.message);
     }
   };
+
   return (
     <AuthWrapper>
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
@@ -242,7 +252,7 @@ const AddProduct = () => {
                   {error}
                 </h3>
               )}
-              {formError && <h3>{formError}</h3>}
+              {formError && <h3 className="text-red-500">{formError}</h3>}
               <form className="py-4" onSubmit={handleSubmit}>
                 <div className="flex flex-col items-start gap-y-4 w-full">
                   {/* Name */}
@@ -421,9 +431,8 @@ const AddProduct = () => {
                       <input id="custom-switch" type="checkbox" className="sr-only" checked={active} onChange={(e) => setActive(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${active ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                          active ? "transform translate-x-5" : ""
-                        }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${active ? "transform translate-x-5" : ""
+                          }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{active ? "فعال" : "غیرفعال"}</span>
                   </label>
@@ -434,9 +443,8 @@ const AddProduct = () => {
                       <input id="award-switch" type="checkbox" className="sr-only" checked={award} onChange={(e) => setAward(e.target.checked)} />
                       <div className={`block w-10 h-5 rounded-full ${award ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                          award ? "transform translate-x-5" : ""
-                        }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${award ? "transform translate-x-5" : ""
+                          }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{award ? "جایزه دار" : "غیر جایزه دار"}</span>
                   </label>
@@ -447,9 +455,8 @@ const AddProduct = () => {
                       <input id="free-checkbox" type="checkbox" className="sr-only" checked={free} onChange={handleFreeToggle} />
                       <div className={`block w-10 h-5 rounded-full ${free ? "bg-blue-600" : "bg-gray-400"} transition-colors duration-300`}></div>
                       <div
-                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                          free ? "transform translate-x-5" : ""
-                        }`}></div>
+                        className={`dot absolute left-0 top-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${free ? "transform translate-x-5" : ""
+                          }`}></div>
                     </div>
                     <span className="ms-2 text-sm dark:text-white">{free ? "رایگان" : "غیررایگان"}</span>
                   </label>
