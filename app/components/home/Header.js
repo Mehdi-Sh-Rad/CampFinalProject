@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/app/context/CartContext";
 import {
   FaSearch,
@@ -13,50 +13,53 @@ import {
   FaUserCog,
   FaUser,
   FaBook,
-  FaStar,
-  FaFlag,
-  FaGraduationCap,
-  FaFeatherAlt,
-  FaAward,
   FaNewspaper,
+  FaGift,
+  FaMoneyBill,
+  FaEye,
+  FaShoppingBag,
 } from "react-icons/fa";
+import CartPopup from "@/app/components/carts/CartPopup";
 
 // icons for circle menu
 const categoryIcons = {
-  "زبان اصلی": <FaFlag size={20} />,
-  دانشگاهی: <FaGraduationCap size={20} />,
-  "ادبیات داستانی": <FaFeatherAlt size={20} />,
-  "پرفروش‌ها": <FaStar size={20} />,
-  "جوایز ادبی": <FaAward size={20} />,
-  مقالات: <FaNewspaper size={20} />,
-  "همه دسته‌ها": <FaBook size={20} />,
+  مقالات: <FaNewspaper size={20} className="text-dark" />,
+  "همه دسته‌ها": <FaBook size={20} className="text-dark" />,
+  "تخفیف‌دارها": <FaGift size={20} className="text-dark" />,
+  "رایگان": <FaMoneyBill size={20} className="text-dark" />,
+  "پربازدیدترین": <FaEye size={20} className="text-dark" />,
+  "پرفروش‌ترین": <FaShoppingBag size={20} className="text-dark" />,
 };
-
-// lists of dynamic categories that we choose to show in circle menu
-const desiredCategories = ["زبان اصلی", "دانشگاهی", "ادبیات داستانی"];
 
 // lists of static ones in circle menu
 const staticMenuItems = [
-  { name: "همه دسته‌ها", href: "/categories", icon: <FaBook size={20} /> },
-  { name: "پرفروش‌ها", href: "#", icon: <FaStar size={20} /> },
-  { name: "جوایز ادبی", href: "/products/awards", icon: <FaAward size={20} /> },
-  { name: "مقالات", href: "/blogs", icon: <FaNewspaper size={20} /> },
+  { name: "همه دسته‌ها", href: "/categories", icon: <FaBook size={20} className="text-dark" /> },
+  { name: "مقالات", href: "/blogs", icon: <FaNewspaper size={20} className="text-dark" /> },
+  { name: "تخفیف‌دارها", href: "/products?discountPrice=true", icon: <FaGift size={20} className="text-dark" /> },
+  { name: "رایگان", href: "/products?free=true", icon: <FaMoneyBill size={20} className="text-dark" /> },
+  { name: "پربازدیدترین", href: "/products?sort=view-desc", icon: <FaEye size={20} className="text-dark" /> },
+  { name: "پرفروش‌ترین", href: "/products?sort=sold-desc", icon: <FaShoppingBag size={20} className="text-dark" /> },
 ];
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const [isMenuVisible, setIsMenuVisible] = useState(false); 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [logoSettings, setLogoSettings] = useState(null);
   const [siteSetting, setSiteSetting] = useState({
-    title: "بوکینو",
     slogan: "جهان کتاب، در دستان شما",
   });
   const [categories, setCategories] = useState([]);
-  const { cart } = useCart();
+  const { cart, isCartPopupVisible, setIsCartPopupVisible, toggleCartPopup } = useCart();
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [circleMenuHeight, setCircleMenuHeight] = useState(0);
+  const [hamburgerMenuHeight, setHamburgerMenuHeight] = useState(0);
+  const headerRef = useRef(null); 
+  const circleMenuRef = useRef(null); 
+  const hamburgerMenuRef = useRef(null); 
 
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
@@ -71,7 +74,6 @@ export default function Header() {
         const siteSettingResponse = await fetch("/api/siteSetting");
         const siteSettingData = await siteSettingResponse.json();
         setSiteSetting({
-          title: siteSettingData.title,
           slogan: siteSettingData.slogan,
         });
       } catch (error) {
@@ -87,10 +89,7 @@ export default function Header() {
       try {
         const response = await fetch("/api/categories");
         const data = await response.json();
-        const filteredCategories = data.filter((cat) =>
-          desiredCategories.includes(cat.name)
-        );
-        setCategories(filteredCategories || []);
+        setCategories(data || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
         setCategories([]);
@@ -100,23 +99,82 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const headerElement = document.querySelector("header");
-    if (headerElement) {
+    const headerElement = headerRef.current;
+    if (!headerElement) return;
+
+    const updateHeight = () => {
       const height = headerElement.offsetHeight;
       setHeaderHeight(height);
-    }
-
-    const handleResize = () => {
-      const newHeight = headerElement?.offsetHeight || 0;
-      setHeaderHeight(newHeight);
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const observer = new ResizeObserver(() => {
+      updateHeight();
+    });
+
+    observer.observe(headerElement);
+    updateHeight();
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isMenuOpen, isMenuVisible]);
+
+  useEffect(() => {
+    const circleMenuElement = circleMenuRef.current;
+    if (!circleMenuElement || !isMenuVisible) {
+      setCircleMenuHeight(0);
+      return;
+    }
+
+    const updateCircleMenuHeight = () => {
+      const height = circleMenuElement.offsetHeight;
+      setCircleMenuHeight(height);
+    };
+
+    const observer = new ResizeObserver(() => {
+      updateCircleMenuHeight();
+    });
+
+    observer.observe(circleMenuElement);
+    updateCircleMenuHeight();
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isMenuVisible]);
+
+  useEffect(() => {
+    const hamburgerMenuElement = hamburgerMenuRef.current;
+    if (!hamburgerMenuElement || !isMenuOpen) {
+      setHamburgerMenuHeight(0);
+      return;
+    }
+
+    const updateHamburgerMenuHeight = () => {
+      const height = hamburgerMenuElement.offsetHeight;
+      setHamburgerMenuHeight(height);
+    };
+
+    const observer = new ResizeObserver(() => {
+      updateHamburgerMenuHeight();
+    });
+
+    observer.observe(hamburgerMenuElement);
+    updateHamburgerMenuHeight();
+
+    return () => {
+      observer.disconnect();
+    };
   }, [isMenuOpen]);
+
+  const totalHeight = headerHeight + (isMenuVisible ? circleMenuHeight : 0) + (isMenuOpen ? hamburgerMenuHeight : 0);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleCircleMenu = () => {
+    setIsMenuVisible(!isMenuVisible);
   };
 
   const handleAdminClick = () => {
@@ -157,46 +215,81 @@ export default function Header() {
     }
   }, [searchQuery]);
 
-  const circleMenuItems = [
-    ...staticMenuItems,
-    ...categories.map((category) => ({
-      name: category.name,
-      href: `/products?category=${category._id}`,
-      icon: categoryIcons[category.name] || <FaBook size={20} />,
-    })),
-  ];
+  const circleMenuItems = [...staticMenuItems];
 
   const hamburgerMenuItems = [
     ...staticMenuItems.map((item) => ({
       name: item.name,
       href: item.href,
     })),
-    ...categories.map((category) => ({
-      name: category.name,
-      href: `/products?category=${category._id}`,
-    })),
   ];
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 w-full z-[1000] bg-background shadow-md">
-        <div className="container mx-auto px-4 py-1">
-          <div className="flex justify-between items-center border-b border-gray-200">
-            <Link href="/">
-              <Image
-                src={logoSettings?.headerLogo || "/PersianLogo.png"}
-                alt="لوگوی سایت"
-                width={200}
-                height={60}
-                className="object-contain"
-              />
-            </Link>
+
+      <style>
+        {`
+          @keyframes slideDown {
+            from {
+              transform: translateY(-100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
+          }
+
+          .animate-slide-down {
+            animation: slideDown 0.3s ease-out forwards;
+          }
+        `}
+      </style>
+
+      <header
+        ref={headerRef}
+        className="fixed top-0 left-0 right-0 w-full z-[1000] bg-background shadow-md"
+      >
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="relative group hidden md:block">
+                <button
+                  onClick={toggleCircleMenu}
+                  className="text-dark hover:text-secondary flex items-center gap-1"
+                >
+                  {isMenuVisible ? (
+                    <FaTimes size={24} className="text-dark" />
+                  ) : (
+                    <FaBars size={24} className="text-dark" />
+                  )}
+                </button>
+                <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
+                  منو
+                </span>
+              </div>
+
+              <Link href="/">
+                <Image
+                  src={logoSettings?.headerLogo || "/PersianLogo.png"}
+                  alt="لوگوی سایت"
+                  width={200}
+                  height={60}
+                  className="object-contain"
+                />
+              </Link>
+              <div className="flex flex-col">
+                <p className="text-sm font-medium text-primary opacity-80 leading-none">
+                  {siteSetting.slogan}
+                </p>
+              </div>
+            </div>
 
             <div className="hidden md:flex md:flex-1 mx-4 relative max-w-lg">
               <input
                 type="text"
                 placeholder="جستجوی کتاب‌ها..."
-                className="w-full p-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:border-primary focus:ring-0 bg-white text-dark shadow-sm transition-all duration-300"
+                className="w-full p-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:border-primary focus:ring-0 bg-white text-dark shadow-sm transition-all duration-300 text-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -207,7 +300,7 @@ export default function Header() {
               {searchQuery.trim() && (
                 <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
                   {isLoading ? (
-                    <div className="p-4 text-center text-dark">
+                    <div className="p-2 text-center text-dark text-sm">
                       در حال جستجو...
                     </div>
                   ) : searchResults.length > 0 ? (
@@ -215,7 +308,7 @@ export default function Header() {
                       <Link
                         key={product._id}
                         href={`/products/${product._id}`}
-                        className="flex items-center gap-4 p-3 hover:bg-gray-100 transition"
+                        className="flex items-center gap-3 p-2 hover:bg-gray-100 transition"
                       >
                         {product.imageUrls?.[0] && (
                           <Image
@@ -238,7 +331,7 @@ export default function Header() {
                               "رایگان"
                             ) : product.discountPrice ? (
                               <>
-                                <span className="line-through text-gray-400 mr-2">
+                                <span className="line-through text-gray-400 mr-1">
                                   {product.price} تومان
                                 </span>
                                 <span className="text-green-600">
@@ -253,7 +346,7 @@ export default function Header() {
                       </Link>
                     ))
                   ) : (
-                    <div className="p-4 text-center text-dark">
+                    <div className="p-2 text-center text-dark text-sm">
                       هیچ نتیجه‌ای یافت نشد
                     </div>
                   )}
@@ -261,33 +354,44 @@ export default function Header() {
               )}
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-4">
-                <div className="relative group">
+            <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-3">
+                <div
+                  className="relative group"
+                  onMouseEnter={() => setIsCartPopupVisible(true)}
+                  onMouseLeave={() => setIsCartPopupVisible(false)}
+                >
                   <Link
                     href="/cart"
-                    className="text-dark hover:text-secondary flex items-center gap-2"
+                    className="text-dark hover:text-secondary flex items-center gap-1"
+                    onClick={(e) => {
+                      if (isCartPopupVisible) {
+                        e.preventDefault(); 
+                      }
+                      toggleCartPopup();
+                    }}
                   >
                     <FaShoppingCart size={22} className="text-dark" />
                     {totalItems > 0 && (
-                      <span className="bg-red-400 text-white rounded-full w-5 h-5 flex items-center justify-center absolute -right-2 -top-2 text-xs font-bold">
+                      <span className="bg-red-400 text-white rounded-full w-4 h-4 flex items-center justify-center absolute -right-1 -top-1 text-[10px] font-bold">
                         {totalItems}
                       </span>
                     )}
                   </Link>
-                  <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                  <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
                     سبد
                   </span>
+                  {isCartPopupVisible && <CartPopup />}
                 </div>
 
                 <div className="relative group">
                   <Link
                     href="/user"
-                    className="text-dark hover:text-secondary flex items-center gap-2"
+                    className="text-dark hover:text-secondary flex items-center gap-1"
                   >
                     <FaUser size={22} className="text-dark" />
                   </Link>
-                  <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                  <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
                     کاربر
                   </span>
                 </div>
@@ -295,11 +399,11 @@ export default function Header() {
                   <div className="relative group">
                     <button
                       onClick={handleAdminClick}
-                      className="text-dark hover:text-secondary flex items-center gap-2"
+                      className="text-dark hover:text-secondary flex items-center gap-1"
                     >
                       <FaUserCog size={28} className="text-dark" />
                     </button>
-                    <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                    <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
                       ادمین
                     </span>
                   </div>
@@ -309,18 +413,18 @@ export default function Header() {
                   <div className="relative group">
                     <button
                       onClick={() => signOut({ callbackUrl: "/" })}
-                      className="text-dark hover:text-secondary flex items-center gap-2"
+                      className="text-dark hover:text-secondary flex items-center gap-1"
                     >
                       <FaSignOutAlt size={24} className="text-red-500" />
                     </button>
-                    <span className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-sm">
+                    <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
                       خروج
                     </span>
                   </div>
                 ) : (
                   <Link
                     href="/auth/login"
-                    className="bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary"
+                    className="bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary text-sm"
                   >
                     ورود/ثبت‌نام
                   </Link>
@@ -332,11 +436,11 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="md:hidden w-full mt-2 relative">
+          <div className="md:hidden w-full mt-1 relative">
             <input
               type="text"
               placeholder="جستجوی کتاب‌ها..."
-              className="w-full p-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:border-primary focus:ring-0 bg-white text-dark shadow-sm transition-all duration-300"
+              className="w-full p-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:border-primary focus:ring-0 bg-white text-dark shadow-sm transition-all duration-300 text-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -347,7 +451,7 @@ export default function Header() {
             {searchQuery.trim() && (
               <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-y-auto z-10 mt-1">
                 {isLoading ? (
-                  <div className="p-4 text-center text-dark">
+                  <div className="p-2 text-center text-dark text-sm">
                     در حال بارگذاری...
                   </div>
                 ) : searchResults.length > 0 ? (
@@ -355,7 +459,7 @@ export default function Header() {
                     <Link
                       key={product._id}
                       href={`/products/${product._id}`}
-                      className="flex items-center gap-4 p-3 hover:bg-gray-100 transition"
+                      className="flex items-center gap-3 p-2 hover:bg-gray-100 transition"
                     >
                       {product.imageUrls?.[0] && (
                         <Image
@@ -378,7 +482,7 @@ export default function Header() {
                             "رایگان"
                           ) : product.discountPrice ? (
                             <>
-                              <span className="line-through text-gray-400 mr-2">
+                              <span className="line-through text-gray-400 mr-1">
                                 {product.price} تومان
                               </span>
                               <span className="text-green-600">
@@ -393,7 +497,7 @@ export default function Header() {
                     </Link>
                   ))
                 ) : (
-                  <div className="p-4 text-center text-dark">
+                  <div className="p-2 text-center text-dark text-sm">
                     هیچ نتیجه‌ای یافت نشد
                   </div>
                 )}
@@ -401,93 +505,110 @@ export default function Header() {
             )}
           </div>
 
-          <div className="text-center">
-            <h1 className="text-lg md:text-xl font-bold text-primary">
-              {siteSetting.title}
-            </h1>
-            <p className="text-base md:text-lg font-medium text-primary mt-1 opacity-80">
-              {siteSetting.slogan}
-            </p>
-          </div>
-        </div>
+          {isMenuVisible && (
+            <nav
+              ref={circleMenuRef}
+              className="py-1 bg-white hidden md:block absolute left-0 right-0 top-full animate-slide-down border border-gray-200 shadow-lg z-[1001]"
+            >
+              <div className="container mx-auto px-4">
+                <ul className="flex flex-wrap justify-center gap-3 sm:gap-4">
+                  {circleMenuItems.map((item, index) => (
+                    <li key={index} className="flex flex-col items-center">
+                      <Link
+                        href={item.href}
+                        className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-primary hover:text-white hover:shadow-md transition"
+                      >
+                        {item.icon}
+                      </Link>
+                      <span className="mt-1 text-sm text-dark">{item.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+          )}
 
-        <nav className="py-4 bg-white hidden md:block">
-          <div className="container mx-auto px-4">
-            <ul className="flex flex-wrap justify-center gap-4 sm:gap-6">
-              {circleMenuItems.map((item, index) => (
-                <li key={index} className="flex flex-col items-center">
-                  <Link
-                    href={item.href}
-                    className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-primary hover:text-white hover:shadow-md transition"
-                  >
-                    {item.icon}
-                  </Link>
-                  <span className="mt-2 text-sm text-dark">{item.name}</span>
+          {isMenuOpen && (
+            <nav
+              ref={hamburgerMenuRef}
+              className="md:hidden bg-white shadow-lg border border-gray-200 z-[1001]"
+            >
+              <ul className="flex flex-col gap-3 p-3 text-dark">
+                <li>
+                  <div className="flex flex-col mb-2">
+                    <Link href="/">
+                      <Image
+                        src={logoSettings?.headerLogo || "/PersianLogo.png"}
+                        alt="لوگوی سایت"
+                        width={200}
+                        height={60}
+                        className="object-contain"
+                      />
+                    </Link>
+                    <p className="text-xs font-medium text-primary opacity-80 leading-none mt-1">
+                      {siteSetting.slogan}
+                    </p>
+                  </div>
                 </li>
-              ))}
-            </ul>
-          </div>
-        </nav>
-
-        {isMenuOpen && (
-          <nav className="md:hidden bg-white shadow-md">
-            <ul className="flex flex-col gap-4 p-4 text-dark">
-              {status === "authenticated" ? (
+                {status === "authenticated" ? (
+                  <li>
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="w-full bg-primary text-white px-3 py-1 rounded-lg hover:bg-secondary flex items-center gap-1 justify-center text-sm"
+                    >
+                      <FaSignOutAlt size={20} className="text-red-500" /> خروج
+                    </button>
+                    <hr className="border-t border-gray-200" />
+                  </li>
+                ) : (
+                  <li>
+                    <Link
+                      href="/auth/login"
+                      className="flex items-center gap-1 hover:text-secondary py-1"
+                    >
+                      <FaUser size={20} /> ورود / ثبت نام
+                    </Link>
+                    <hr className="border-t border-gray-200" />
+                  </li>
+                )}
+                <li>
+                  <Link
+                    href="/cart"
+                    className="flex items-center gap-1 hover:text-secondary py-1"
+                  >
+                    <FaShoppingCart size={20} /> سبد خرید
+                  </Link>
+                  <hr className="border-t border-gray-200" />
+                </li>
                 <li>
                   <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="w-full bg-primary text-white px-4 py-1 rounded-lg hover:bg-secondary flex items-center gap-2 justify-center"
+                    onClick={handleAdminClick}
+                    className="block hover:text-secondary py-1"
                   >
-                    <FaSignOutAlt size={20} className="text-red-500" /> خروج
+                    پنل ادمین
                   </button>
                   <hr className="border-t border-gray-200" />
                 </li>
-              ) : (
-                <li>
-                  <Link
-                    href="/auth/login"
-                    className="flex items-center gap-2 hover:text-secondary py-2"
-                  >
-                    <FaUser /> ورود / ثبت نام
-                  </Link>
-                  <hr className="border-t border-gray-200" />
-                </li>
-              )}
-              <li>
-                <Link
-                  href="/cart"
-                  className="flex items-center gap-2 hover:text-secondary py-2"
-                >
-                  <FaShoppingCart /> سبد خرید
-                </Link>
-                <hr className="border-t border-gray-200" />
-              </li>
-              <li>
-                <button
-                  onClick={handleAdminClick}
-                  className="block hover:text-secondary py-2"
-                >
-                  پنل ادمین
-                </button>
-                <hr className="border-t border-gray-200" />
-              </li>
-              {hamburgerMenuItems.map((item, index) => (
-                <li key={index}>
-                  <Link
-                    href={item.href}
-                    className="block hover:text-secondary py-2"
-                  >
-                    {item.name}
-                  </Link>
-                  <hr className="border-t border-gray-200" />
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
+                {hamburgerMenuItems.map((item, index) => (
+                  <li key={index}>
+                    <Link
+                      href={item.href}
+                      className="block hover:text-secondary py-1"
+                    >
+                      {item.name}
+                    </Link>
+                    <hr className="border-t border-gray-200" />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </div>
       </header>
-      {/* Spacer to prevent content from being hidden behind the header */}
-      <div style={{ height: `${headerHeight}px` }} />
+
+
+      <div style={{ height: `${totalHeight}px` }} />
+
     </>
   );
 }

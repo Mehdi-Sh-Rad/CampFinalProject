@@ -6,10 +6,10 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cart, setCart] = useState({ items: [], discountPrice: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [updatingItem, setUpdatingItem] = useState(null);
   const [popupMessage, setPopupMessage] = useState("");
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isCartPopupVisible, setIsCartPopupVisible] = useState(false); 
+  const [updatingItem, setUpdatingItem] = useState(null);
 
   const showPopup = (message) => {
     setPopupMessage(message);
@@ -19,15 +19,26 @@ export function CartProvider({ children }) {
     }, 3000);
   };
 
+  const toggleCartPopup = () => {
+    setIsCartPopupVisible((prev) => !prev);
+  };
+
+  useEffect(() => {
+    let timer;
+    if (isCartPopupVisible) {
+      timer = setTimeout(() => {
+        setIsCartPopupVisible(false);
+      }, 5000); 
+    }
+    return () => clearTimeout(timer); 
+  }, [isCartPopupVisible]);
 
   useEffect(() => {
     async function fetchCart() {
       try {
         setLoading(true);
-        setError(null);
         const res = await fetch("/api/cart");
         if (!res.ok) {
-          setError("لطفا وارد حساب کاربری خود شوید");
           setCart({ items: [], discountPrice: 0 });
           return;
         }
@@ -35,7 +46,6 @@ export function CartProvider({ children }) {
         const data = await res.json();
         setCart(data && data.items ? data : { items: [], discountPrice: 0 });
       } catch (error) {
-        setError(error);
         setCart({ items: [], discountPrice: 0 });
       } finally {
         setLoading(false);
@@ -58,17 +68,13 @@ export function CartProvider({ children }) {
   }
 
   async function addToCart(productId, quantity = 1) {
-
-    try {    
-      // Check if the product already exists in the cart
+    try {
       const existingItem = cart.items.find((item) => item.product._id === productId);
       if (existingItem) {
-        setError("این محصول به سبد خرید شما اضافه شده است");
-        return; // Exit the function if the product is already in the cart
+        return { success: false, message: "این محصول به سبد خرید شما اضافه شده است" };
       }
 
       setUpdatingItem(productId);
-      setError(null);
 
       const res = await fetch("/api/cart", {
         method: "POST",
@@ -78,15 +84,15 @@ export function CartProvider({ children }) {
 
       if (!res.ok) {
         const errorData = await res.json();
-        setError(
-          errorData.message || "مشکلی در اضافه کردن به سبد خرید پیش آمده است"
-        );
-        return;
+        return { success: false, message: errorData.message || "مشکلی در اضافه کردن به سبد خرید پیش آمده است" };
       }
 
       await updateCart();
+      showPopup("محصول با موفقیت به سبد خرید اضافه شد!");
+      setIsCartPopupVisible(true); 
+      return { success: true };
     } catch (error) {
-      setError("مشکلی در اضافه کردن به سبد خرید پیش آمده است");
+      return { success: false, message: "مشکلی در اضافه کردن به سبد خرید پیش آمده است" };
     } finally {
       setUpdatingItem(null);
     }
@@ -103,13 +109,13 @@ export function CartProvider({ children }) {
 
       if (!res.ok) {
         const errorData = await res.json();
-        setError(errorData.message || "مشکلی در حذف محصول پیش آمده است");
-        return;
+        return { success: false, message: errorData.message || "مشکلی در حذف محصول پیش آمده است" };
       }
 
       await updateCart();
+      return { success: true };
     } catch (error) {
-      setError("مشکلی در حذف محصول پیش آمده است");
+      return { success: false, message: "مشکلی در حذف محصول پیش آمده است" };
     } finally {
       setUpdatingItem(null);
     }
@@ -119,23 +125,22 @@ export function CartProvider({ children }) {
     setCart({ items: [], discountPrice: 0 });
   }
 
-  function clearError() {
-    setError(null);
-  }
-
   return (
     <CartContext.Provider
       value={{
         cart,
         setCart,
-        error,
         loading,
         updatingItem,
         addToCart,
         removeFromCart,
         clearCart,
-        clearError,
         showPopup,
+        isPopupVisible,
+        popupMessage,
+        isCartPopupVisible,
+        setIsCartPopupVisible,
+        toggleCartPopup,
       }}
     >
       {children}

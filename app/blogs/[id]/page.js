@@ -7,6 +7,8 @@ import Footer from "../../components/home/Footer";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Loading from "@/app/loading"; 
+import { FaSearch } from "react-icons/fa";
 
 export default function BlogDetail() {
   const [blogPost, setBlogPost] = useState(null);
@@ -14,6 +16,7 @@ export default function BlogDetail() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); 
   const { data: session, status } = useSession();
   const params = useParams();
   const blogId = params?.id;
@@ -21,6 +24,7 @@ export default function BlogDetail() {
   useEffect(() => {
     const fetchBlogPost = async () => {
       try {
+        setLoading(true); 
         const res = await fetch(`/api/blogPosts/${blogId}`, {
           method: "GET",
           headers: {
@@ -44,6 +48,9 @@ export default function BlogDetail() {
         setRelatedPosts(fetchedRelatedPosts);
       } catch (err) {
         setError(err.message);
+        setBlogPost(null);
+      } finally {
+        setLoading(false); 
       }
     };
 
@@ -55,6 +62,7 @@ export default function BlogDetail() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
+        setLoading(true); 
         const res = await fetch(`/api/comments?productId=${blogId}`, {
           method: "GET",
           headers: {
@@ -67,6 +75,8 @@ export default function BlogDetail() {
         setComments(data);
       } catch (err) {
         setError(err.message);
+      } finally {
+        setLoading(false); 
       }
     };
 
@@ -113,11 +123,36 @@ export default function BlogDetail() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <Loading /> 
+        <Benefits />
+        <Footer />
+      </div>
+    );
+  }
+
   if (!blogPost) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <div className="text-center p-4 text-red-500">مقاله یافت نشد</div>
+        <div className="flex-grow flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-md max-w-md mx-auto">
+            <FaSearch className="text-gray-400 text-5xl mb-4" />
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">مقاله یافت نشد</h2>
+            <p className="text-gray-500 text-center mb-6">
+              متأسفانه مقاله‌ای با این مشخصات پیدا نشد. می‌توانید به صفحه مقالات برگردید.
+            </p>
+            <Link
+              href="/blogs"
+              className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition"
+            >
+              بازگشت به مقالات
+            </Link>
+          </div>
+        </div>
         <Benefits />
         <Footer />
       </div>

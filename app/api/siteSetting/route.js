@@ -9,7 +9,6 @@ export async function GET() {
     let settings = await SiteSetting.findOne();
     if (!settings) {
       settings = await SiteSetting.create({
-        title: "بوکینو",
         slogan: "جهان کتاب، در دستان شما",
       });
     }
@@ -28,9 +27,9 @@ export async function POST(request) {
 
     let settings = await SiteSetting.findOne();
     if (!settings) {
-      settings = await SiteSetting.create(data);
+      settings = await SiteSetting.create({ slogan: data.slogan });
     } else {
-      settings = await SiteSetting.findOneAndUpdate({}, data, { new: true });
+      settings = await SiteSetting.findOneAndUpdate({}, { slogan: data.slogan }, { new: true });
     }
 
     return new Response(JSON.stringify(settings), { status: 200 });

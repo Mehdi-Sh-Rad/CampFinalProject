@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const SiteSetting = () => {
   const [logoSettings, setLogoSettings] = useState(null);
-  const [siteSetting, setSiteSetting] = useState({ title: "", slogan: "" });
+  const [siteSetting, setSiteSetting] = useState({ slogan: "" }); // حذف title
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,7 +24,7 @@ const SiteSetting = () => {
         if (!siteSettingResponse.ok)
           throw new Error("مشکل در دریافت تنظیمات سایت");
         const siteSettingData = await siteSettingResponse.json();
-        setSiteSetting({ title: siteSettingData.title, slogan: siteSettingData.slogan });
+        setSiteSetting({ slogan: siteSettingData.slogan }); // حذف title
 
         const bannersResponse = await fetch("/api/banners");
         if (!bannersResponse.ok) throw new Error("مشکل در دریافت بنرها");
@@ -65,7 +65,6 @@ const SiteSetting = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const updatedSettings = {
-      title: formData.get("title"),
       slogan: formData.get("slogan"),
     };
 
@@ -79,7 +78,7 @@ const SiteSetting = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setSiteSetting({ title: data.title, slogan: data.slogan });
+        setSiteSetting({ slogan: data.slogan }); // حذف title
         alert("تنظیمات سایت با موفقیت ذخیره شد!");
       } else {
         const errorData = await response.json();
@@ -152,27 +151,11 @@ const SiteSetting = () => {
             {error && <div className="text-red-500 text-center">{error}</div>}
 
             <div className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4">مدیریت عنوان و شعار</h2>
+              <h2 className="text-2xl font-semibold mb-4">مدیریت شعار سایت</h2>
               {loading ? (
                 <div className="w-full h-24 bg-gray-300 animate-pulse"></div>
               ) : (
                 <form onSubmit={handleSiteSettingSubmit} className="space-y-4">
-                  <div>
-                    <label className="block mb-2 text-sm font-medium">
-                      عنوان سایت:
-                    </label>
-                    <input
-                      type="text"
-                      name="title"
-                      value={siteSetting.title}
-                      onChange={(e) =>
-                        setSiteSetting({ ...siteSetting, title: e.target.value })
-                      }
-                      className="w-full p-2 border rounded-md"
-                      placeholder="عنوان سایت"
-                      required
-                    />
-                  </div>
                   <div>
                     <label className="block mb-2 text-sm font-medium">
                       شعار سایت:

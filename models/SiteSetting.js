@@ -2,12 +2,6 @@ import mongoose from "mongoose";
 
 const SiteSettingSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      default: "بوکینو",
-      trim: true,
-    },
     slogan: {
       type: String,
       required: true,

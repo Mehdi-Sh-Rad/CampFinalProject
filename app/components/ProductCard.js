@@ -13,9 +13,8 @@ export default function ProductCard({ product, showCategory = false, showButton 
             <Image
               src={product.imageUrls[0]}
               alt={product.name}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-t-lg"
+              fill
+              className="object-cover rounded-t-lg"
             />
           ) : (
             <div className="w-full h-36 bg-gray-200 flex items-center justify-center rounded-t-lg">
@@ -38,8 +37,7 @@ export default function ProductCard({ product, showCategory = false, showButton 
         )}
         <div className="flex justify-center items-center gap-2 mb-2">
           <p
-            className={`text-sm font-bold ${product.discountPrice ? "line-through text-gray-500" : "text-dark"
-              }`}
+            className={`text-sm font-bold ${product.discountPrice ? "line-through text-gray-500" : "text-dark"}`}
           >
             {product.price.toLocaleString()} تومان
           </p>
@@ -49,9 +47,7 @@ export default function ProductCard({ product, showCategory = false, showButton 
             </p>
           )}
         </div>
-        {showButton && (
-          <AddToCartButton productId={product._id} />
-        )}
+        {showButton && <AddToCartButton productId={product._id} />}
       </div>
     </div>
   );
