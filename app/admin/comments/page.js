@@ -1,5 +1,6 @@
 "use client";
 
+import { getComments } from "@/app/lib/fetch/Comments";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -10,15 +11,13 @@ const Comments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  //Fetch comments on component mount
+  //Fetch comments
   useEffect(() => {
     const fetchComments = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/comments");
-
-        if (!response.ok) throw new Error(" مشکل در دریافت اطلاعات نظرات");
-        const data = await response.json();
+        const data = await getComments();
+        if (!data) throw new Error(" مشکل در دریافت اطلاعات نظرات");  
         setComments(data);
       } catch (error) {
         setError(error.message);

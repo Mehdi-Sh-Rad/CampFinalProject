@@ -1,24 +1,22 @@
 "use client";
-
+import { getComment } from "@/app/lib/fetch/Comments";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
-  const [status, setStatus] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  //Fetch comments on component mount
+  //Fetch comments of the user
   useEffect(() => {
     const fetchComments = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/comments?user=true");
+        const data = await getComment()
 
-        if (!response.ok) throw new Error(" مشکل در دریافت اطلاعات نظرات");
-        const data = await response.json();
+        if (!data) throw new Error(" مشکل در دریافت اطلاعات نظرات");
         setComments(data);
       } catch (error) {
         setError(error.message);
@@ -29,58 +27,11 @@ const Comments = () => {
     fetchComments();
   }, []);
 
-  //Delete comment by ID
-  const handleDelete = async (id) => {
-    try {
-      await fetch(`/api/comments/${id}`, { method: "DELETE" });
-      setComments(comments.filter((comment) => comment._id !== id));
-    } catch (error) {
-      setError("مشکلی در حذف پیش آمد");
-    }
-  };
-
-  // Toggle comment status
-  const handleStatus = async (id, preStatus) => {
-    const newStatus = !Boolean(preStatus);
-    setStatus(newStatus);
-    try {
-      const response = await fetch(`/api/comments/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (response.status === 400) {
-        let message = await response.json();
-        setError(message.message);
-      }
-      if (!response.ok) throw new Error("مشکلی در تغییر وضعیت آمده است");
-    } catch (error) {
-      setError(error.message);
-    }
-    setComments(
-      comments.map((comment) => {
-        if (comment._id === id) {
-          return { ...comment, status: newStatus };
-        }
-        return comment;
-      })
-    );
-  };
   return (
     <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
       <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
         <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl"> مدیریت نظرات </h1>
         <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base"> نظرات محصولات را مدیریت کنید.</span>
-        <Link
-          href={"/user/comments/add"}
-          as={"/user/comments/add"}
-          className="z-10 flex gap-x-2 justify-center items-center absolute left-10 bottom-16 bg-white py-2 px-4 rounded text-gray-600 shadow-lg dark:bg-shop-dark dark:text-shop-bg">
-          افزودن نظر جدید  
-          <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-        </Link>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
           src={"/uploads/top-header.png"}

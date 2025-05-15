@@ -37,12 +37,12 @@ export default function ProductCard({ product, showCategory = false, showButton 
         )}
         <div className="flex justify-center items-center gap-2 mb-2">
           <p
-            className={`text-sm font-bold ${product.discountPrice ? "line-through text-gray-500" : "text-dark"}`}
+            className={`text-sm font-bold ${product.discountPrice ? "line-through text-gray-500 mb-5" : "text-dark mb-5"}`}
           >
             {product.price.toLocaleString()} تومان
           </p>
           {product.discountPrice && (
-            <p className="text-sm font-bold text-red-500">
+            <p className="text-sm font-bold text-red-500 mb-5">
               {product.discountPrice.toLocaleString()} تومان
             </p>
           )}

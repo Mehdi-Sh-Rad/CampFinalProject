@@ -162,14 +162,17 @@ export default function Header() {
 
   // Fetch search results
   const fetchSearchResults = async (query) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
+  // Clean the query using regex
+  const cleanedQuery = query.replace(/<[^>]*>?/gm, ""); 
+
+  if (!cleanedQuery.trim()) {
+    setSearchResults([]);
+    return;
+  }
     try {
       setIsLoading(true);
       const response = await fetch(
-        `/api/search?search=${encodeURIComponent(query)}`
+        `/api/search?search=${encodeURIComponent(cleanedQuery)}`
       );
       const data = await response.json();
       setSearchResults(data || []);

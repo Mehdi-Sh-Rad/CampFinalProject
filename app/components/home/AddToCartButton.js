@@ -40,7 +40,7 @@ const AddToCartButton = ({ productId }) => {
   }, [localError]);
 
   return (
-    <section className="flex justify-center items-center flex-col">
+    <section>
       <button
         onClick={handleAddToCart}
         disabled={loading}

@@ -10,8 +10,10 @@ import { useSession } from "next-auth/react";
 import ProductCard from "@/app/components/home/ProductCard";
 import { useCart } from "@/app/context/CartContext";
 import AddToCartButton from "@/app/components/home/AddToCartButton";
-import Loading from "@/app/loading"; 
+import Loading from "@/app/loading";
 import { FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import { getProduct } from "@/app/lib/fetch/Products";
+import { createComment, getComment, getProductComment } from "@/app/lib/fetch/Comments";
 
 export default function ProductDetail() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, error } = useCart();
@@ -24,23 +26,24 @@ export default function ProductDetail() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadingComment, setLoadingComment] = useState(false);
   const { data: session, status } = useSession();
   const params = useParams();
   const productId = params?.id;
 
+  // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/products/${productId}`);
-        if (!res.ok) throw new Error("خطا در گرفتن محصول");
-        const fetchedProduct = await res.json();
+        const fetchedProduct = await getProduct(productId);
+        if (!fetchedProduct) throw new Error("خطا در گرفتن محصول");
         setProduct(fetchedProduct);
         if (fetchedProduct.imageUrls && fetchedProduct.imageUrls.length > 0) {
           setSelectedImage(fetchedProduct.imageUrls[0]);
           setSelectedImageIndex(0);
         }
-
+        // Fetch related products
         const relatedRes = await fetch(
           `/api/products?category=${fetchedProduct.category}&exclude=${productId}`
         );
@@ -60,13 +63,13 @@ export default function ProductDetail() {
     }
   }, [productId]);
 
+  // Fetch comments of the product
   useEffect(() => {
     const fetchComments = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/comments?productId=${productId}`);
-        if (!res.ok) throw new Error("خطا در گرفتن دیدگاه‌ها");
-        const data = await res.json();
+        const data = await getProductComment(productId);
+        if (!data) throw new Error("خطا در گرفتن دیدگاه‌ها");
         setComments(data);
       } catch (err) {
         setProductError(err.message);
@@ -80,46 +83,42 @@ export default function ProductDetail() {
     }
   }, [productId]);
 
+  // Handle comment submission
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!session) {
       setProductError("برای ثبت دیدگاه باید وارد حساب کاربری خود شوید.");
       return;
     }
+    // Regex for cleaning the input
+    const cleanedNewComment = newComment.replace(/<[^>]*>?/gm, "");
 
-    if (!newComment.trim()) {
+    if (!cleanedNewComment.trim()) {
       setProductError("لطفاً متن دیدگاه را وارد کنید.");
       return;
-    }
-
+    } 
     try {
-      const res = await fetch("/api/comments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: newComment,
-          user: session.user.id,
-          product: productId,
-        }),
-      });
-
-      if (!res.ok) {
+      setLoadingComment(true);
+      const newCommentData = await createComment(cleanedNewComment, productId, session.user.id);
+      if (!newCommentData) {
         const errorData = await res.json();
         throw new Error(errorData.message);
       }
 
-      const newCommentData = await res.json();
       setComments([newCommentData, ...comments]);
       setNewComment("");
       setProductError(null);
+      alert("دیدگاه شما پس از تایید ادمین سامانه نمایش داده خواهد شد")
     } catch (err) {
       setProductError(err.message);
+    } finally {
+      setLoadingComment(false);
     }
   };
 
+  // Handle local storage for viewed products
   useEffect(() => {
     if (!product) return;
-
     const key = `viewed_${product._id}`;
     const last = localStorage.getItem(key);
     const now = Date.now();
@@ -135,6 +134,7 @@ export default function ProductDetail() {
     }
   }, [product]);
 
+  // Handle image selection
   const handlePrevImage = () => {
     if (!product || !product.imageUrls || product.imageUrls.length <= 1) return;
     const newIndex = (selectedImageIndex - 1 + product.imageUrls.length) % product.imageUrls.length;
@@ -149,17 +149,19 @@ export default function ProductDetail() {
     setSelectedImage(product.imageUrls[newIndex]);
   };
 
+  // Handle loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <Loading /> 
+        <Loading />
         <Benefits />
         <Footer />
       </div>
     );
   }
 
+  // Handle product not found
   if (!product) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -196,7 +198,7 @@ export default function ProductDetail() {
                 {product.imageUrls && product.imageUrls.length > 1 && (
                   <button
                     className="flex-shrink-0 text-[#7B61FF] hover:text-[#6A50E6] p-1 rounded-full transition-all mr-4 shadow-md hover:shadow-lg"
-                    onClick={handlePrevImage} 
+                    onClick={handlePrevImage}
                   >
                     <FaArrowRight size={24} />
                   </button>
@@ -217,7 +219,7 @@ export default function ProductDetail() {
                 {product.imageUrls && product.imageUrls.length > 1 && (
                   <button
                     className="flex-shrink-0 text-[#7B61FF] hover:text-[#6A50E6] p-1 rounded-full transition-all ml-4 shadow-md hover:shadow-lg"
-                    onClick={handleNextImage} 
+                    onClick={handleNextImage}
                   >
                     <FaArrowLeft size={24} />
                   </button>
@@ -234,9 +236,8 @@ export default function ProductDetail() {
                 {product.imageUrls.map((imageUrl, index) => (
                   <div
                     key={index}
-                    className={`relative w-12 h-12 sm:w-16 sm:h-16 cursor-pointer rounded-md border-2 ${
-                      selectedImage === imageUrl ? "border-primary" : "border-gray-300"
-                    } flex-shrink-0`}
+                    className={`relative w-12 h-12 sm:w-16 sm:h-16 cursor-pointer rounded-md border-2 ${selectedImage === imageUrl ? "border-primary" : "border-gray-300"
+                      } flex-shrink-0`}
                     onClick={() => {
                       setSelectedImage(imageUrl);
                       setSelectedImageIndex(index);
@@ -253,7 +254,7 @@ export default function ProductDetail() {
               </div>
             )}
           </div>
-          <div className="md:w-2/3">
+          <div className="md:w-2/3 mt-8">
             <h1 className="text-2xl font-bold text-dark mb-3">{product.name}</h1>
             <div className="space-y-1 mb-3 text-sm">
               <p className="text-gray-600">
@@ -299,7 +300,7 @@ export default function ProductDetail() {
 
         {isLightboxOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1001]" 
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1001]"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsLightboxOpen(false);
@@ -312,7 +313,7 @@ export default function ProductDetail() {
                   className="flex-shrink-0 text-white text-2xl bg-[#7B61FF] hover:bg-[#6A50E6] p-1 rounded-full transition-all mr-4"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handlePrevImage(); 
+                    handlePrevImage();
                   }}
                 >
                   <FaArrowRight />
@@ -338,7 +339,7 @@ export default function ProductDetail() {
                   className="flex-shrink-0 text-white text-2xl bg-[#7B61FF] hover:bg-[#6A50E6] p-1 rounded-full transition-all ml-4"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleNextImage(); 
+                    handleNextImage();
                   }}
                 >
                   <FaArrowLeft />
@@ -393,7 +394,7 @@ export default function ProductDetail() {
               type="submit"
               className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-all self-end shadow-md hover:shadow-lg"
             >
-              ارسال دیدگاه
+              {loadingComment ? (<p>در حال ارسال ...</p>) : ("ارسال دیدگاه")}
             </button>
           </form>
         </div>
