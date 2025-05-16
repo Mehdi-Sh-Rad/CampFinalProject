@@ -31,7 +31,6 @@ const AddProduct = () => {
   // Fetch categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
-
       try {
         const data = await getCategories();
         if (!data) {

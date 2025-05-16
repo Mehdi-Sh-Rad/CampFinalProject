@@ -6,14 +6,16 @@ import Payment from "@/models/Payment";
 import Product from "@/models/Product";
 import User from "@/models/User";
 
+// View payments
 export async function GET(request) {
   await connectToDatabase();
   const payments = await Payment.find({}).populate("user")
-  .populate("items.product")
-  .sort({ createdAt: -1 });
+    .populate("items.product")
+    .sort({ createdAt: -1 });
   return new Response(JSON.stringify(payments), { status: 200 });
 }
 
+// Create a new payment
 export async function POST(request) {
   await connectToDatabase();
 

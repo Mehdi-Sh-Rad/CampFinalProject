@@ -1,11 +1,11 @@
 "use client";
 import AuthWrapper from "@/app/components/auth/auth";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { getPayments } from "@/app/lib/fetch/Payments";
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
@@ -17,9 +17,8 @@ const Payments = () => {
     const fetchPayments = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/payments");
-        if (!response.ok) throw new Error("مشکل در دریافت اطلاعات پراخت های مشتریان");
-        const data = await response.json();
+        const data = await getPayments();
+        if (!data) throw new Error("مشکل در دریافت اطلاعات پراخت های مشتریان");
         setPayments(data);
       } catch (error) {
         setError(error.message);
@@ -153,7 +152,7 @@ const Payments = () => {
                               <tr className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap px-1 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap px-2 py-4">{payment.orderCode}</td>
-                                <td className="whitespace-nowrap px-4 py-4">{payment.user?.name}</td>
+                                <td className="whitespace-nowrap px-4 py-4">{payment.user?.name || "نامشخص"}</td>
                                 <td className="whitespace-nowrap  px-6 py-4"
                                   style={{
                                     whiteSpace: "nowrap",

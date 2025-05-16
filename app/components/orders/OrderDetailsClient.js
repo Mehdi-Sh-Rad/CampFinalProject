@@ -70,7 +70,7 @@ export default function OrderDetailsClient({ id }) {
                   </div>
                   <div className="p-4">
                     <h2 className="text-lg font-semibold mb-1 dark:text-gray-200">{prod.name}</h2>
-                    <p className="text-green-600 mb-3">{prod.price.toLocaleString()} تومان</p>
+                    <p className="text-green-600 mb-3">{prod.finalPrice.toLocaleString()} تومان</p>
 
                     {files.length > 0 && (
                       <div className="mt-3">

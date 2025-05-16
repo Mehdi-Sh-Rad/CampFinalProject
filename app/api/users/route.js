@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import User from "@/models/User";
 
+//view all users
 export async function GET(req) {
   try {
     await connectToDatabase();

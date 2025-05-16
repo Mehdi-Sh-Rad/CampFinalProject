@@ -17,9 +17,7 @@ const Products = () => {
       setLoading(true);
       try {
         const data = await getProducts();
-
-        if (!data) throw new Error("مشکل در دریافت محصولات ");
-    
+        if (!data) throw new Error("مشکل در دریافت محصولات ");   
         setProducts(data);
       } catch (error) {
         setError(error.message);

@@ -1,5 +1,5 @@
 "use client";
-
+import { deleteUser, getUsers, updateUser } from "@/app/lib/fetch/Users";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
@@ -8,18 +8,13 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch users from the server
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/auth");
-
-        if (!response.ok) throw new Error(" مشکل در دریافت اطلاعات کاربران");
-        if (response.status === 404) {
-          setError("کاربری یافت نشد");
-          return;
-        }
-        const data = await response.json();
+        const data = await getUsers();
+        if (!data) throw new Error(" مشکل در دریافت اطلاعات کاربران");
         setUsers(data);
       } catch (error) {
         setError(error.message);
@@ -30,37 +25,27 @@ const Users = () => {
     fetchUsers();
   }, []);
 
+  // Delete user
   const handleDelete = async (id) => {
     try {
-      await fetch(`/api/auth?id=${id}`, { method: "DELETE" });
-      console.log(fetch);
+      await deleteUser(id);
       setUsers(users.filter((user) => user._id !== id));
     } catch (error) {
       setError("مشکلی در حذف پیش آمد");
     }
   };
 
+  // Handle active/deactive user
   const handleActive = async (id, preStatus) => {
     setLoading(true);
     const newStatus = !Boolean(preStatus);
     try {
-      const response = await fetch(`/api/auth?id=${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: newStatus }),
-      });
-
-      if (response.status === 400) {
-        let message = await response.json();
-        setError(message.message);
-      }
-      if (!response.ok) throw new Error("مشکلی در تغییر وضعیت کاربر پیش آمده است");
+      const response = await updateUser(id, newStatus);
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
-
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
         if (user._id === id) {
@@ -71,6 +56,7 @@ const Users = () => {
     );
   };
 
+  // Handle admin user
   const handleAdmin = async (id, preStatus) => {
     setLoading(true);
     const newStatus = !Boolean(preStatus);
