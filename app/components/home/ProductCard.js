@@ -8,14 +8,15 @@ export default function ProductCard({ product, showCategory = false, showButton 
       className="bg-white border border-purple-100 rounded-xl shadow-sm transition-all duration-500 hover:border-secondary hover:shadow-md hover:-translate-y-2 hover:scale-105"
     >
       <Link href={`/products/${product._id}`}>
-        <div className="relative w-full h-36">
+        <div className="relative w-full h-60">
           {product.imageUrls ? (
             <Image
-              src={product.imageUrls[0]}
-              alt={product.name}
-              fill
-              className="object-cover rounded-t-lg"
-            />
+            src={product.imageUrls[0]}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover rounded-t-lg"
+          />
           ) : (
             <div className="w-full h-36 bg-gray-200 flex items-center justify-center rounded-t-lg">
               <span className="text-gray-500">تصویر موجود نیست</span>
@@ -32,7 +33,7 @@ export default function ProductCard({ product, showCategory = false, showButton 
         <p className="text-xs text-gray-600 mb-1">{product.author}</p>
         {showCategory && (
           <p className="text-xs text-gray-600 mb-2">
-            دسته‌بندی: {product.category ? product.category.name : "نامشخص"}
+            دسته‌بندی: {product.category ? product.category?.name : "نامشخص"}
           </p>
         )}
         <div className="flex justify-center items-center gap-2 mb-2">

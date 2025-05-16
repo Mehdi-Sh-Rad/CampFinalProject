@@ -21,6 +21,7 @@ export default function BlogDetail() {
   const params = useParams();
   const blogId = params?.id;
 
+  //fetch blog posts
   useEffect(() => {
     const fetchBlogPost = async () => {
       try {
@@ -53,12 +54,12 @@ export default function BlogDetail() {
         setLoading(false); 
       }
     };
-
     if (blogId) {
       fetchBlogPost();
     }
   }, [blogId]);
 
+  //Fetch blog comments
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -91,7 +92,6 @@ export default function BlogDetail() {
       setError("برای ثبت دیدگاه باید وارد حساب کاربری خود شوید.");
       return;
     }
-
     if (!newComment.trim()) {
       setError("لطفاً متن دیدگاه را وارد کنید.");
       return;
@@ -113,7 +113,6 @@ export default function BlogDetail() {
         const errorData = await res.json();
         throw new Error(errorData.message);
       }
-
       const newCommentData = await res.json();
       setComments([newCommentData, ...comments]);
       setNewComment("");

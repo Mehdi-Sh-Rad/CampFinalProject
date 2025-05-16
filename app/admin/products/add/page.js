@@ -19,7 +19,7 @@ const AddProduct = () => {
   const [active, setActive] = useState(true);
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
-  const [types, setTypes] = useState(["pdf", "docx", "ppt", "png", "jpeg"]);
+  const [types, setTypes] = useState(["pdf", "docx", "ppt", "png", "jpeg", "mp3"]);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [tags, setTags] = useState([""]);
   const [free, setFree] = useState(false);

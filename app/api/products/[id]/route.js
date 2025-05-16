@@ -1,11 +1,13 @@
 import connectToDatabase from "@/app/lib/db";
 import Product from "@/models/Product";
+import Category from "@/models/Category";
 import { NextResponse } from "next/server";
 import { join } from "path";
 import { unlink, writeFile } from "fs/promises";
 import { isValidObjectId } from "mongoose";
 import { mkdirSync, existsSync } from "fs";
 
+// View product by ID
 export async function GET(request, { params }) {
   await connectToDatabase();
   const { id } = await params;
@@ -32,7 +34,7 @@ function extractFileName(url) {
   return url.split("/").pop();
 }
 
-// PUT: Update an existing product by ID
+// Update an existing product by ID
 export async function PUT(request, { params }) {
   try {
     const { id } = await params;
@@ -101,9 +103,6 @@ export async function PUT(request, { params }) {
           return NextResponse.json({message : "نام میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
         }
 
-
-
-
     if (!author || author.trim() === "") {
       return new Response(JSON.stringify({ message: "نام نویسنده الزامی است" }), { status: 400 });
     }
@@ -115,7 +114,6 @@ export async function PUT(request, { params }) {
         if (!authorRegex.test(author)) {
           return NextResponse.json({message : "نام نویسنده میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
         }
-
 
     if (!description || description.trim() === "") {
       return new Response(JSON.stringify({ message: "توضیحات محصول الزامی است" }), { status: 400 });
@@ -161,8 +159,6 @@ export async function PUT(request, { params }) {
     if (tags.length === 0) {
       return new Response(JSON.stringify({ message: "حداقل یک برچسب الزامی است" }), { status: 400 });
     }
-
-    console.log("before : ", price);
 
     // Set price to 0 if free is true
     if (free) {

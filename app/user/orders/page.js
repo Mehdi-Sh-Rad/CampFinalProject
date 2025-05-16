@@ -112,6 +112,9 @@ const Orders = () => {
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
+                              <td className="whitespace-nowrap px-4 py-4">
+                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -158,7 +161,7 @@ const Orders = () => {
                                       textOverflow: "ellipsis",
                                       maxWidth: "150px",
                                     }}>
-                                    {order.items.map((item) => item.product.name).join(" , ")}
+                                    {order.items.map((item) => item.product?.name).join(" , ")}
                                   </td>
                                   <td className="whitespace-nowrap px-4 py-4">{order.status ? "تایید" : "در انتظار"}</td>
                                   <td className="whitespace-nowrap px-4 py-4">{order.payablePrice > 0 ? order.payablePrice?.toLocaleString("fa-IR") : "رایگان"}</td>

@@ -22,6 +22,7 @@ export async function GET(request) {
   const award = searchParams.get("award") === "true";
   const free = searchParams.get("free") === "true";
   const active = searchParams.get("active") === "true";
+  const discount = searchParams.get("discountPrice") === "true";
 
   // Initialize an empty query object.
   let query = {};
@@ -38,10 +39,12 @@ export async function GET(request) {
     query.finalPrice = { $gte: minPrice };
   } else if (maxPrice !== null) {
     query.finalPrice = { $lte: maxPrice };
-  }
+  }; 
 
-  // If 'award' is true, add it to the query object
+  // If 'award' 'active' 'discount' is true, add it to the query object
   if (award) query.award = true;
+
+  if (discount) query.discountPrice = { $exists: true, $ne: null };
 
   if (active) query.active = true;
 
@@ -81,9 +84,7 @@ export async function GET(request) {
   return new Response(JSON.stringify(products), { status: 200 });
 }
 
-
-
-
+// Create a new product
 export async function POST(request) {
   try {
     const data = await request.formData();
@@ -150,7 +151,6 @@ export async function POST(request) {
       return NextResponse.json({message : "نام نویسنده میتواند شامل حروف ، اعداد و فاصله باشد"} , {status : 400})
     }
 
-
     if (!description || description.trim() === "") {
       return new Response(JSON.stringify({ message: "توضیحات محصول الزامی است" }), { status: 400 });
     }
@@ -204,7 +204,6 @@ export async function POST(request) {
     if (!existsSync(uploadDirFile)) {
                 mkdirSync(uploadDirFile, { recursive: true });
               }
-
 
 
     const uploadDirImage = join(process.cwd(), "public/uploads/images");

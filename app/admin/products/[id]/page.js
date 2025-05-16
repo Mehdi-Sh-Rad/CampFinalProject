@@ -5,6 +5,7 @@ import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Loading from "@/app/loading";
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -245,7 +246,7 @@ const UpdateProduct = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <Loading />;
   }
 
   if (error) {

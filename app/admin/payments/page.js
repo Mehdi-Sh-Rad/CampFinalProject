@@ -159,7 +159,7 @@ const Payments = () => {
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
                                     maxWidth: "250px",
-                                  }}>{payment.items.map((item) => item.product.name).join(" , ")}</td>
+                                  }}>{payment.items.map((item) => item.product?.name).join(" , ")}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{payment.totalPrice.toLocaleString("fa-IR")}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(payment.createdAt)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{payment.status ? "تایید" : "تایید نشده"}</td>

@@ -39,6 +39,7 @@ export default function ProductDetail() {
         const fetchedProduct = await getProduct(productId);
         if (!fetchedProduct) throw new Error("خطا در گرفتن محصول");
         setProduct(fetchedProduct);
+        console.log("prdocut:", product)
         if (fetchedProduct.imageUrls && fetchedProduct.imageUrls.length > 0) {
           setSelectedImage(fetchedProduct.imageUrls[0]);
           setSelectedImageIndex(0);
@@ -260,15 +261,15 @@ export default function ProductDetail() {
               <p className="text-gray-600">
                 نویسنده: <span className="text-dark">{product.author}</span>
               </p>
-              <p className="text-gray-600">
+              {/* <p className="text-gray-600">
                 دسته‌بندی:{" "}
                 <Link href="#" className="text-primary hover:underline">
                   {product.category?.name || "نامشخص"}
                 </Link>
-              </p>
+              </p> */}
               {product.types && product.types.length > 0 && (
                 <p className="text-gray-600">
-                  نوع: <span className="text-dark">{product.types.join(", ")}</span>
+                  فرمت فایل: <span className="text-dark">{product.types.join(", ")}</span>
                 </p>
               )}
               {product.tags && product.tags.length > 0 && (

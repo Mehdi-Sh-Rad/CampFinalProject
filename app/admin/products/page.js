@@ -17,7 +17,7 @@ const Products = () => {
       setLoading(true);
       try {
         const data = await getProducts();
-        if (!data) throw new Error("مشکل در دریافت محصولات ");   
+        if (!data) throw new Error("مشکل در دریافت محصولات ");
         setProducts(data);
       } catch (error) {
         setError(error.message);
@@ -200,8 +200,8 @@ const Products = () => {
                                     <Image src={product.imageUrls?.[0] || "/logo-min.png"} width={100} height={100} alt={product.name || "product image"} />
                                   </td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.price === 0
-    ? "رایگان"
-    : `${product.price.toLocaleString("fa-IR")} تومان`} </td>
+                                    ? "رایگان"
+                                    : `${product.price.toLocaleString("fa-IR")} تومان`} </td>
                                   <td className="whitespace-nowrap  px-4 py-4">{product.active ? "فعال" : "غیرفعال"}</td>
                                   <td className="whitespace-nowrap  px-4 py-4">
                                     <div className="flex justify-center gap-x-2">

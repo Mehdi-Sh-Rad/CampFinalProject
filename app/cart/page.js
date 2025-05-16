@@ -70,7 +70,7 @@ export default function Cart() {
           <section className="lg:w-2/3">
             {cart.items.map((item) => (
               <section
-                className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg mb-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+                className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-12 rounded-lg mb-4 shadow-sm hover:shadow-md transition-shadow duration-200"
                 key={item.product?._id || item._id}
               >
                 <section className="flex items-center w-full sm:w-auto mb-4 sm:mb-0">
