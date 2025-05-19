@@ -63,7 +63,7 @@ export async function GET(request) {
   else if (sort === "view-asc") sortCondition.viewCount = 1;
 
   // Find products in the database based on the 'query', populate the 'category' field, and apply the 'sortCondition'.
-  const productsRaw = await Product.find(query).populate("category").sort(sortCondition);
+  const productsRaw = await Product.find(query).populate("category").sort(sortCondition).collation({ locale: "fa", strength: 2 });;
 
   // Map over the raw product data
   const products = productsRaw.map((product) => ({
