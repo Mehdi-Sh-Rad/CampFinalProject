@@ -4,51 +4,92 @@ import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/app/context/CartContext";
-import {FaSearch,  FaShoppingCart,  FaBars,  FaTimes,  FaSignOutAlt,  FaUserCog,  FaUser,  FaBook,  FaNewspaper,  FaGift,  FaMoneyBill,  FaEye,  FaShoppingBag,} from "react-icons/fa";
+import {
+  FaSearch,
+  FaShoppingCart,
+  FaBars,
+  FaTimes,
+  FaSignOutAlt,
+  FaUserCog,
+  FaUser,
+  FaBook,
+  FaNewspaper,
+  FaGift,
+  FaMoneyBill,
+  FaEye,
+  FaShoppingBag,
+} from "react-icons/fa";
 import CartPopup from "@/app/components/carts/CartPopup";
+import UserPopup from "@/app/components/home/UserPopup";
 
 // icons for circle menu
 const categoryIcons = {
   مقالات: <FaNewspaper size={20} className="text-dark" />,
   "همه دسته‌ها": <FaBook size={20} className="text-dark" />,
-  "تخفیف‌دارها": <FaGift size={20} className="text-dark" />,
-  "رایگان": <FaMoneyBill size={20} className="text-dark" />,
-  "پربازدیدترین": <FaEye size={20} className="text-dark" />,
-  "پرفروش‌ترین": <FaShoppingBag size={20} className="text-dark" />,
+  تخفیف‌دارها: <FaGift size={20} className="text-dark" />,
+  رایگان: <FaMoneyBill size={20} className="text-dark" />,
+  پربازدیدترین: <FaEye size={20} className="text-dark" />,
+  پرفروش‌ترین: <FaShoppingBag size={20} className="text-dark" />,
 };
 
 // lists of static ones in circle menu
 const staticMenuItems = [
-  { name: "همه دسته‌ها", href: "/categories", icon: <FaBook size={20} className="text-dark" /> },
-  { name: "مقالات", href: "/blogs", icon: <FaNewspaper size={20} className="text-dark" /> },
-  { name: "تخفیف‌دارها", href: "/products?discountPrice=true", icon: <FaGift size={20} className="text-dark" /> },
-  { name: "رایگان", href: "/products?free=true", icon: <FaMoneyBill size={20} className="text-dark" /> },
-  { name: "پربازدیدترین", href: "/products?sort=view-desc", icon: <FaEye size={20} className="text-dark" /> },
-  { name: "پرفروش‌ترین", href: "/products?sort=sold-desc", icon: <FaShoppingBag size={20} className="text-dark" /> },
+  {
+    name: "همه دسته‌ها",
+    href: "/categories",
+    icon: <FaBook size={20} className="text-dark" />,
+  },
+  {
+    name: "مقالات",
+    href: "/blogs",
+    icon: <FaNewspaper size={20} className="text-dark" />,
+  },
+  {
+    name: "تخفیف‌دارها",
+    href: "/products?discountPrice=true",
+    icon: <FaGift size={20} className="text-dark" />,
+  },
+  {
+    name: "رایگان",
+    href: "/products?free=true",
+    icon: <FaMoneyBill size={20} className="text-dark" />,
+  },
+  {
+    name: "پربازدیدترین",
+    href: "/products?sort=view-desc",
+    icon: <FaEye size={20} className="text-dark" />,
+  },
+  {
+    name: "پرفروش‌ترین",
+    href: "/products?sort=sold-desc",
+    icon: <FaShoppingBag size={20} className="text-dark" />,
+  },
 ];
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
-  const [isMenuVisible, setIsMenuVisible] = useState(false); 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [logoSettings, setLogoSettings] = useState(null);
   const [siteSetting, setSiteSetting] = useState("");
-  const { cart, isCartPopupVisible, setIsCartPopupVisible, toggleCartPopup } = useCart();
+  const { cart } = useCart();
+  const [isCartPopupOpen, setIsCartPopupOpen] = useState(false);
+  const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
   const [circleMenuHeight, setCircleMenuHeight] = useState(0);
   const [hamburgerMenuHeight, setHamburgerMenuHeight] = useState(0);
-  const headerRef = useRef(null); 
-  const circleMenuRef = useRef(null); 
-  const hamburgerMenuRef = useRef(null); 
+  const headerRef = useRef(null);
+  const circleMenuRef = useRef(null);
+  const hamburgerMenuRef = useRef(null);
 
-  //calculate totalItems
+  // calculate totalItems
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
-    //fetch logo and siteSetting
+  // fetch logo and siteSetting
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -69,7 +110,7 @@ export default function Header() {
     fetchSettings();
   }, []);
 
-//Dynamic height calculation
+  // Dynamic height calculation
   useEffect(() => {
     const headerElement = headerRef.current;
     if (!headerElement) return;
@@ -91,7 +132,7 @@ export default function Header() {
     };
   }, [isMenuOpen, isMenuVisible]);
 
-  //Adjust the height when menu is open
+  // Adjust the height when menu is open
   useEffect(() => {
     const circleMenuElement = circleMenuRef.current;
     if (!circleMenuElement || !isMenuVisible) {
@@ -141,7 +182,10 @@ export default function Header() {
     };
   }, [isMenuOpen]);
 
-  const totalHeight = headerHeight + (isMenuVisible ? circleMenuHeight : 0) + (isMenuOpen ? hamburgerMenuHeight : 0);
+  const totalHeight =
+    headerHeight +
+    (isMenuVisible ? circleMenuHeight : 0) +
+    (isMenuOpen ? hamburgerMenuHeight : 0);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -151,24 +195,14 @@ export default function Header() {
     setIsMenuVisible(!isMenuVisible);
   };
 
-  // Admin panel redirection
-  const handleAdminClick = () => {
-    if (status === "authenticated") {
-      window.location.href = "/admin";
-    } else {
-      window.location.href = "/auth/login";
-    }
-  };
-
   // Fetch search results
   const fetchSearchResults = async (query) => {
-  // Clean the query using regex
-  const cleanedQuery = query.replace(/<[^>]*>?/gm, ""); 
+    const cleanedQuery = query.replace(/<[^>]*>?/gm, "");
 
-  if (!cleanedQuery.trim()) {
-    setSearchResults([]);
-    return;
-  }
+    if (!cleanedQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -184,7 +218,6 @@ export default function Header() {
     }
   };
 
-  // Fetch search results when the search query changes
   useEffect(() => {
     fetchSearchResults(searchQuery);
   }, [searchQuery]);
@@ -205,7 +238,7 @@ export default function Header() {
   ];
 
   return (
-    <>  
+    <>
       <header
         ref={headerRef}
         className="fixed top-0 left-0 right-0 w-full z-[1000] bg-background shadow-md"
@@ -316,20 +349,18 @@ export default function Header() {
 
             <div className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-3">
+                {/* آیکون سبد خرید */}
                 <div
-                  className="relative group"
-                  onMouseEnter={() => setIsCartPopupVisible(true)}
-                  onMouseLeave={() => setIsCartPopupVisible(false)}
+                  className="relative group w-full"
+                  onMouseEnter={() => {
+                    setIsCartPopupOpen(true);
+                    setIsUserPopupOpen(false);
+                  }}
+                  onMouseLeave={() => setIsCartPopupOpen(false)}
                 >
                   <Link
                     href="/cart"
                     className="text-dark hover:text-secondary flex items-center gap-1"
-                    onClick={(e) => {
-                      if (isCartPopupVisible) {
-                        e.preventDefault(); 
-                      }
-                      toggleCartPopup();
-                    }}
                   >
                     <FaShoppingCart size={22} className="text-dark" />
                     {totalItems > 0 && (
@@ -339,52 +370,31 @@ export default function Header() {
                     )}
                   </Link>
                   <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
-                    سبد
+                    ...
                   </span>
-                  {isCartPopupVisible && <CartPopup />}
+                  {isCartPopupOpen && <CartPopup />}
                 </div>
 
-               {session?.user ? (
-                <div className="relative group">
-                  <Link
-                    href="/user"
-                    className="text-dark hover:text-secondary flex items-center gap-1"
-                  >
+                {/* آیکون کاربر */}
+                <div
+                  className="relative group w-full"
+                  onMouseEnter={() => {
+                    setIsUserPopupOpen(true);
+                    setIsCartPopupOpen(false);
+                  }}
+                  onMouseLeave={() => setIsUserPopupOpen(false)}
+                >
+                  <div className="text-dark hover:text-secondary flex items-center gap-1">
                     <FaUser size={22} className="text-dark" />
-                  </Link>
+                  </div>
                   <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
-                    کاربر
+                    ...
                   </span>
-                </div>) : ""
-                
-                }
-                {session?.user?.isAdmin ? (
-                  <div className="relative group">
-                    <button
-                      onClick={handleAdminClick}
-                      className="text-dark hover:text-secondary flex items-center gap-1"
-                    >
-                      <FaUserCog size={28} className="text-dark" />
-                    </button>
-                    <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
-                      ادمین
-                    </span>
-                  </div>
-                ) : ""}
+                  {isUserPopupOpen && <UserPopup />}
+                </div>
 
-                {status === "authenticated" ? (
-                  <div className="relative group">
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="text-dark hover:text-secondary flex items-center gap-1"
-                    >
-                      <FaSignOutAlt size={24} className="text-red-500" />
-                    </button>
-                    <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
-                      خروج
-                    </span>
-                  </div>
-                ) : (
+                {/* دکمه ورود/ثبت‌نام */}
+                {status !== "authenticated" && (
                   <Link
                     href="/auth/login"
                     className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-secondary text-sm"
@@ -483,7 +493,9 @@ export default function Header() {
                       >
                         {item.icon}
                       </Link>
-                      <span className="mt-1 text-sm text-dark">{item.name}</span>
+                      <span className="mt-1 text-sm text-dark">
+                        {item.name}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -569,7 +581,6 @@ export default function Header() {
         </div>
       </header>
       <div style={{ height: `${totalHeight}px` }} />
-
     </>
   );
 }
