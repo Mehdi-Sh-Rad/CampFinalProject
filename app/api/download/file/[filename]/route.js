@@ -4,8 +4,10 @@ import { stat, createReadStream } from "fs";
 import { promisify } from "util";
 import { getServerSession } from "next-auth";
 import Order from "@/models/Order";
+import crypto from "crypto";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import connectToDatabase from "@/app/lib/db";
+export const runtime = "nodejs";
 
 // Promisify fs.stat for async/await usage
 const statAsync = promisify(stat);
@@ -19,6 +21,28 @@ export async function GET(request, { params }) {
 
   const userId = session.user.id;
   const filename = params.filename;
+  const { searchParams } = new URL(request.url);
+  const signature = searchParams.get("signature");
+  const timestamp = parseInt(searchParams.get("timestamp") || "0", 10);
+
+  if (!signature || !timestamp) {
+    return NextResponse.json({ message: "لینک دانلود نامعتبر است" }, { status: 400 });
+  }
+
+  // Verify signature
+  const secret = process.env.DOWNLOAD_SECRET;
+  const data = `${userId}:${filename}:${timestamp}`;
+  const expectedSignature = crypto.createHmac("sha256", secret).update(data).digest("hex");
+
+  if (signature !== expectedSignature) {
+    return NextResponse.json({ message: "لینک دانلود نامعتبر است" }, { status: 403 });
+  }
+
+  // Check timestamp (valid for 5 minutes)
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  if (currentTimestamp - timestamp > 300) {
+    return NextResponse.json({ message: "لینک دانلود نامعتبر است" }, { status: 403 });
+  }
 
   //connect to database
   await connectToDatabase();
