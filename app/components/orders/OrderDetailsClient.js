@@ -12,6 +12,34 @@ export default function OrderDetailsClient({ id }) {
     return url.split("/").pop();
   }
 
+  // Handle file download with signature
+  async function handleDownload(filename) {
+    try {
+      // Get signature and timestamp
+      const res = await fetch(`/api/download/generate-download-signature?filename=${encodeURIComponent(filename)}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "خطا در دریافت امضا");
+      }
+
+      const { signature, timestamp } = await res.json();
+
+      if (!signature || !timestamp) {
+        throw new Error("امضا یا زمان‌بندی نامعتبر است");
+      }
+
+      // Construct download URL with signature and timestamp
+      const downloadUrl = `/api/download/file/${encodeURIComponent(filename)}?signature=${encodeURIComponent(signature)}&timestamp=${timestamp}`;
+      window.location.href = downloadUrl;
+    } catch (error) {
+      setError(error.message || "خطا در دانلود فایل");
+    }
+  }
+
   // Fetch order details on component mount
   useEffect(() => {
     async function fetchOrder() {
@@ -78,13 +106,9 @@ export default function OrderDetailsClient({ id }) {
                         <ul className="list-disc list-inside dark:text-white space-y-1">
                           {files.map((fileUrl, index) => (
                             <li key={index}>
-                              <a
-                                href={`/api/download/file/${extractFilename(fileUrl)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-500 hover:underline">
+                              <button onClick={() => handleDownload(extractFilename(fileUrl))} className="text-blue-500 hover:underline focus:outline-none">
                                 {`دانلود فایل ${index + 1}`}
-                              </a>
+                              </button>
                             </li>
                           ))}
                         </ul>
