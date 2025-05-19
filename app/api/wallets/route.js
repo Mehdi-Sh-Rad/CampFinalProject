@@ -5,34 +5,35 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import Wallet from "@/models/Wallet";
 import User from "@/models/User";
 
-//Show Wallet
-export async function GET(req) {
-  try {
-    await connectToDatabase();
 
-    const session = await getServerSession({ req, ...authOptions });
+export async function GET(request) {
+  await connectToDatabase();
+
+  const url = new URL(request.url);
+  const isUserRequest = url.searchParams.get("user"); // Check if the "user" query parameter is present
+
+  if (isUserRequest) {
+    // Fetch wallet for the logged-in user
+    const session = await getServerSession({ req: request, ...authOptions });
 
     if (!session || !session.user) {
-      return NextResponse.json({ error: "شما وارد نشده اید" }, { status: 401 });
+      return new Response(JSON.stringify({ message: "لطفا ابتدا وارد حساب شوید" }), { status: 401 });
     }
 
-    let wallet = await Wallet.findOne({ user: session.user.id })
+    const userWallet = await Wallet.findOne({ user: session.user.id })
+      .populate("user")
+      .sort({ createdAt: -1 });
+    return NextResponse.json(userWallet);
+  }
+
+  // Fetch all wallets (for admin panel)
+  const wallets = await Wallet.find({})
     .populate("user")
     .sort({ createdAt: -1 });
 
-    if (!wallet) {
-      wallet = new Wallet({ user: session.user.id, balance: 0 });
-      await wallet.save();
-    }
+  return new Response(JSON.stringify(wallets), { status: 200 });
+}
 
-    return NextResponse.json(wallet);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "خطایی در کیف پول رخ داده است" },
-      { status: 500 }
-    );
-  }
-};
 
 //Create Wallet
 export async function POST(req) {

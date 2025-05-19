@@ -11,6 +11,7 @@ import Footer from "../components/home/Footer";
 import EmptyCart from "../components/carts/EmptyCart";
 import OrderSuccess from "../components/carts/OrderSuccess";
 import Loading from "../loading";
+import { getWallet } from "../lib/fetch/Wallets";
 
 export default function Checkout() {
   const { cart, clearCart } = useCart();
@@ -65,9 +66,8 @@ export default function Checkout() {
     const fetchWallets = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/wallets");
-        if (!response.ok) throw new Error("مشکل در دریافت کیف‌پول‌ها");
-        const data = await response.json();
+        const data = await getWallet();
+        if (!data) throw new Error("مشکل در دریافت کیف‌پول‌ها");
         setWallets(Array.isArray(data) ? data : [data]);
       } catch (error) {
         setError(error.message);

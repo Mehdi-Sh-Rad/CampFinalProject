@@ -14,9 +14,9 @@ export async function getWallets () {
     return res.json()
 };
 
-//View user Wallet
+//View current user Wallet
 export async function getWallet () {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wallets`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wallets?user=true`, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
