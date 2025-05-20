@@ -397,7 +397,7 @@ export default function Header() {
                 {status !== "authenticated" && (
                   <Link
                     href="/auth/login"
-                    className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-secondary text-sm ml-2 "
+                    className="bg-primary text-white px-8 py-2 rounded-lg hover:bg-secondary text-sm "
                   >
                     ورود / ثبت‌نام
                   </Link>

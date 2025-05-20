@@ -77,9 +77,6 @@ const Payments = () => {
                               کاربر
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              محصول
-                            </th>
-                            <th scope="col" className="px-4 py-4">
                               پرداختی
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -111,9 +108,6 @@ const Payments = () => {
                               <td className="whitespace-nowrap px-4 py-4">
                                 <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                               </td>
-                              <td className="whitespace-nowrap px-4 py-4">
-                                <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
-                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -133,9 +127,6 @@ const Payments = () => {
                               کاربر
                             </th>
                             <th scope="col" className="px-4 py-4">
-                              محصول
-                            </th>
-                            <th scope="col" className="px-4 py-4">
                               پرداختی
                             </th>
                             <th scope="col" className="px-4 py-4">
@@ -153,13 +144,6 @@ const Payments = () => {
                                 <td className="whitespace-nowrap px-1 py-4 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap px-2 py-4">{payment.orderCode}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{payment.user?.name || "نامشخص"}</td>
-                                <td className="whitespace-nowrap  px-6 py-4"
-                                  style={{
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    maxWidth: "250px",
-                                  }}>{payment.items.map((item) => item.product?.name).join(" , ")}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{payment.totalPrice.toLocaleString("fa-IR")}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{formatToPersianDate(payment.createdAt)}</td>
                                 <td className="whitespace-nowrap px-4 py-4">{payment.status ? "تایید" : "تایید نشده"}</td>
