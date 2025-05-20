@@ -41,7 +41,7 @@ export async function POST(request) {
     const body = await request.json();
 
     // Basic validation
-    if (!body.topic || typeof body.topic !== "string" || body.topic.trim().length < 1 || body.topic.trim().length > 100) {
+    if (!body.topic || typeof body.topic !== "string" || body.topic.trim().length < 1 ) {
       return new Response(JSON.stringify({ message: "موضوع تیکت باید بین ۱ تا ۱۰۰ کاراکتر باشد" }), {
         status: 400,
       });

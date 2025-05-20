@@ -7,7 +7,6 @@ import React, { useState } from "react";
 
 const AddTicket = () => {
   const [topic, setTopic] = useState("");
-  const [order, setOrder] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
@@ -23,13 +22,6 @@ const AddTicket = () => {
       return false;
     }
   
-    if (order.trim() === "") {
-      setFormError("درج شماره سفارش یا کد محصول الزامی است");
-      return false;
-    } else if (order.length > 50) {
-      setFormError("شماره سفارش نباید بیش از ۵۰ کاراکتر باشد");
-      return false;
-    }
     setFormError(""); 
     return true;
   };
@@ -46,7 +38,7 @@ const AddTicket = () => {
       const response = await fetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic, order }),
+        body: JSON.stringify({ topic }),
       });
 
       if (response.status === 400) {
@@ -68,7 +60,7 @@ const AddTicket = () => {
         <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base">از این قسمت تیکت جدید ثبت نمایید </span>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
-          src={"/uploads/top-header.png"}
+          src={"/uploads/top-header-user.png"}
           alt="هدر"
           width={1663}
           height={277}
@@ -101,15 +93,6 @@ const AddTicket = () => {
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                />
-                <input
-                  name="order"
-                  autoComplete="topic"
-                  className="focus:outline-none border dark:bg-shop-dark dark:border-gray-600 dark:text-gray-200 dark:placeholder:text-gray-200 border-gray-200 rounded px-4 py-2 w-full focus:ring-2 focus:ring-shop-red transition-all duration-300"
-                  placeholder="شماره سفارش و یا کدمحصول مدنظر"
-                  type="text"
-                  value={order}
-                  onChange={(e) => setOrder(e.target.value)}
                 />
                 <div>
                   <button type="submit" className="bg-green-500 text-white ml-3 py-2 px-4 rounded">

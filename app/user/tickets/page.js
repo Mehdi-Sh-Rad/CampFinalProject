@@ -53,7 +53,7 @@ const Tickets = () => {
         </Link>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
-          src={"/uploads/top-header.png"}
+          src={"/uploads/top-header-user.png"}
           alt="هدر"
           width={1663}
           height={277}
@@ -78,32 +78,26 @@ const Tickets = () => {
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            سفارش
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
                             آخرین پیام
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            عملیات
+                            مشاهده و گفتگو
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {[...Array(4)].map((_, index) => (
                           <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                            <td className="whitespace-nowrap px-4 py-4 font-medium">
+                            <td className="whitespace-nowrap px-1 py-1 font-medium">
                               <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4">
+                            <td className="whitespace-nowrap px-1 py-1">
                               <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4">
+                            <td className="whitespace-nowrap px-6 py-4">
                               <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4">
-                              <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-4">
+                            <td className="whitespace-nowrap px-6 py-4">
                               <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
                           </tr>
@@ -122,13 +116,10 @@ const Tickets = () => {
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            سفارش
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
                             آخرین پیام
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            عملیات
+                            مشاهده و گفتگو
                           </th>
                         </tr>
                       </thead>
@@ -139,7 +130,6 @@ const Tickets = () => {
                               <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
                                 <td className="whitespace-nowrap  px-1 py-1 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap  px-1 py-1">{ticket.topic}</td>
-                                <td className="whitespace-nowrap  px-1 py-1">{ticket.order}</td>
                                 <td
                                   className="whitespace-nowrap  px-1 py-4"
                                   style={{

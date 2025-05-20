@@ -8,12 +8,14 @@ export default function AuthWrapper({ children }) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  // Redirect to login page if unauthenticated
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/login");
     }
   }, [status, router]);
 
+  // Redirect to home page if authenticated
   if (status === "loading") {
     return (
       <div className="flex justify-center items-center h-screen">

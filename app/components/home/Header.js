@@ -377,14 +377,14 @@ export default function Header() {
 
                 {/* آیکون کاربر */}
                 <div
-                  className="relative group w-full"
+                  className="relative group w-full ml-3" 
                   onMouseEnter={() => {
                     setIsUserPopupOpen(true);
                     setIsCartPopupOpen(false);
                   }}
                   onMouseLeave={() => setIsUserPopupOpen(false)}
                 >
-                  <div className="text-dark hover:text-secondary flex items-center gap-1">
+                  <div className="text-dark hover:text-secondary flex items-center gap-1 ml-2">
                     <FaUser size={22} className="text-dark" />
                   </div>
                   <span className="absolute bottom-[-18px] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-dark text-xs">
@@ -397,7 +397,7 @@ export default function Header() {
                 {status !== "authenticated" && (
                   <Link
                     href="/auth/login"
-                    className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-secondary text-sm"
+                    className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-secondary text-sm ml-2 "
                   >
                     ورود / ثبت‌نام
                   </Link>
@@ -557,7 +557,7 @@ export default function Header() {
                 </li>
                 <li>
                   <button
-                    onClick={handleAdminClick}
+                    href="/admin"
                     className="block hover:text-secondary py-1"
                   >
                     پنل ادمین

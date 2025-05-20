@@ -46,7 +46,7 @@ const UserDashboard = () => {
   };
 
   return (
-    <AuthWrapper>
+    <AuthWrapper panelType="user">
       <div className="bg-shop-bg dark:bg-[#171a26] min-h-[100vh]">
         <div className="relative h-[180px] min-h-[180px] w-full overflow-hidden rounded-b-xl">
           <h1 className="text-white absolute z-10 right-8 top-6 font-bold text-xl md:text-3xl">
@@ -57,7 +57,7 @@ const UserDashboard = () => {
           </span>
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
-            src={"/uploads/top-header.png"}
+            src={"/uploads/top-header-user.png"}
             alt="هدر"
             width={1663}
             height={277}

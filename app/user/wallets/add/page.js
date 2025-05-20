@@ -67,7 +67,7 @@ const DepositWallets = () => {
           </h1>
           <Image
             className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
-            src="/uploads/top-header.png"
+            src="/uploads/top-header-user.png"
             alt="هدر"
             width={1663}
             height={277}

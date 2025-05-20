@@ -35,14 +35,6 @@ export default function Checkout() {
       0
     ) || 0;
 
-  useEffect(() => {
-    if (totalPrice > 0) {
-      setPayableAmount(totalPrice - appliedDiscount);
-    } else {
-      setPayableAmount(0);
-    }
-  }, [totalPrice, appliedDiscount]);
-
   // Fetch discounts
   useEffect(() => {
     const fetchDiscount = async () => {
@@ -82,7 +74,7 @@ export default function Checkout() {
     generateOrderCode();
   }, []);
 
-  //Generate discount code
+  //Generate order code
   const generateOrderCode = () => {
     const characters = "0123456789";
     let result = "P-";
@@ -125,25 +117,37 @@ export default function Checkout() {
     }
   };
 
-  //Handle remove discount
-  const handleRemoveDiscount = async (id) => {
-    setLoading(true);
-    setDiscountError("");
-    try {
-      if (!id) {
-        setDiscountError("کد تخفیف نامعتبر است");
-        return;
-      }
-      await fetch(`/api/discounts?id=${id}`, { method: "DELETE" });
-      setAppliedDiscount(0);
-      setDiscountPercent(null);
-      setDiscountCode("");
-    } catch (error) {
-      setDiscountError(error.message || "مشکلی در حذف کد تخفیف پیش آمده است");
-    } finally {
-      setLoading(false);
+  //Handle discount
+  // const handleDiscount = async (id) => {
+  //   setLoading(true);
+  //   setDiscountError("");
+  //   try {
+  //     if (!id) {
+  //       setDiscountError("کد تخفیف نامعتبر است");
+  //       return;
+  //     }
+  //     // await fetch(`/api/discounts?id=${id}`, { method: "DELETE" });
+  //     setAppliedDiscount(0);
+  //     setDiscountPercent(null);
+  //     setDiscountCode("");
+  //   } catch (error) {
+  //     setDiscountError(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  useEffect(() => {
+    if (totalPrice > 0) {
+      console.log("totalPrice", totalPrice);
+      console.log("appliedDiscount", appliedDiscount);
+      console.log("payableAmount", totalPrice - appliedDiscount);
+      setPayableAmount(totalPrice - appliedDiscount);
+    } else {
+      setPayableAmount(0);
     }
-  };
+  }, [totalPrice, appliedDiscount]);
+
 
   //Handle payment process
   const handlePayment = async () => {
@@ -227,6 +231,7 @@ export default function Checkout() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderCode,
+          discountPrice: appliedDiscount,
           status: true,
         }),
       });
@@ -235,16 +240,15 @@ export default function Checkout() {
         const data = await res.json();
         throw new Error(data.message || "مشکلی در ثبت سفارش پیش آمده است");
       }
-
       await handlePayment();
-      clearCart();
+
       if (discountCode) {
         const discountItem = discount.find(
           (item) => item.code === discountCode
         );
-        if (discountItem) await handleRemoveDiscount(discountItem._id);
       }
       setShowOrderSuccess(true);
+      clearCart();
     } catch (error) {
       setError(error.message);
     } finally {

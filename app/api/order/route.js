@@ -26,8 +26,7 @@ export async function POST(req) {
     const orderCode = body.orderCode;
     const status = body.status;
     const totalPrice = cart.items.reduce((total, item) => total + (item.product.finalPrice || 0), 0);
-
-    const discountPrice = cart.discountPrice || 0;
+    const discountPrice = body.discountPrice || 0;
     const payablePrice = totalPrice - discountPrice;
 
     const newOrder = await Order.create({

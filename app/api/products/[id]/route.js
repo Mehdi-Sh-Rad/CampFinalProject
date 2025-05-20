@@ -324,7 +324,7 @@ export async function DELETE(request, { params }) {
       return new Response(JSON.stringify({ message: "فایل محصول پیدا نشد" }), { status: 404 });
     }
     fileUrls.map((fileUrl) => {
-      const filePath = join(process.cwd(), "public", fileUrl);
+      const filePath = join(process.cwd(), fileUrl);
       unlink(filePath).catch(() => {
         console.log("خطا در حذف فایل از سرور");
       });

@@ -72,9 +72,6 @@ const Tickets = () => {
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            سفارش
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
                             آخرین پیام
                           </th>
                           <th scope="col" className=" px-6 py-4">
@@ -90,9 +87,6 @@ const Tickets = () => {
                             </td>
                             <td className="whitespace-nowrap px-4 py-4">
                               <div className="w-24 h-4 bg-gray-300 animate-pulse"></div>
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-4">
-                              <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-4">
                               <div className="w-16 h-4 bg-gray-300 animate-pulse"></div>
@@ -122,9 +116,6 @@ const Tickets = () => {
                             موضوع
                           </th>
                           <th scope="col" className=" px-6 py-4">
-                            سفارش
-                          </th>
-                          <th scope="col" className=" px-6 py-4">
                             آخرین پیام
                           </th>
                           <th scope="col" className=" px-6 py-4">
@@ -140,7 +131,6 @@ const Tickets = () => {
                                 <td className="whitespace-nowrap  px-1 py-1 font-medium">{index + 1}</td>
                                 <td className="whitespace-nowrap  px-1 py-1">{ticket.userId?.name}</td>
                                 <td className="whitespace-nowrap  px-1 py-1">{ticket.topic}</td>
-                                <td className="whitespace-nowrap  px-1 py-1">{ticket.order}</td>
                                 <td
                                   className="whitespace-nowrap  px-1 py-4"
                                   style={{

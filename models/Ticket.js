@@ -11,9 +11,6 @@ const TicketSchema = new mongoose.Schema({
       ref: "User", // Reference to the User model
       required: true,
    },
-   order: {
-      type: String,
-   },
    message: [
       {
          text: String,

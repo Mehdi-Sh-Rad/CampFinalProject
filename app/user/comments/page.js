@@ -34,7 +34,7 @@ const Comments = () => {
         <span className="text-white absolute z-10 right-8 top-20 text-xs sm:text-base"> نظرات محصولات را مدیریت کنید.</span>
         <Image
           className="absolute object-fill w-full h-full left-0 top-0 right-0 bottom-0 header-img"
-          src={"/uploads/top-header.png"}
+          src={"/uploads/top-header-user.png"}
           alt="هدر"
           width={1663}
           height={277}
